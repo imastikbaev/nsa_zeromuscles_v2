@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { firstMission, sufficientPanels } from '../lib/first-mission';
-import { advanceByCommand, createFlight, pendingEvent, respondByCommand, scoreFlight, setFlightOperations } from '../lib/simulation';
+import { type Flight, advanceByCommand, createFlight, pendingEvent, respondByCommand, scoreFlight, setFlightOperations } from '../lib/simulation';
 import { readFlight, readRecords, saveFlight, saveResult } from '../lib/storage';
 
 for (const camera of ['camera', 'hires'] as const) {
@@ -16,7 +16,19 @@ for (const camera of ['camera', 'hires'] as const) {
     try {
       const initial = firstMission(camera);
       const design = { ...initial, panels: sufficientPanels(initial), durationMonths: 1 };
-      let flight = { ...createFlight(design, () => .9), paused: true };
+      let flight: Flight = { ...createFlight(design, () => .9), paused: true };
+      // An instrument disabled in one workspace must remain visible and reversible
+      // after restoring in the other; full duty is not an instrument enable command.
+      flight = setFlightOperations(flight, { disabledInstruments: [camera], duty: .5, priority: camera, downlink: false });
+      assert(saveFlight(design, flight));
+      flight = readFlight()!.flight;
+      flight = setFlightOperations(flight, { duty: 1 });
+      assert.deepEqual(flight.operations!.disabledInstruments, [camera]);
+      assert.equal(flight.operations!.priority, camera);
+      assert.equal(flight.operations!.downlink, false);
+      flight = setFlightOperations(flight, { disabledInstruments: [], downlink: true });
+      assert.equal(flight.operations!.elapsedHours, 0);
+      assert.deepEqual(flight.operations!.disabledInstruments, []);
       for (let commands = 0; !flight.completed; commands++) {
         assert(commands < 20, 'flight must finish, including restored event decisions');
         assert(saveFlight(design, flight));
@@ -25,7 +37,7 @@ for (const camera of ['camera', 'hires'] as const) {
         assert.deepEqual(checkpoint.design, design);
         assert.deepEqual(checkpoint.flight, flight);
         flight = checkpoint.flight;
-        const elapsed = flight.operations!.elapsedHours;
+        const elapsed: number = flight.operations!.elapsedHours;
         flight = setFlightOperations(flight, { duty: .5, downlink: true });
         assert.equal(flight.operations!.elapsedHours, elapsed, 'planning must not consume mission time');
         const event = pendingEvent(flight);
@@ -37,6 +49,7 @@ for (const camera of ['camera', 'hires'] as const) {
       const result = scoreFlight(design, flight);
       assert.equal(flight.operations!.elapsedHours, 724);
       assert(result.lastInterval);
+      assert(flight.operations!.data.find(row => row.id === camera)!.generated > 0, 're-enabled camera must collect data');
       assert(saveResult(result));
       assert.deepEqual(readRecords()[0], result);
       assert(saveResult(result));

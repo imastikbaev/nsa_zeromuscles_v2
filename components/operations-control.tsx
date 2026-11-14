@@ -28,6 +28,7 @@ export function OperationsControl({ design, flight, onChange }: {
     <label>{t("Instrument duty cycle")}<select value={o.duty} onChange={e => update({ duty: Number(e.target.value) })}>
      <option value={1}>{t("Full observations")}</option><option value={0.5}>{t("Half observations")}</option><option value={0}>{t("Instruments off")}</option>
     </select></label>
+    <p>{t("Duty cycle applies only to enabled instruments.")}</p>
     {o.data.map(r => <label key={r.id}><input type="checkbox" checked={!(o.disabledInstruments ?? []).includes(r.id)} onChange={e => update({ disabledInstruments: e.target.checked ? (o.disabledInstruments ?? []).filter(id => id !== r.id) : [...(o.disabledInstruments ?? []), r.id] })}/>{t(instruments.find(i => i.id === r.id)!.name)}</label>)}
     <label><input type="checkbox" checked={o.downlink} onChange={e => update({ downlink: e.target.checked })}/>{t("Transmit during contact windows")}</label>
     <label>{t("Data transmission priority")}<select value={o.priority ?? ""} onChange={e => update({ priority: e.target.value || null })}>

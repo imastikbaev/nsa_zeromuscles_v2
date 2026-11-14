@@ -36,7 +36,6 @@ import {
   respondByCommand,
   responseRisk,
   scoreFlight,
-  setFlightOperations,
   type Flight,
   type Result,
 } from '@/lib/simulation';
@@ -51,6 +50,7 @@ import {
 } from '@/lib/storage';
 import { ExpeditionShell, useExpeditionCopy } from './expedition-shell';
 import { FlightStageScene } from './flight-stage-scene';
+import { OperationsControl } from './operations-control';
 import { IntervalSummary } from './interval-summary';
 import { LaunchSequence } from './launch-sequence';
 import { useI18n } from './preferences';
@@ -184,16 +184,14 @@ export function IntuitiveBuilder() {
     setDesign(fixed);
   };
 
-  const startTestFlight = (withCinematic = true) => {
+  const startTestFlight = () => {
     if (calc.issues.length > 0 || (flight && !flight.completed)) return;
     const newFlight = { ...createFlight(design), paused: true };
     setFlight(newFlight);
     setResult(null);
     setStorageWarning(!saveFlight(design, newFlight));
     setStep(3);
-    if (withCinematic) {
-      setShowLaunchModal(true);
-    }
+
   };
 
   const handleNextPhase = () => {
@@ -279,7 +277,7 @@ export function IntuitiveBuilder() {
               className="ib-secondary-btn"
               onClick={() => setShowLaunchModal(true)}
             >
-              🚀 {c('Кино-запуск ракеты', 'Preview Rocket Launch', 'Зымыран стартын көру')}
+              🚀 {c('Предпросмотр запуска', 'Preview launch', 'Ұшыруды алдын ала көру')}
             </button>
           </div>
         </header>
@@ -915,9 +913,9 @@ export function IntuitiveBuilder() {
                           type="button"
                           className="ib-primary-btn"
                           disabled={calc.issues.length > 0}
-                          onClick={() => startTestFlight(true)}
+                          onClick={() => startTestFlight()}
                         >
-                          🚀 {c('Запустить тестовый полёт (с анимацией)', 'Launch Animated Test Flight', 'Анимациялық сынақ ұшуын бастау')}
+                          🚀 {c('Начать миссию с первого этапа', 'Begin mission at the first phase', 'Миссияны бірінші кезеңнен бастау')}
                         </button>
                       </div>
                     </div>
@@ -979,65 +977,7 @@ export function IntuitiveBuilder() {
                       </div>
                     )}
 
-                    {/* Orbital Operations Duty & Downlink Controls */}
-                    {flight.operations && (
-                      <div className="ib-slider-grid" style={{ marginBottom: 18 }}>
-                        <div className="ib-slider-box">
-                          <div className="ib-slider-top">
-                            <span>{c('Интенсивность съёмки приборов', 'Instrument Duty Cycle', 'Аспаптардың жұмыс режимі')}</span>
-                            <strong>{Math.round(flight.operations.duty * 100)}%</strong>
-                          </div>
-                          <div className="ib-chip-row">
-                            {[1, 0.5, 0].map((val) => (
-                              <button
-                                key={val}
-                                type="button"
-                                className={`ib-mode-btn ${flight.operations?.duty === val ? 'is-active' : ''}`}
-                                onClick={() => {
-                                  const next = setFlightOperations(flight, { duty: val });
-                                  commitFlight(next);
-                                }}
-                              >
-                                {val === 1
-                                  ? c('100% Полная', '100% Full', '100% Толық')
-                                  : val === 0.5
-                                    ? c('50% Эконом', '50% Half', '50% Үнемді')
-                                    : c('0% Пауза', '0% Off', '0% Тоқтату')}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div className="ib-slider-box">
-                          <div className="ib-slider-top">
-                            <span>{c('Передача данных на Землю', 'Radio Downlink Transmitter', 'Жерге деректерді жіберу')}</span>
-                            <strong>{flight.operations.downlink ? 'ON' : 'OFF'}</strong>
-                          </div>
-                          <div className="ib-chip-row">
-                            <button
-                              type="button"
-                              className={`ib-mode-btn ${flight.operations.downlink ? 'is-active' : ''}`}
-                              onClick={() => {
-                                const next = setFlightOperations(flight, { downlink: true });
-                                commitFlight(next);
-                              }}
-                            >
-                              {c('Вкл (Передача в ЦУП)', 'Transmitting', 'Қосулы')}
-                            </button>
-                            <button
-                              type="button"
-                              className={`ib-mode-btn ${!flight.operations.downlink ? 'is-active' : ''}`}
-                              onClick={() => {
-                                const next = setFlightOperations(flight, { downlink: false });
-                                commitFlight(next);
-                              }}
-                            >
-                              {c('Выкл (Экономия энергии)', 'Standby (Save Power)', 'Өшірулі')}
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                    <OperationsControl design={design} flight={flight} onChange={commitFlight} />
 
                     <p>{t('Time advances only when you confirm. Adjust instruments and transmission before continuing.')}</p>
                     <p><strong>{t('Next interval duration')}: </strong>{nextIntervalHours(flight, design)} {t('hours')}</p>
@@ -1153,7 +1093,7 @@ export function IntuitiveBuilder() {
                         <button
                           type="button"
                           className="ib-primary-btn"
-                          onClick={() => startTestFlight(true)}
+                          onClick={() => startTestFlight()}
                         >
                           ↻ {c('Повторить тестовый полёт', 'Fly Again', 'Қайта ұшыру')}
                         </button>
@@ -1250,7 +1190,7 @@ export function IntuitiveBuilder() {
                   <div className="ib-meter-head">
                     <span>{c('Передача данных', 'Downlink', 'Деректер арнасы')}</span>
                     <strong className={calc.bandwidth >= calc.requiredBandwidth ? 'is-ok' : 'is-bad'}>
-                      {Math.round(calc.bandwidth)} / {calc.requiredBandwidth} GB/d
+                      {Math.round(calc.bandwidth)} / {calc.requiredBandwidth} Mbps
                     </strong>
                   </div>
                   <div className="ib-bar-track">
@@ -1289,12 +1229,12 @@ export function IntuitiveBuilder() {
             ref={launchDialog}
             className="ib-modal-backdrop"
             onCancel={(event) => { event.preventDefault(); setShowLaunchModal(false); }}
-            aria-label={c('Анимация запуска ракеты и выведения на орбиту', 'Rocket Launch & Orbit Insertion Animation', 'Зымыран стартының анимациясы')}
+            aria-label={c('Предпросмотр запуска', 'Launch preview', 'Ұшыруды алдын ала көру')}
           >
             <div className="ib-modal-box">
               <div className="ib-modal-top">
                 <h2>
-                  🚀 {design.name} · {calc.launcher.name} → {calc.orbit.name}
+                  {c('Предпросмотр', 'Preview', 'Алдын ала көру')} · {design.name}
                 </h2>
                 <button
                   type="button"
@@ -1302,18 +1242,13 @@ export function IntuitiveBuilder() {
                   onClick={() => setShowLaunchModal(false)}
                 >
                   {flight
-                    ? c('Перейти к управлению на орбите →', 'Continue to Orbital Control →', 'Орбиталық басқаруға өту →')
+                    ? c('Вернуться к текущему этапу миссии →', 'Return to the current mission phase →', 'Миссияның ағымдағы кезеңіне оралу →')
                     : c('Закрыть окно', 'Close Preview', 'Жабу')}
                 </button>
               </div>
-              <LaunchSequence
-                design={design}
-                onComplete={() => {
-                  if (flight) {
-                    setShowLaunchModal(false);
-                  }
-                }}
-              />
+              <p>{c('Это предпросмотр: просмотр, пропуск и повтор не запускают миссию и не расходуют её ресурсы.', 'This is a preview: watching, skipping and replaying do not start the mission or consume its resources.', 'Бұл алдын ала көру: қарау, өткізу және қайталау миссияны бастамайды және ресурстарын жұмсамайды.')}</p>
+              {flight && <p>{c('Текущий этап миссии:', 'Current mission phase:', 'Миссияның ағымдағы кезеңі:')} {t(phases[flight.phase])}</p>}
+              <LaunchSequence design={design} />
             </div>
           </dialog>
         )}

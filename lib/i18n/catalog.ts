@@ -1768,6 +1768,10 @@ export const catalog: Record<string, readonly [string, string]> = {
     "Анимированный конструктор",
     "Анимациялық конструктор"
   ],
+  "Duty cycle applies only to enabled instruments.": [
+    "Интенсивность применяется только к включённым приборам.",
+    "Жұмыс қарқындылығы тек қосылған аспаптарға қолданылады."
+  ],
   "Mission operations": [
     "Управление миссией",
     "Миссияны басқару"

@@ -231,7 +231,7 @@ export function LaunchSequence({
     };
   });
 
-  const labelPhase = phaseIndex === 4 ? c("Орбита достигнута", "Orbit achieved", "Орбитаға шықты") : t(phases[phaseIndex]);
+  const labelPhase = phaseIndex === 4 ? c("Предпросмотр завершён", "Preview complete", "Алдын ала көру аяқталды") : t(phases[phaseIndex]);
 
   return (
     <div className="ls-root">
@@ -432,9 +432,9 @@ export function LaunchSequence({
         </div>
         <p className="ls-note">
           {c(
-            "Учебная иллюстрация, не расчёт траектории.",
-            "Educational illustration, not a trajectory calculation.",
-            "Оқу иллюстрациясы, траектория есебі емес.",
+            "Предпросмотр. Не изменяет этап, время или ресурсы миссии.",
+            "Illustrative preview. Does not change mission phase, time or resources.",
+            "Алдын ала көру. Миссия кезеңін, уақытын немесе ресурстарын өзгертпейді.",
           )}
         </p>
       </div>

@@ -23,3 +23,4 @@ Scheduled operations completed without energy shortages or storage overflow.	З�
 Battery values are interval endpoints; unserved energy includes shortages inside the interval.	Заряд показан на начало и конец интервала; непокрытая потребность учитывает нехватку энергии внутри него.	Заряд аралықтың басы мен соңында көрсетілген; өтелмеген қажеттілік аралық ішіндегі энергия тапшылығын қамтиды.
 hours	ч	сағ
 Animated workspace	Анимированный конструктор	Анимациялық конструктор
+Duty cycle applies only to enabled instruments.	Интенсивность применяется только к включённым приборам.	Жұмыс қарқындылығы тек қосылған аспаптарға қолданылады.
