@@ -1,0 +1,1068 @@
+/* Mission operations visual system.
+   NASA editorial references: Helvetica hierarchy, monochrome surfaces,
+   red primary actions and blue selection. Mission Architect keeps its own identity.
+   This presentation layer does not alter engineering or simulation state. */
+:root {
+  color-scheme: dark;
+  --selection: #142a45;
+  --selection-line: #659fdf;
+  --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+::selection {
+  background: #245c98;
+  color: white;
+}
+.skip-link {
+  position: fixed;
+  top: -80px;
+  left: 16px;
+  z-index: 100;
+  padding: 14px 20px;
+  background: white;
+  color: black;
+}
+.skip-link:focus {
+  top: 10px;
+}
+.topbar {
+  height: 88px;
+  background: #000;
+  border-bottom: 1px solid #3d4147;
+  padding-inline: 28px;
+  gap: 28px;
+}
+.brand {
+  min-width: 255px;
+  letter-spacing: -0.3px;
+  font-size: 17px;
+}
+.brand-mark {
+  width: 44px;
+  height: 44px;
+  background: transparent;
+  color: white;
+  border-left: 4px solid var(--accent);
+  border-radius: 0;
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: -5px;
+  padding-right: 6px;
+}
+.brand-mark > span > span {
+  color: var(--accent);
+}
+.brand-light {
+  font-weight: 800;
+  margin-left: 5px;
+}
+.brand small {
+  font: 8px var(--mono);
+  letter-spacing: 1.7px;
+  color: #b2b8c0;
+  margin-top: 7px;
+}
+.top-pill {
+  border: 0;
+  border-left: 1px solid #4a4a4a;
+  padding: 5px 0 5px 20px;
+  color: #c2c8d0;
+  font: 9px var(--mono);
+  letter-spacing: 1.3px;
+}
+.top-version {
+  color: #a7aeb7;
+  font: 10px var(--mono);
+}
+.avatar {
+  border-radius: 0;
+  background: #171b22;
+  color: white;
+  border-color: #56616e;
+  display: grid;
+  place-items: center;
+}
+.app-body {
+  min-height: calc(100vh - 88px);
+}
+.sidebar {
+  background: #000;
+  width: 210px;
+  padding: 30px 14px;
+}
+.nav-group-title {
+  color: #a1aab5;
+  font: 9px var(--mono);
+  letter-spacing: 1.5px;
+}
+.nav-item {
+  border-radius: 0;
+  color: #b7bdc6;
+  border-left: 3px solid transparent;
+  font-size: 12px;
+  padding: 13px 10px;
+}
+.nav-item:hover,
+.workflow-item:hover {
+  background: #171e27;
+}
+.nav-item.active {
+  background: #16263d;
+  border-left-color: #80baff;
+  color: white;
+}
+.nav-dot {
+  display: none;
+}
+.count {
+  background: #303843;
+  color: white;
+}
+.workflow-item {
+  color: #a6afb9;
+  border-radius: 0;
+}
+.step-number {
+  border-radius: 0;
+  color: #acb8c8;
+  border-color: #46505d;
+}
+.workflow-item.selected .step-number {
+  background: #fff;
+  border-color: #fff;
+  color: #111;
+}
+.academy-card {
+  background: none;
+  border: 0;
+  border-top: 2px solid #e8e8e8;
+  border-radius: 0;
+  padding: 20px 10px;
+}
+.academy-orbit {
+  color: white;
+  margin-bottom: 14px;
+}
+.academy-card strong {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+.academy-card p {
+  color: #a7b0bb;
+  font-size: 11px;
+}
+.academy-card button {
+  color: white;
+  font-weight: 700;
+}
+.sidebar-caption {
+  color: #9aa4b1;
+  font-size: 7px;
+}
+.main {
+  padding: 0 30px;
+  margin: 0 auto;
+}
+.page-heading {
+  margin: 0 -30px 0;
+  padding: 30px 30px 32px;
+  background: #f2f2ef;
+  color: #12151a;
+  border-bottom: 4px solid var(--accent);
+}
+.breadcrumb {
+  font: 10px var(--mono);
+  color: #515962;
+  margin-bottom: 22px;
+  letter-spacing: 1.6px;
+}
+.breadcrumb span {
+  color: #818790;
+}
+.title-row {
+  align-items: flex-end;
+}
+.title-row h1 {
+  font-size: clamp(32px, 3.8vw, 58px);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -2px;
+}
+.title-row p {
+  color: #49525e;
+  font-size: 13px;
+  line-height: 1.65;
+  max-width: 570px;
+  margin-top: 16px;
+}
+.mode-select {
+  background: transparent;
+  border: 1px solid #7d838b;
+  padding: 12px;
+  border-radius: 0;
+}
+.mode-select select {
+  color: #15191f;
+  font-size: 12px;
+}
+.mode-select select:focus-visible {
+  outline: 2px solid #245c98;
+  outline-offset: 4px;
+}
+.mode-select .mode-icon,
+.mode-select > svg {
+  color: #272e38;
+}
+.mode-select option {
+  background: #f2f2ef;
+  color: #15191f;
+}
+.mission-register {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  margin: 0 -30px 24px;
+  padding: 20px 30px;
+  background: #000;
+  border-bottom: 1px solid var(--line);
+  gap: 22px;
+}
+.mission-register > div {
+  min-width: 0;
+}
+.mission-register span {
+  display: block;
+  color: #9faab8;
+  font: 9px var(--mono);
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.mission-register strong {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 13px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.mission-register small {
+  font-weight: 400;
+  color: #adb8c5;
+}
+.mission-register i {
+  width: 6px;
+  height: 6px;
+  background: currentColor;
+}
+.register-hold {
+  color: #ffc776;
+}
+.learning-entry {
+  background: none;
+  border: 0;
+  border-left: 3px solid #7babdd;
+  border-radius: 0;
+  padding: 10px 16px;
+  margin-bottom: 20px;
+}
+.learning-entry-icon {
+  color: #b3d6ff;
+  background: none;
+}
+.learning-entry strong {
+  font-size: 13px;
+  color: #fff;
+}
+.learning-entry small {
+  color: #a6b0be;
+}
+.learning-entry-link {
+  color: #c3ddff;
+}
+.project-library {
+  border-radius: 0;
+  background: #10151c;
+  border-color: var(--line);
+}
+.library-bar {
+  padding: 14px 16px;
+}
+.library-toggle > svg {
+  color: #b8c9df;
+}
+.workspace-switch {
+  gap: 0;
+  padding-bottom: 0;
+  margin-top: 24px;
+  border-bottom: 1px solid #536170;
+}
+.workspace-switch button {
+  background: transparent;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  border-radius: 0;
+  padding: 16px 20px;
+  color: #b4bfcd;
+}
+.workspace-switch button[aria-pressed="true"] {
+  background: transparent;
+  border-color: #fff;
+  color: #fff;
+}
+.workspace-switch button span {
+  background: #22354b;
+  color: #c7dfff;
+}
+.stepper {
+  background: #10151c;
+  border-radius: 0;
+  margin: 20px 0 30px;
+}
+.stepper button {
+  padding: 17px 14px;
+}
+.stepper button.current {
+  background: #172b46;
+  border-bottom-color: #80baff;
+}
+.stepper-icon {
+  border-radius: 0;
+  border-color: #4b5765;
+}
+.current .stepper-icon {
+  background: #fff;
+  color: #0e2039;
+  border-color: #fff;
+}
+.current small {
+  color: #afcff2;
+}
+.stepper small {
+  color: #9aa9ba;
+  font-size: 9px;
+}
+.stepper strong {
+  font-weight: 600;
+  color: #bdc7d4;
+}
+.current strong {
+  color: white;
+}
+.eyebrow {
+  color: #a9cfff;
+  font: 10px var(--mono);
+  letter-spacing: 1.4px;
+}
+.section-heading {
+  border-bottom: 1px solid #3b4552;
+  padding-bottom: 18px;
+  margin-bottom: 20px;
+}
+.section-heading h2 {
+  font-size: 27px;
+  font-weight: 700;
+  letter-spacing: -0.8px;
+}
+.section-heading p {
+  color: #aeb8c5;
+  font-size: 12px;
+}
+.section-index {
+  color: #778596;
+  font-size: 46px;
+  font-weight: 300;
+}
+.brief-grid {
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+.mission-cards {
+  gap: 1px;
+  background: #394554;
+  border: 1px solid #394554;
+}
+.mission-card {
+  border: 0;
+  border-radius: 0;
+  background: #10151c;
+  padding: 18px 15px 14px;
+  min-height: 172px;
+}
+.mission-card:hover {
+  transform: none;
+  background: #1b2634;
+}
+.mission-card.selected {
+  background: #173453;
+  box-shadow: inset 3px 0 #8ec8ff;
+  border: 0;
+}
+.mission-icon {
+  color: #c8d8ec;
+  margin-bottom: 17px;
+}
+.mission-card strong {
+  font-size: 14px;
+  font-weight: 700;
+}
+.mission-card p {
+  font-size: 11px;
+  color: #a9b5c6;
+}
+.mission-card.selected p {
+  color: #cfdaeb;
+}
+.mission-tag,
+.selected .mission-tag {
+  color: #b1bfd1;
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+.selection-circle {
+  border-radius: 0;
+  border-color: #697b90;
+  width: 15px;
+  height: 15px;
+}
+.selected .selection-circle,
+.selected .checkbox {
+  background: #fff;
+  border-color: #fff;
+  color: #102440;
+}
+.preview-column {
+  border-radius: 0;
+  border-color: #3c4b5d;
+  background: #0b121d;
+}
+.orbit-view {
+  background-color: #070d17;
+  background-image:
+    linear-gradient(#58769716 1px, transparent 1px),
+    linear-gradient(90deg, #58769716 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: center;
+}
+.orbit-path {
+  border-color: #92bbdd55;
+}
+.orbit-satellite {
+  color: #fff;
+  filter: none;
+}
+.orbit-middle {
+  border-color: #afcff285;
+}
+.live-dot {
+  box-shadow: none;
+}
+.view-top,
+.orbit-bottom span {
+  color: #a5b8d0;
+}
+.destination-caption {
+  background: #111e2e;
+}
+.destination-caption strong {
+  color: white;
+}
+.destination-caption span {
+  color: #bdccde;
+}
+.objective.selected {
+  background: #162d49;
+  border-color: #729ecb;
+  color: white;
+}
+.guided-tip {
+  background: #111c2a;
+  border: 0;
+  border-left: 3px solid #679ad1;
+  border-radius: 0;
+}
+.guided-tip > span {
+  color: #b5d4ff;
+  background: none;
+}
+.guided-tip strong {
+  color: #ddeaff;
+}
+.guided-tip p {
+  color: #b1c1d5;
+}
+.primary-button {
+  background: #d83933;
+  color: #fff;
+  border-radius: 2px;
+  font-weight: 700;
+  font-size: 12px;
+  box-shadow: none;
+  min-height: 42px;
+}
+.primary-button:hover {
+  background: #b52622;
+  transform: none;
+}
+.secondary-button {
+  color: #e2e8ef;
+  border-color: #5b697b;
+  border-radius: 2px;
+}
+.secondary-button:hover {
+  background: #25344a;
+}
+.resource-panel {
+  background: #10151c;
+  border-radius: 0;
+  border-top: 3px solid #e2e5e9;
+}
+.panel-heading {
+  background: #18212d;
+}
+.panel-heading h3 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  font-weight: 700;
+}
+.resource-name {
+  color: #c6d1df;
+}
+.resource-value strong {
+  color: white;
+  font-size: 25px;
+  letter-spacing: -0.5px;
+}
+.resource-value > span,
+.resource small {
+  color: #a4b1c3;
+}
+.meter,
+.meter i {
+  border-radius: 0;
+}
+.meter i {
+  background: #cdd8e7;
+}
+.meter.bad i {
+  background: #ff7770;
+}
+.science-summary {
+  background: #18263a;
+  border-block: 1px solid #394b63;
+}
+.science-icon {
+  color: #adcfff;
+  background: transparent;
+}
+.science-summary strong,
+.science-summary small {
+  color: #c7dcf8;
+}
+.readiness {
+  border-radius: 0;
+}
+.resource-foot {
+  color: #9dacc0;
+}
+.part-card,
+.launcher-card,
+.orbit-option,
+.glossary-card,
+.challenge-card {
+  background: #111821;
+  border-color: #3b4655;
+  border-radius: 0;
+}
+.part-card.selected,
+.launcher-card.selected,
+.orbit-option.selected {
+  background: #162d49;
+  border-color: #7eaddb;
+}
+.part-card:hover,
+.launcher-card:hover,
+.challenge-card:hover {
+  transform: none;
+  border-color: #c8d7e8;
+}
+.part-symbol {
+  background: #22344c;
+  color: #c4dfff;
+}
+.part-card > strong,
+.launcher-detail h3,
+.orbit-option h3 {
+  font-weight: 700;
+}
+.component-tabs button.active,
+.module-buttons button.active {
+  color: #fff;
+  border-color: #79acdd;
+  background: #193553;
+}
+.component-tabs button {
+  border-radius: 0;
+}
+.craft-view {
+  background: #090f18;
+  border-color: #3c4b5d;
+  border-radius: 0;
+}
+.launch-banner,
+.challenge-intro,
+.academy-intro,
+.active-challenge {
+  background: #142238;
+  border-color: #475d79;
+  border-radius: 0;
+}
+.launch-banner-icon,
+.active-challenge-icon {
+  color: #c5deff;
+  background: #233d5f;
+}
+.orbit-code {
+  color: #c3dcff;
+}
+.advisor-launcher > button {
+  background: #14283f;
+  border-color: #6385ad;
+  color: white;
+  border-radius: 2px;
+}
+.advisor-label {
+  color: #becfe3;
+}
+.advisor-popover,
+.install-help {
+  border-radius: 0;
+  background: #152031;
+  border-color: #56708e;
+}
+.install-button {
+  background: #17273d;
+  color: #e0ecff;
+  border-color: #546c8a;
+  border-radius: 0;
+}
+.challenge-number {
+  color: #a0b5cf;
+}
+.challenge-card h3,
+.glossary-card h3 {
+  font-weight: 700;
+}
+.challenge-start {
+  color: #c8e0ff;
+}
+.challenge-limits > span {
+  color: #d7e2f0;
+  background: #223247;
+  border-color: #4b607b;
+}
+.result-hero {
+  background: #14243a;
+  border-color: #4a607c;
+  border-radius: 0;
+}
+.grade-emblem {
+  border-radius: 0;
+  background: none;
+  color: #fff;
+  border-color: #b8c9df;
+}
+.result-hero h2 {
+  font-weight: 700;
+}
+.total-score strong {
+  color: white;
+}
+.total-score span {
+  color: #b2c3dc;
+}
+.result-badges > span {
+  background: #203750;
+  border-color: #587496;
+  color: #deedff;
+}
+.event-card {
+  border-radius: 0;
+  background: #25171a;
+  border-color: #9c565c;
+}
+.event-card.discovery {
+  background: #102a25;
+  border-color: #528779;
+}
+.event-choices button {
+  background: #111923;
+  border-color: #607186;
+  border-radius: 0;
+}
+.event-choices button:hover {
+  background: #20334b;
+  border-color: #b7d8ff;
+}
+.telemetry-chart {
+  background: #0a121e;
+  border-radius: 0;
+  border-color: #4a5f7a;
+}
+.telemetry-tabs button[aria-pressed="true"],
+.telemetry-samples button[aria-pressed="true"] {
+  background: #214468;
+  border-color: #93c9ff;
+  color: white;
+}
+.lab-hero {
+  margin-top: 28px;
+  background: #10213a;
+  border: 1px solid #526c8e;
+  border-radius: 0;
+}
+.lab-hero h2 {
+  font-weight: 800;
+  letter-spacing: -1.6px;
+}
+.lab-hero .eyebrow {
+  color: #b6d7ff;
+}
+.lab-brief-card {
+  background: #0b192c;
+  border-color: #4d6687;
+}
+.lab-brief-card dt {
+  color: #a9bbd2;
+}
+.lab-brief-card dd {
+  color: #edf4ff;
+}
+.lab-progress {
+  background: #122233;
+  border-color: #415d7a;
+  border-radius: 0;
+}
+.lab-story,
+.lab-workbench,
+.lab-defense,
+.lab-flight {
+  background: #101821;
+  border-radius: 0;
+  border-color: #3c4b5b;
+}
+.lab-concepts > article {
+  border-radius: 0;
+  background: #101923;
+}
+.lab-concepts > article.selected {
+  background: #16304d;
+  border-color: #7eaddb;
+}
+.lab-choice button[aria-pressed="true"] {
+  background: #16304d;
+  border-color: #7eaddb;
+  color: white;
+}
+.lab-complete {
+  background: #102820;
+  border-color: #548374;
+  border-radius: 0;
+}
+.lab-note textarea {
+  background: #0b1119;
+  border-color: #5a6b80;
+  border-radius: 0;
+}
+.lab-note textarea:focus-visible {
+  outline: 2px solid #9dceff;
+  outline-offset: 3px;
+}
+.page-footer {
+  border-top: 1px solid #425064;
+  margin-top: 35px;
+  padding-block: 22px;
+  color: #a5b4c7;
+  font-size: 8px;
+}
+.page-footer > span:first-child {
+  color: #dce4ef;
+}
+.challenges-page,
+.records-page,
+.academy-page,
+.flight-screen,
+.results-page {
+  padding-top: 28px;
+}
+@media (min-width: 1600px) {
+  .workspace-grid {
+    grid-template-columns: minmax(0, 1fr) 285px;
+  }
+}
+@media (max-width: 1250px) {
+  .sidebar {
+    width: 185px;
+  }
+  .topbar-center {
+    display: none;
+  }
+  .brief-grid {
+    grid-template-columns: 1fr;
+  }
+  .preview-column .orbit-view {
+    min-height: 360px;
+  }
+}
+@media (max-width: 900px) {
+  .sidebar {
+    width: 165px;
+    padding-inline: 8px;
+  }
+  .main {
+    padding-inline: 22px;
+  }
+  .page-heading {
+    margin-inline: -22px;
+    padding: 26px 22px;
+  }
+  .mission-register {
+    margin-inline: -22px;
+    padding: 18px 22px;
+    grid-template-columns: 1fr 1fr;
+  }
+  .mission-register > div:last-child {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .mission-register > div:last-child > span {
+    margin-bottom: 0;
+  }
+  .title-row {
+    flex-wrap: wrap;
+    gap: 18px;
+  }
+  .title-row h1 {
+    font-size: 40px;
+  }
+}
+@media (max-width: 680px) {
+  .topbar {
+    height: 74px;
+    padding-inline: 17px;
+    gap: 8px;
+  }
+  .brand {
+    min-width: 0;
+    gap: 9px;
+    font-size: 13px;
+  }
+  .brand-mark {
+    width: 31px;
+    height: 36px;
+    font-size: 22px;
+    border-left-width: 3px;
+  }
+  .brand small {
+    font-size: 6px;
+    letter-spacing: 0.8px;
+  }
+  .brand-light {
+    margin-left: 3px;
+  }
+  .topbar-right {
+    gap: 8px;
+  }
+  .install-button {
+    font-size: 10px;
+    padding: 8px;
+  }
+  .app-body {
+    min-height: calc(100vh - 74px);
+  }
+  .main {
+    padding: 0 17px 80px;
+  }
+  .page-heading {
+    margin-inline: -17px;
+    padding: 23px 17px 26px;
+  }
+  .breadcrumb {
+    margin-bottom: 18px;
+    font-size: 9px;
+  }
+  .title-row h1 {
+    font-size: 38px;
+    letter-spacing: -1.5px;
+  }
+  .title-row p {
+    font-size: 12px;
+    margin-top: 12px;
+  }
+  .mode-select {
+    padding: 9px 10px;
+  }
+  .mission-register {
+    margin-inline: -17px;
+    padding: 18px 17px;
+    gap: 16px;
+  }
+  .mission-register strong {
+    font-size: 12px;
+  }
+  .mission-register span {
+    font-size: 8px;
+  }
+  .sidebar {
+    background: #000;
+    width: 100%;
+    border-top: 1px solid #5d6979;
+    padding: 0;
+  }
+  .nav-item {
+    border-left: 0;
+    border-top: 3px solid transparent;
+    border-radius: 0;
+    font-size: 8px;
+    padding: 10px 3px;
+  }
+  .nav-item.active {
+    border-top-color: #90c6ff;
+    background: #12283f;
+  }
+  .learning-entry {
+    padding: 6px 12px;
+  }
+  .learning-entry strong {
+    font-size: 12px;
+  }
+  .workspace-switch button {
+    padding: 13px 10px;
+    font-size: 11px;
+  }
+  .stepper {
+    margin-block: 17px 24px;
+  }
+  .stepper button {
+    padding: 12px 3px;
+  }
+  .stepper small {
+    font-size: 7px;
+  }
+  .stepper strong {
+    font-size: 10px;
+  }
+  .section-heading h2 {
+    font-size: 25px;
+  }
+  .mission-card {
+    min-height: 166px;
+    padding: 16px 12px;
+  }
+  .mission-card strong {
+    font-size: 13px;
+  }
+  .mission-card p {
+    font-size: 11px;
+  }
+  .section-index {
+    font-size: 38px;
+  }
+  .mobile-resource-strip {
+    background: #101c2a;
+    border-color: #475c77;
+    border-radius: 0;
+  }
+  .lab-hero {
+    margin-top: 22px;
+  }
+  .grade-emblem {
+    border-radius: 0;
+  }
+  .page-footer {
+    font-size: 7px;
+    align-items: flex-start;
+    text-align: left;
+    line-height: 1.8;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}
+/* Review and status surfaces share the same semantic palette. */
+.review-tabs button.active {
+  background: #172d48;
+  border-color: #9cccff;
+  color: #fff;
+}
+.review-identity,
+.review-assumptions,
+.trade-card,
+.trade-summary {
+  background: #101923;
+  border-radius: 0;
+  border-color: #45576e;
+}
+.review-table caption,
+.review-table thead {
+  background: #192738;
+  color: #c1d0e3;
+}
+.review-table td,
+.review-table th {
+  border-color: #38485c;
+}
+.readiness {
+  background: #13251f;
+  border-color: #4a7260;
+}
+.readiness.has-issues {
+  background: #302019;
+  border-color: #9d7350;
+}
+.science-summary span {
+  color: #bfd0e7;
+}
+.science-summary > svg {
+  color: #adcfff;
+}
+.library-toggle-label {
+  color: #c6dfff;
+}
+.lab-hero-copy > p {
+  color: #c0cfe2;
+}
+.lab-orbit-art svg {
+  color: #90b6df80;
+}
+.lab-orbit-art > span {
+  background: white;
+  box-shadow: none;
+}
+.lab-orbit-art i {
+  box-shadow: inset -15px -5px 20px #071018cc;
+}
+.lab-learning-grid > article {
+  background: #122338;
+  border-color: #465f7d;
+  border-radius: 0;
+}
+.lab-current,
+.lab-flight-evidence {
+  background: #14263b;
+  border-color: #4b6585;
+}
+.nominal-card {
+  background: #101f28;
+  border-color: #426275;
+}
+.radar-pulse {
+  box-shadow: none;
+}

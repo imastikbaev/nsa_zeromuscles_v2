@@ -1,0 +1,176 @@
+Interface language	Язык интерфейса	Интерфейс тілі
+Switch to light theme	Включить светлую тему	Ашық тақырыпқа ауысу
+Switch to dark theme	Включить тёмную тему	Қараңғы тақырыпқа ауысу
+Preferences apply for this visit only.	Настройки действуют только в этом сеансе.	Баптаулар осы сеанста ғана сақталады.
+Skip to mission workspace	Перейти к проектированию	Жобалау бөліміне өту
+SPACE MISSION DESIGN & SIMULATION	ПРОЕКТИРОВАНИЕ И СИМУЛЯЦИЯ МИССИЙ	МИССИЯЛАРДЫ ЖОБАЛАУ ЖӘНЕ МОДЕЛЬДЕУ
+EDUCATIONAL SIMULATION	УЧЕБНЫЙ СИМУЛЯТОР	ОҚУ СИМУЛЯТОРЫ
+Saved on this device	Сохранено на устройстве	Құрылғыда сақталған
+Storage unavailable	Сохранение недоступно	Сақтау қолжетімсіз
+Install app	Установить	Орнату
+Update app	Обновить	Жаңарту
+Open flight academy	Открыть справочник	Анықтамалықты ашу
+WORKSPACE	РАБОЧАЯ ОБЛАСТЬ	ЖҰМЫС АЙМАҒЫ
+Mission builder	Конструктор	Құрастырушы
+Challenges	Задания	Тапсырмалар
+Flight records	Полёты	Ұшулар
+Field guide	Справочник	Анықтамалық
+Mission lab	Лаборатория	Зертхана
+YOUR MISSION	ВАША МИССИЯ	СІЗДІҢ МИССИЯҢЫЗ
+Mission brief	Цель миссии	Миссия мақсаты
+Spacecraft	Аппарат	Ғарыш аппараты
+Launch vehicle	Ракета	Зымыран
+Trajectory	Траектория	Траектория
+Engineering	Инженерный	Инженерлік
+reference manual.	справочник.	анықтамалық.
+Orbital mechanics, spacecraft systems, and mission constraints.	Орбиты, системы аппарата и ограничения миссии.	Орбиталар, аппарат жүйелері және миссия шектеулері.
+Flight academy	Изучить основы	Негіздерін үйрену
+MISSION ARCHITECT / EDUCATION	MISSION ARCHITECT / ОБРАЗОВАНИЕ	MISSION ARCHITECT / БІЛІМ
+MISSION BUILDER	КОНСТРУКТОР	ҚҰРАСТЫРУШЫ
+BUILDER	КОНСТРУКТОР	ҚҰРАСТЫРУШЫ
+LAB	ЛАБОРАТОРИЯ	ЗЕРТХАНА
+RECORDS	ПОЛЁТЫ	ҰШУЛАР
+CHALLENGES	ЗАДАНИЯ	ТАПСЫРМАЛАР
+ACADEMY	СПРАВОЧНИК	АНЫҚТАМАЛЫҚ
+FLIGHT	ПОЛЁТ	ҰШУ
+Mission design	Проектирование миссии	Миссияны жобалау
+Mission control	Управление полётом	Ұшуды басқару
+Mission challenges	Миссии с ограничениями	Шектеулері бар миссиялар
+Flight archive	Архив полётов	Ұшулар мұрағаты
+Mission laboratory	Лаборатория миссий	Миссиялар зертханасы
+Engineering field guide	Инженерный справочник	Инженерлік анықтамалық
+Configure the spacecraft, verify requirements, and review every resource budget.	Соберите аппарат, проверьте ограничения и оцените запас ресурсов.	Аппаратты құрастырыңыз, шектеулерді тексеріңіз және ресурс қорын бағалаңыз.
+Monitor the spacecraft, evaluate anomalies, and command the mission.	Следите за аппаратом, оценивайте события и принимайте решения.	Аппаратты бақылаңыз, оқиғаларды бағалаңыз және шешім қабылдаңыз.
+Design to a brief. Meet the requirements. Test the outcome.	Выполните задание, соблюдите ограничения и проверьте результат.	Тапсырманы орындаңыз, шектеулерді сақтаңыз және нәтижені тексеріңіз.
+Review mission outcomes, telemetry, and engineering decisions.	Изучайте результаты, телеметрию и последствия решений.	Нәтижелерді, телеметрияны және шешімдердің салдарын зерттеңіз.
+A practical investigation: define, compare, fly, and evaluate.	Практическое исследование: спроектируйте, сравните, запустите и оцените.	Практикалық зерттеу: жобалаңыз, салыстырыңыз, ұшырыңыз және бағалаңыз.
+The principles behind each engineering decision.	Принципы, на которых основаны инженерные решения.	Инженерлік шешімдердің негізіндегі қағидалар.
+Game mode	Режим работы	Жұмыс режимі
+Guided mode	С подсказками	Кеңестермен
+Challenge mode	Испытание	Сынақ
+Sandbox mode	Песочница	Еркін режим
+Guided	С подсказками	Кеңестермен
+Challenge	Испытание	Сынақ
+Sandbox	Песочница	Еркін режим
+GUIDED	С ПОДСКАЗКАМИ	КЕҢЕСТЕРМЕН
+guided	с подсказками	кеңестермен
+challenge	испытание	сынақ
+sandbox	песочница	еркін режим
+Leave the active challenge to change modes.	Выйдите из задания, чтобы сменить режим.	Режимді өзгерту үшін тапсырмадан шығыңыз.
+ACTIVE PROJECT	ТЕКУЩИЙ ПРОЕКТ	АҒЫМДАҒЫ ЖОБА
+Active mission overview	Текущая миссия	Ағымдағы миссия
+DESTINATION / ORBIT	НАПРАВЛЕНИЕ / ОРБИТА	БАҒЫТ / ОРБИТА
+DESIGN REVIEW	ПРОВЕРКА ПРОЕКТА	ЖОБАНЫ ТЕКСЕРУ
+Ready for launch	Готово к запуску	Ұшыруға дайын
+{0} open checks	Открытых проверок: {0}	Ашық тексерулер: {0}
+Training brief 01 / Climate Watch	Учебная миссия 01 / Climate Watch	Оқу миссиясы 01 / Climate Watch
+Compare two satellite designs against the same science requirements.	Сравните два спутника для одной научной задачи.	Бір ғылыми міндетке арналған екі серікті салыстырыңыз.
+Open mission lab	Начать исследование	Зерттеуді бастау
+ACTIVE CHALLENGE	ТЕКУЩЕЕ ЗАДАНИЕ	АҒЫМДАҒЫ ТАПСЫРМА
+Leave challenge	Выйти из задания	Тапсырмадан шығу
+Destination and difficulty are fixed. Your engineering choices are yours.	Направление и сложность заданы. Конструкцию выбираете вы.	Бағыт пен күрделілік берілген. Құрылымды өзіңіз таңдайсыз.
+BUDGET	БЮДЖЕТ	БЮДЖЕТ
+MASS	МАССА	МАССА
+EOL RESERVE	ЗАПАС К КОНЦУ МИССИИ	МИССИЯ СОҢЫНДАҒЫ ҚОР
+View all mission resources and constraints	Все ресурсы и ограничения	Барлық ресурстар мен шектеулер
+All clear	Проверки пройдены	Тексерулер өтті
+{0} checks	Проверок: {0}	Тексерулер: {0}
+Workspace view	Представление проекта	Жоба көрінісі
+Configuration	Конфигурация	Конфигурация
+Engineering analysis	Инженерный анализ	Инженерлік талдау
+Checks pass	Проверки пройдены	Тексерулер өтті
+{0} open	Открыто: {0}	Ашық: {0}
+STEP 0	ШАГ 0	ҚАДАМ 0
+01 / MISSION BRIEF	01 / ЦЕЛЬ МИССИИ	01 / МИССИЯ МАҚСАТЫ
+Mission definition	Определите задачу	Міндетті анықтаңыз
+Select a destination to establish the mission’s operating environment.	Выберите направление: оно определит условия работы аппарата.	Бағытты таңдаңыз: ол аппараттың жұмыс жағдайларын анықтайды.
+RECOMMENDED	ДЛЯ НАЧИНАЮЩИХ	ЖАҢАДАН БАСТАҒАНДАРҒА
+EXPERT	СЛОЖНЫЙ УРОВЕНЬ	КҮРДЕЛІ ДЕҢГЕЙ
+EXPLORATION	ИССЛЕДОВАНИЕ	ЗЕРТТЕУ
+Science objectives	Научные задачи	Ғылыми міндеттер
+selected	выбрано	таңдалды
+Select the measurements the payload must support.	Выберите, какие измерения должны выполнять приборы.	Құралдар қандай өлшеулер жүргізуі керектігін таңдаңыз.
+Your first mission? Start close to home.	Первая миссия? Начните с Земли.	Алғашқы миссия ма? Жерден бастаңыз.
+Earth observation offers a shorter journey, a stronger signal, and a little more room to experiment.	На околоземной орбите проще обеспечить связь и питание и проверить свои идеи.	Жер маңындағы орбитада байланыс пен қуатты қамтамасыз етіп, идеяларды тексеру оңайырақ.
+Configuration changes are saved automatically.	Изменения сохраняются автоматически.	Өзгерістер автоматты түрде сақталады.
+Design spacecraft	Собрать аппарат	Аппаратты құрастыру
+Mission advisor	Советник	Кеңесші
+SPACE MISSION DESIGN LAB	ЛАБОРАТОРИЯ КОСМИЧЕСКИХ МИССИЙ	ҒАРЫШ МИССИЯЛАРЫ ЗЕРТХАНАСЫ
+Independent educational simulator · Not affiliated with NASA	Независимый учебный симулятор · Не является продуктом NASA	Тәуелсіз оқу симуляторы · NASA өнімі емес
+MISSION RESOURCES	РЕСУРСЫ МИССИИ	МИССИЯ РЕСУРСТАРЫ
+Mission resources	Ресурсы миссии	Миссия ресурстары
+LIVE	РАСЧЁТ	ЕСЕП
+Mission budget	Бюджет миссии	Миссия бюджеті
+Spacecraft mass	Масса аппарата	Аппарат массасы
+End-of-life power	Мощность к концу миссии	Миссия соңындағы қуат
+Propellant	Топливо	Отын
+Data buffer	Буфер данных	Деректер буфері
+Bandwidth	Скорость передачи	Деректер жіберу жылдамдығы
+Reliability	Надёжность	Сенімділік
+Potential science score	Научный потенциал	Ғылыми әлеует
+Launch constraints satisfied	Ограничения соблюдены	Шектеулер сақталған
+Your design is within mission constraints.	Проект соответствует ограничениям миссии.	Жоба миссия шектеулеріне сәйкес.
+Calculated with every decision	Пересчёт при каждом изменении	Әр өзгерісте қайта есептеледі
+${0}M remaining	Осталось ${0} млн	${0} млн қалды
+{0} kg remaining	Осталось {0} кг	{0} кг қалды
+/ unlimited	/ без ограничений	/ шектеусіз
+Unlimited experimentation	Эксперименты без лимита бюджета	Бюджет шектеуінсіз тәжірибелер
+Budget	Бюджет	Бюджет
+Mass	Масса	Масса
+Power	Мощность	Қуат
+Fuel	Топливо	Отын
+Science	Наука	Ғылым
+Health	Состояние	Күйі
+Cost	Стоимость	Құны
+kg	кг	кг
+W	Вт	Вт
+kWh	кВт·ч	кВт·сағ
+GB	ГБ	ГБ
+Mbps	Мбит/с	Мбит/с
+pts	балл.	ұпай
+months	мес.	ай
+m²	м²	м²
+m/s	м/с	м/с
+Earth Observation	Наблюдение Земли	Жерді бақылау
+Lunar Mission	Лунная миссия	Ай миссиясы
+Mars Orbiter	Орбитальная миссия к Марсу	Марс орбиталық миссиясы
+Asteroid Explorer	Исследование астероида	Астероидты зерттеу
+Solar Observation	Наблюдение Солнца	Күнді бақылау
+Deep Space Mission	Дальний космос	Алыс ғарыш
+Image Earth’s surface and monitor climate.	Съёмка поверхности и наблюдение за климатом.	Жер бетін түсіру және климатты бақылау.
+Map lunar terrain and identify surface minerals.	Картографирование Луны и поиск минералов.	Ай картасын жасау және минералдарды анықтау.
+Study the atmosphere and map the Martian surface.	Изучение атмосферы и поверхности Марса.	Марс атмосферасы мен бетін зерттеу.
+Survey a small body’s shape and composition.	Изучение формы и состава малого тела.	Шағын дененің пішіні мен құрамын зерттеу.
+Measure solar radiation and plasma conditions.	Измерение солнечного излучения и параметров плазмы.	Күн сәулеленуі мен плазма параметрлерін өлшеу.
+Measure radiation beyond the inner solar system.	Измерение радиации вдали от внутренних планет.	Ішкі планеталардан алыс жерде радиацияны өлшеу.
+EARTH SCIENCE / REMOTE SENSING	ИЗУЧЕНИЕ ЗЕМЛИ / ДИСТАНЦИОННАЯ СЪЁМКА	ЖЕР ҒЫЛЫМЫ / ҚАШЫҚТАН БАҚЫЛАУ
+LUNAR SCIENCE / ORBITAL SURVEY	ИЗУЧЕНИЕ ЛУНЫ / ОРБИТАЛЬНАЯ СЪЁМКА	АЙ ҒЫЛЫМЫ / ОРБИТАЛЫҚ ТҮСІРУ
+MARS SCIENCE / ORBITAL SURVEY	ИЗУЧЕНИЕ МАРСА / ОРБИТАЛЬНАЯ СЪЁМКА	МАРС ҒЫЛЫМЫ / ОРБИТАЛЫҚ ТҮСІРУ
+SMALL BODIES / RENDEZVOUS	МАЛЫЕ ТЕЛА / СБЛИЖЕНИЕ	ШАҒЫН ДЕНЕЛЕР / ЖАҚЫНДАУ
+HELIOPHYSICS / SOLAR MONITORING	ГЕЛИОФИЗИКА / НАБЛЮДЕНИЕ СОЛНЦА	ГЕЛИОФИЗИКА / КҮНДІ БАҚЫЛАУ
+High-resolution imaging	Детальная съёмка	Егжей-тегжейлі түсіру
+Study the atmosphere	Изучение атмосферы	Атмосфераны зерттеу
+Detect water & minerals	Поиск воды и минералов	Су мен минералдарды іздеу
+Monitor climate	Мониторинг климата	Климатты бақылау
+Study radiation	Изучение радиации	Радиацияны зерттеу
+Map the terrain	Картографирование рельефа	Жер бедерін картаға түсіру
+Resolve fine surface details from orbit.	Рассмотреть мелкие детали поверхности с орбиты.	Орбитадан беткі ұсақ бөлшектерді ажырату.
+Measure gases and atmospheric composition.	Измерить содержание газов в атмосфере.	Атмосферадағы газдар құрамын өлшеу.
+Read spectral signatures of ice and rock.	Определить лёд и породы по спектру.	Мұз бен тау жыныстарын спектрі арқылы анықтау.
+Build detailed elevation maps.	Создать подробную карту высот.	Толық биіктік картасын жасау.
+Back	Назад	Артқа
+Next	Далее	Келесі
+Close	Закрыть	Жабу
+Apply	Применить	Қолдану
+Undo	Отменить	Болдырмау
+Remove	Удалить	Жою
+Compare	Сравнить	Салыстыру
+Open	Открыть	Ашу
+Update	Обновить	Жаңарту
+Save	Сохранить	Сақтау
+Edit	Изменить	Өзгерту
+Actual	Текущее	Ағымдағы
+Limit	Лимит	Шек
+Status	Статус	Күй
+PASS	ПРОЙДЕНО	ӨТТІ
+FAIL	НЕ ПРОЙДЕНО	ӨТПЕДІ

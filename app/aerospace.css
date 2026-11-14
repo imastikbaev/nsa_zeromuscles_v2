@@ -1,0 +1,1353 @@
+/* Aerospace workspace: the final visual layer. Light configuration surfaces are
+   explicit components; telemetry remains dark in either application theme. */
+:root {
+  --bg: #05080f;
+  --panel: #0b101b;
+  --panel-2: #111a28;
+  --line: rgba(255, 255, 255, 0.08);
+  --text: #f5f8ff;
+  --muted: #8b9bb1;
+  --accent: #0095ff;
+  --orange: #0095ff;
+  --blue: #52b7ff;
+  --green: #66d6ad;
+}
+body {
+  font-family: Inter, Geist, "Helvetica Neue", Arial, sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+.aerospace-shell {
+  max-width: 1920px;
+  margin: auto;
+}
+.aerospace-shell h1,
+.aerospace-shell h2,
+.aerospace-shell h3 {
+  letter-spacing: -0.03em;
+}
+.aerospace-shell .topbar {
+  background: #05080f;
+  height: 88px;
+  padding: 0 32px;
+  gap: 30px;
+  border-bottom: 1px solid var(--line);
+}
+.aerospace-shell .brand {
+  min-width: 235px;
+  font-size: 14px;
+  letter-spacing: 0.015em;
+  gap: 10px;
+}
+.aerospace-shell .brand-mark {
+  background: none;
+  border: 0;
+  width: 38px;
+  height: 40px;
+  padding: 0;
+  color: #fff;
+}
+.aerospace-shell .brand small {
+  font:
+    8px Inter,
+    Arial,
+    sans-serif;
+  letter-spacing: 1.35px;
+  color: #7c8da4;
+}
+.aerospace-shell .topbar-center {
+  display: flex;
+  min-width: 0;
+}
+.aerospace-shell .top-pill {
+  border: 1px solid var(--line);
+  border-radius: 9999px;
+  background: #0b111d;
+  color: #8f9fb3;
+  padding: 9px 15px;
+  font:
+    11px Inter,
+    Arial,
+    sans-serif;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+.aerospace-shell .top-version,
+.aerospace-shell .saved,
+.aerospace-shell .avatar {
+  display: none;
+}
+.aerospace-shell .topbar-right {
+  gap: 10px;
+}
+.aerospace-shell .language-control select,
+.aerospace-shell .theme-control,
+.aerospace-shell .install-button {
+  background: #0e1623;
+  border: 1px solid var(--line);
+  border-radius: 9999px;
+  color: #b4c3d6;
+  font-size: 11px;
+}
+.aerospace-shell .theme-control {
+  width: 36px;
+  height: 36px;
+}
+.aerospace-shell .install-button {
+  padding: 10px 12px;
+}
+.aerospace-shell .primary-button {
+  background: #0095ff;
+  color: #fff;
+  box-shadow: none;
+  border-radius: 9999px;
+  padding: 12px 20px;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  min-height: 42px;
+}
+.aerospace-shell .primary-button:hover {
+  background: #1687d9;
+  transform: none;
+}
+.aerospace-shell .secondary-button {
+  border-radius: 9999px;
+  border: 1px solid #2a384b;
+  padding: 11px 18px;
+  color: #c3cede;
+}
+.aerospace-shell .new-mission-cta {
+  white-space: nowrap;
+}
+.aerospace-shell .sidebar {
+  width: 78px;
+  padding: 30px 12px;
+  background: #05080f;
+  border-right: 1px solid var(--line);
+  align-items: center;
+}
+.aerospace-shell .sidebar .nav-group-title,
+.aerospace-shell .sidebar .workflow-item,
+.aerospace-shell .sidebar-bottom,
+.aerospace-shell .sidebar .count {
+  display: none;
+}
+.aerospace-shell .sidebar .nav-item {
+  width: 50px;
+  height: 50px;
+  min-height: 50px;
+  padding: 0;
+  justify-content: center;
+  font-size: 0;
+  gap: 0;
+  border: 0;
+  border-radius: 16px;
+  color: #7f90a7;
+  margin-bottom: 14px;
+}
+.aerospace-shell .sidebar .nav-item svg {
+  width: 20px;
+  height: 20px;
+}
+.aerospace-shell .sidebar .nav-item.active {
+  background: #10253e;
+  color: #52b7ff;
+  border: 0;
+}
+.aerospace-shell .sidebar .mobile-academy {
+  display: flex;
+}
+.aerospace-shell .main {
+  max-width: 1550px;
+  padding: 32px 40px 0;
+  margin: 0 auto;
+}
+.aerospace-shell .page-heading {
+  background: none;
+  color: #f5f8ff;
+  border: 0;
+  margin: 0;
+  padding: 0 0 25px;
+}
+.aerospace-shell .breadcrumb {
+  display: none;
+}
+.aerospace-shell .title-row {
+  align-items: center;
+}
+.aerospace-shell .title-row h1 {
+  font-weight: 600;
+  font-size: 34px;
+  line-height: 1.2;
+}
+.aerospace-shell .title-row p {
+  font-size: 12px;
+  color: #7e90a8;
+  margin-top: 10px;
+  max-width: 650px;
+}
+.aerospace-shell .mode-select {
+  border-radius: 9999px;
+  border: 1px solid var(--line);
+  background: #0d1521;
+  padding: 11px 15px;
+}
+.aerospace-shell .mode-select select,
+.aerospace-shell .mode-icon,
+.aerospace-shell .mode-select > svg {
+  color: #b5c4d7;
+}
+.aerospace-shell .mode-select option {
+  background: #101a29;
+  color: #dce8f8;
+}
+.dashboard-tabs {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 9999px;
+  background: #0b111c;
+  width: fit-content;
+  max-width: 100%;
+  margin-bottom: 28px;
+  overflow-x: auto;
+}
+.dashboard-tabs button {
+  border-radius: 9999px;
+  white-space: nowrap;
+  padding: 11px 22px;
+  color: #8799b3;
+  font-size: 12px;
+  font-weight: 500;
+}
+.dashboard-tabs button[aria-pressed="true"] {
+  background: #eaf3ff;
+  color: #12223b;
+  box-shadow: 0 2px 8px #0002;
+}
+.dashboard-tabs button:hover:not([aria-pressed="true"]) {
+  background: #142237;
+  color: #dce8f8;
+}
+.overview-active
+  :is(
+    .workspace-switch,
+    .stepper,
+    .workspace-grid,
+    .mobile-resource-strip,
+    .advisor-launcher
+  ) {
+  display: none;
+}
+.overview-active .project-library {
+  margin-top: 20px;
+}
+.overview-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: stretch;
+}
+.bento-card {
+  background: #0b101b;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 26px;
+  min-width: 0;
+  overflow: hidden;
+}
+.bento-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+.bento-eyebrow {
+  font:
+    9px Inter,
+    Arial,
+    sans-serif;
+  font-weight: 600;
+  letter-spacing: 1.7px;
+  color: #73869e;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.bento-eyebrow i,
+.subtle-status i {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  background: #42c5a0;
+  border-radius: 100%;
+}
+.bento-heading h3 {
+  font-size: 19px;
+  font-weight: 500;
+  line-height: 1.4;
+  margin-top: 8px;
+  color: #eff5ff;
+}
+.mission-hero {
+  padding: 0;
+  position: relative;
+  display: flex;
+  min-height: 235px;
+}
+.hero-copy {
+  padding: 30px;
+  position: relative;
+  z-index: 2;
+  width: 65%;
+  pointer-events: none;
+}
+.hero-copy button {
+  pointer-events: auto;
+}
+.hero-copy h2 {
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 1.15;
+  margin: 19px 0 10px;
+  overflow-wrap: anywhere;
+  color: #fff;
+}
+.hero-copy p {
+  color: #899db6;
+  font-size: 12px;
+}
+.hero-copy p > span {
+  color: #3e5169;
+  margin: 0 6px;
+}
+.hero-badges {
+  display: flex;
+  gap: 8px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  border-radius: 9999px;
+  font-size: 9px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.status-pill.emerald {
+  color: #7bd8b3;
+  background: #13332a;
+}
+.status-pill.sky {
+  color: #7cbfff;
+  background: #102b47;
+}
+.status-pill.amber {
+  color: #e1bb7b;
+  background: #302719;
+}
+.hero-link {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 22px;
+  padding: 0;
+  font-size: 11px;
+  color: #b8cee9;
+}
+.hero-orbit {
+  position: absolute;
+  inset: 0 0 0 45%;
+  opacity: 0.85;
+}
+.hero-orbit .orbit-view {
+  min-height: 100%;
+  height: 100%;
+  background: none;
+  border: 0;
+}
+.hero-orbit
+  :is(
+    .view-top,
+    .view-controls,
+    .orbit-bottom,
+    .orbit-label,
+    .orbit-cross,
+    .north-label
+  ) {
+  display: none;
+}
+.hero-orbit .planet {
+  width: 52%;
+  max-width: 180px;
+  box-shadow: 0 0 40px #54a4da15;
+}
+.hero-orbit .orbital-scene {
+  height: 100%;
+  top: 0;
+}
+.hero-orbit .orbit-path {
+  border-color: #617f9e40;
+}
+.hero-orbit .orbit-satellite {
+  color: #8ccaff;
+}
+.quick-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 26px;
+  gap: 24px 18px;
+}
+.quick-metrics > div:nth-child(-n + 2) {
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 22px;
+}
+.quick-metrics span {
+  font-size: 11px;
+  color: #8d9cb1;
+}
+.quick-metrics strong {
+  display: block;
+  font-size: 28px;
+  font-weight: 500;
+  color: #eef4ff;
+  letter-spacing: -0.035em;
+  margin: 9px 0 6px;
+}
+.quick-metrics small {
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: #697b93;
+  margin-left: 5px;
+}
+.quick-metrics p {
+  font-size: 10px;
+  color: #63758c;
+}
+.quick-metrics .metric-good {
+  color: #88dcbd;
+}
+.quick-metrics .metric-danger {
+  color: #f79a92;
+}
+.subtle-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 9px;
+  color: #7a8da6;
+  white-space: nowrap;
+}
+.subtle-status .paused-dot {
+  background: #ddb979;
+}
+.allocation-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 420px;
+}
+.allocation-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 25px 0 8px;
+  gap: 16px;
+}
+.allocation-top strong {
+  font-size: 30px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+.allocation-top small {
+  font-size: 12px;
+  color: #6f829c;
+}
+.allocation-top p {
+  font-size: 10px;
+  color: #8196b2;
+  margin-top: 5px;
+}
+.mini-segments {
+  display: flex;
+  border-radius: 9999px;
+  border: 1px solid #1e2b3c;
+  padding: 3px;
+  background: #080d16;
+}
+.mini-segments button {
+  font-size: 10px;
+  color: #8396af;
+  border-radius: 9999px;
+  padding: 7px 13px;
+}
+.mini-segments button[aria-pressed="true"] {
+  background: #203049;
+  color: #e4efff;
+}
+.allocation-chart {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  margin-top: 12px;
+  min-height: 200px;
+  flex: 1;
+}
+.allocation-column {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  color: #64758e;
+}
+.allocation-track {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  height: 160px;
+  position: relative;
+  background: repeating-linear-gradient(
+    to top,
+    transparent 0px,
+    transparent 39px,
+    #ffffff06 39px,
+    #ffffff06 40px
+  );
+}
+.allocation-bar {
+  display: block;
+  width: min(100%, 40px);
+  border-radius: 6px 6px 0 0;
+  background: #202e43;
+  transition:
+    height 0.3s,
+    background 0.2s;
+  min-height: 3px;
+}
+.allocation-column.active .allocation-bar {
+  background: #0095ff;
+}
+.allocation-column:hover .allocation-bar {
+  background: #365372;
+}
+.allocation-column.active:hover .allocation-bar {
+  background: #25adff;
+}
+.bar-value {
+  position: absolute;
+  top: 3px;
+  font-size: 9px;
+  color: #9db1ca;
+  opacity: 0;
+}
+.allocation-column:is(.active, :hover, :focus-visible) .bar-value {
+  opacity: 1;
+}
+.bar-label {
+  font-size: 9px;
+  line-height: 1.5;
+  display: block;
+  margin-top: 13px;
+  overflow-wrap: anywhere;
+}
+.allocation-column.active .bar-label {
+  color: #c4d7f1;
+}
+.allocation-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding-top: 19px;
+  margin-top: 16px;
+  border-top: 1px solid var(--line);
+}
+.allocation-footer > span {
+  font-size: 9px;
+  color: #5f7491;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.allocation-footer button {
+  font-size: 10px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid #25405b;
+  color: #7dc7ff;
+  padding: 9px 12px;
+  white-space: nowrap;
+}
+/* Deliberately white configuration card, regardless of surrounding theme. */
+.aerospace-shell .config-card {
+  background: #fff;
+  border-color: #e2e8f0;
+  color: #132035;
+}
+.config-card .bento-eyebrow {
+  color: #8290a5;
+}
+.aerospace-shell .config-card h3 {
+  color: #142137;
+  font-size: 20px;
+}
+.config-symbol {
+  background: #eef5fc;
+  color: #5f7b9b;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+}
+.config-card form {
+  margin-top: 24px;
+}
+.config-field {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: #5e6d81;
+  margin-bottom: 17px;
+}
+.aerospace-shell .config-field input,
+.aerospace-shell .config-field select {
+  display: block;
+  width: 100%;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  color: #1b293d;
+  padding: 12px 14px;
+  font-size: 12px;
+  margin-top: 8px;
+  min-width: 0;
+}
+.config-switch-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  margin: 18px 0;
+}
+.config-switch-row strong {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: #27354a;
+}
+.config-switch-row small {
+  display: block;
+  font-size: 10px;
+  color: #8b98a9;
+  margin-top: 4px;
+}
+.ios-switch {
+  width: 36px;
+  height: 21px;
+  background: #cbd5e1;
+  border-radius: 9999px;
+  padding: 3px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+.ios-switch > span {
+  width: 15px;
+  height: 15px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px #0002;
+  transition: transform 0.2s;
+}
+.ios-switch[aria-checked="true"] {
+  background: #0095ff;
+}
+.ios-switch[aria-checked="true"] > span {
+  transform: translateX(15px);
+}
+.config-check {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #29846a;
+  font-size: 10px;
+  background: #f0faf6;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin: 20px 0 0;
+}
+.config-check.has-errors {
+  color: #97571b;
+  background: #fff5e9;
+}
+.config-issues {
+  font-size: 11px;
+  padding-left: 18px;
+  color: #93581e;
+  line-height: 1.5;
+}
+.config-issues small {
+  display: block;
+  color: #66758b;
+  margin-top: 4px;
+}
+.config-issues li {
+  margin-top: 9px;
+}
+.config-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+  padding-top: 21px;
+}
+.aerospace-shell .config-card .secondary-button {
+  border-color: #e1e7ef;
+  color: #66758a;
+  background: white;
+}
+.config-card .primary-button {
+  font-size: 11px;
+}
+.briefs-card .bento-heading {
+  margin-bottom: 20px;
+}
+.briefs-card .bento-heading > svg {
+  color: #5b718f;
+}
+.brief-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 12px;
+  padding: 15px 0;
+  text-align: left;
+  border-top: 1px solid var(--line);
+}
+.brief-row:hover {
+  background: #111c2c;
+}
+.brief-row > svg {
+  color: #50647e;
+  flex-shrink: 0;
+}
+.monogram {
+  width: 39px;
+  height: 39px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #1d283b;
+  color: #a9bcd8;
+  font-size: 11px;
+}
+.monogram.cyan {
+  background: #103247;
+  color: #6bc6f7;
+}
+.brief-row-copy {
+  flex: 1;
+  min-width: 0;
+}
+.brief-row-copy strong {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: #dce7f7;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.brief-row-copy small {
+  display: block;
+  font-size: 10px;
+  color: #687d99;
+  line-height: 1.5;
+  margin-top: 5px;
+}
+.next-step-card {
+  background: #0e1929;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-direction: column;
+}
+.next-step-card h3 {
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1.15;
+  margin: 18px 0;
+  max-width: 310px;
+}
+.next-step-card p {
+  font-size: 12px;
+  line-height: 1.9;
+  color: #8197b3;
+  max-width: 330px;
+}
+.next-step-card .primary-button {
+  margin-top: 24px;
+}
+.overview-notice {
+  grid-column: 1/-1;
+  color: #a7d5f7;
+  padding: 14px 20px;
+  background: #102337;
+  border-radius: 12px;
+  font-size: 12px;
+}
+.new-mission-dialog {
+  margin: auto;
+  width: min(700px, calc(100% - 32px));
+  max-height: 90vh;
+  overflow: auto;
+  padding: 30px;
+  border: 1px solid #29384f;
+  border-radius: 20px;
+  background: #0b1422;
+  color: #e8f2ff;
+}
+.new-mission-dialog::backdrop {
+  background: #02060dbb;
+  backdrop-filter: blur(6px);
+}
+.new-mission-dialog h2 {
+  font-size: 24px;
+  margin-top: 10px;
+}
+.new-mission-dialog > p {
+  font-size: 12px;
+  line-height: 1.7;
+  margin: 18px 0;
+  color: #9eb0c9;
+}
+.new-destinations {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 20px;
+}
+.new-destinations button {
+  border: 1px solid #27364e;
+  border-radius: 14px;
+  padding: 18px;
+  text-align: left;
+}
+.new-destinations button[aria-pressed="true"] {
+  background: #102e4d;
+  border-color: #0095ff;
+}
+.new-destinations strong {
+  font-size: 12px;
+  display: block;
+  margin: 12px 0 6px;
+}
+.new-destinations small {
+  font-size: 11px;
+  line-height: 1.6;
+  color: #8499b7;
+}
+.aerospace-shell
+  :is(
+    .resource-panel,
+    .preview-column,
+    .part-card,
+    .launcher-card,
+    .orbit-option,
+    .project-library,
+    .challenge-card,
+    .lab-hero,
+    .lab-story,
+    .lab-progress,
+    .lab-workbench,
+    .lab-defense,
+    .lab-flight,
+    .lab-concepts > article,
+    .telemetry-chart,
+    .result-hero,
+    .debrief-panel,
+    .decision-impact,
+    .score-explanation,
+    .review-identity,
+    .review-assumptions,
+    .review-table-wrap,
+    .mission-guidance,
+    .science-notebook,
+    .tuning-panel,
+    .craft-view,
+    .result-score-grid > div,
+    .record-highlights > div,
+    .event-card,
+    .mission-log,
+    .review-verdict,
+    .active-challenge,
+    .install-help
+  ) {
+  border-radius: 16px;
+}
+.aerospace-shell
+  :is(
+    .objective,
+    .module-buttons button,
+    .component-tabs button,
+    .review-tabs button,
+    .telemetry-tabs button,
+    .telemetry-samples button,
+    .workspace-switch button,
+    .result-badges > span,
+    .challenge-limits > span
+  ) {
+  border-radius: 9999px;
+}
+.aerospace-shell .project-library {
+  background: #0b101b;
+  border-color: var(--line);
+}
+.aerospace-shell .library-bar {
+  padding: 18px 22px;
+}
+.aerospace-shell .workspace-switch {
+  margin-top: 22px;
+}
+.aerospace-shell .mission-register {
+  margin: 0 0 20px;
+  background: #0b101b;
+  border: 1px solid var(--line);
+  padding: 20px;
+  border-radius: 16px;
+}
+.aerospace-shell .stepper {
+  border-radius: 16px;
+  background: #0b101b;
+}
+.aerospace-shell .stepper button.current {
+  background: #11243a;
+  border-color: #0095ff;
+}
+.aerospace-shell .current .stepper-icon {
+  border-radius: 10px;
+  background: #0095ff;
+  color: white;
+  border: 0;
+}
+.aerospace-shell .eyebrow {
+  color: #70b4e5;
+  font:
+    9px Inter,
+    Arial,
+    sans-serif;
+  letter-spacing: 1.3px;
+}
+.aerospace-shell .section-heading h2 {
+  font-weight: 500;
+  font-size: 26px;
+}
+.aerospace-shell .section-index {
+  font:
+    32px Inter,
+    Arial,
+    sans-serif;
+}
+.aerospace-shell .mission-cards {
+  background: none;
+  border: 0;
+  gap: 12px;
+}
+.aerospace-shell .mission-card {
+  border-radius: 16px;
+  border: 1px solid var(--line);
+}
+.aerospace-shell .mission-card.selected {
+  background: #102641;
+  box-shadow: none;
+  border: 1px solid #2b6e9f;
+}
+.aerospace-shell .page-footer {
+  font-family: Inter, Arial, sans-serif;
+  font-size: 8px;
+  color: #4d607a;
+  border-color: var(--line);
+  margin-top: 30px;
+}
+/* The optional light canvas keeps dark telemetry and white editor contrast. */
+html[data-theme="light"] .aerospace-shell .page-heading {
+  background: transparent;
+  color: #142a46;
+}
+html[data-theme="light"] .aerospace-shell :is(.topbar, .sidebar) {
+  background: #f3f6fa;
+}
+html[data-theme="light"] .aerospace-shell .brand-mark {
+  color: #142a46;
+}
+html[data-theme="light"] .aerospace-shell .dashboard-tabs {
+  background: #e4ebf4;
+  border-color: #d2dce9;
+}
+html[data-theme="light"] .aerospace-shell .dashboard-tabs button {
+  color: #49617c;
+}
+html[data-theme="light"]
+  .aerospace-shell
+  .dashboard-tabs
+  button[aria-pressed="true"] {
+  background: #fff;
+  color: #103252;
+}
+html[data-theme="light"] .aerospace-shell .bento-card:not(.config-card) {
+  --line: rgba(255, 255, 255, 0.08);
+  color: #f5f8ff;
+}
+html[data-theme="light"]
+  .aerospace-shell
+  .bento-card:not(.config-card)
+  :is(h2, h3, strong) {
+  color: #edf5ff;
+}
+html[data-theme="light"]
+  .aerospace-shell
+  .bento-card:not(.config-card)
+  :is(p, small) {
+  color: #8da4bf;
+}
+html[data-theme="light"] .aerospace-shell .config-card :is(h3, strong) {
+  color: #142137;
+}
+html[data-theme="light"] .aerospace-shell .config-card :is(label, small) {
+  color: #66758b;
+}
+@media (min-width: 1550px) {
+  .aerospace-shell .main {
+    padding-inline: 50px;
+  }
+  .overview-grid {
+    gap: 24px;
+  }
+  .bento-card {
+    padding: 30px;
+  }
+  .mission-hero {
+    padding: 0;
+  }
+  .hero-copy {
+    padding: 32px;
+  }
+}
+@media (max-width: 1200px) {
+  .aerospace-shell .topbar-center {
+    display: none;
+  }
+  .aerospace-shell .main {
+    padding: 28px 26px 0;
+  }
+  .aerospace-shell .topbar {
+    padding-inline: 24px;
+  }
+  .dashboard-tabs button {
+    padding-inline: 18px;
+  }
+  .bento-card {
+    padding: 22px;
+  }
+  .mission-hero {
+    padding: 0;
+  }
+  .hero-copy {
+    padding: 25px;
+  }
+  .hero-copy h2 {
+    font-size: 27px;
+  }
+  .quick-metrics strong {
+    font-size: 25px;
+  }
+  .allocation-chart {
+    gap: 8px;
+  }
+  .allocation-footer {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 900px) {
+  .aerospace-shell .sidebar {
+    width: 64px;
+    padding-inline: 7px;
+  }
+  .aerospace-shell .topbar {
+    gap: 12px;
+  }
+  .aerospace-shell .topbar-right {
+    gap: 7px;
+  }
+  .aerospace-shell .brand {
+    min-width: 210px;
+  }
+  .aerospace-shell .install-control {
+    display: flex;
+  }
+  .overview-grid {
+    grid-template-columns: 1fr;
+  }
+  .quick-metrics {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .quick-metrics > div:nth-child(-n + 2) {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+  .quick-metrics strong {
+    font-size: 23px;
+  }
+  .dashboard-tabs {
+    width: 100%;
+  }
+  .dashboard-tabs button {
+    flex: 1;
+    padding-inline: 15px;
+  }
+  .allocation-card {
+    min-height: 400px;
+  }
+  .hero-orbit {
+    inset: 0 0 0 40%;
+  }
+  .hero-copy {
+    width: 65%;
+  }
+  .next-step-card h3,
+  .next-step-card p {
+    max-width: none;
+  }
+}
+@media (max-width: 680px) {
+  .aerospace-shell .topbar {
+    min-height: 120px;
+    height: auto;
+    padding: 18px 20px;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .aerospace-shell .brand {
+    width: 100%;
+    font-size: 13px;
+  }
+  .aerospace-shell .topbar-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .aerospace-shell .language-control select {
+    min-width: 100px;
+    padding: 8px;
+  }
+  .aerospace-shell .new-mission-cta {
+    padding: 10px 14px;
+    font-size: 11px;
+    min-height: 36px;
+  }
+  .aerospace-shell .main {
+    padding: 26px 18px 90px;
+  }
+  .aerospace-shell .page-heading {
+    margin: 0;
+    padding: 0 0 23px;
+  }
+  .aerospace-shell .title-row h1 {
+    font-size: 29px;
+  }
+  .aerospace-shell .title-row p {
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  .aerospace-shell .mode-select {
+    padding: 9px 13px;
+  }
+  .aerospace-shell .title-row {
+    gap: 17px;
+  }
+  .dashboard-tabs {
+    border-radius: 9999px;
+    gap: 0;
+    margin-bottom: 22px;
+  }
+  .dashboard-tabs button {
+    font-size: 10px;
+    padding: 9px 13px;
+    flex: 0 0 auto;
+  }
+  .aerospace-shell .sidebar {
+    position: fixed;
+    bottom: 10px;
+    left: 12px;
+    right: 12px;
+    width: auto;
+    z-index: 30;
+    border: 1px solid #ffffff14;
+    border-radius: 9999px;
+    background: #0b1422f5;
+    backdrop-filter: blur(15px);
+    padding: 5px 8px;
+    flex-direction: row;
+    justify-content: space-around;
+    min-height: 58px;
+    box-shadow: 0 5px 25px #0005;
+  }
+  .aerospace-shell .sidebar .nav-item {
+    width: 46px;
+    height: 46px;
+    min-height: 46px;
+    margin: 0;
+    border-radius: 9999px;
+    font-size: 0;
+    flex: none;
+  }
+  .aerospace-shell .sidebar .nav-item svg {
+    width: 19px;
+    height: 19px;
+  }
+  .overview-grid {
+    gap: 16px;
+  }
+  .bento-card {
+    padding: 21px;
+  }
+  .mission-hero {
+    padding: 0;
+    min-height: 235px;
+  }
+  .hero-copy {
+    padding: 25px 21px;
+    width: 75%;
+  }
+  .hero-copy h2 {
+    font-size: 29px;
+  }
+  .hero-orbit {
+    inset: 0 -18% 0 32%;
+    opacity: 0.55;
+  }
+  .quick-metrics {
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .quick-metrics > div:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 18px;
+  }
+  .quick-metrics strong {
+    font-size: 26px;
+  }
+  .allocation-chart {
+    gap: 7px;
+  }
+  .bar-label {
+    font-size: 8px;
+  }
+  .bento-heading h3 {
+    font-size: 18px;
+  }
+  .subtle-status {
+    font-size: 8px;
+  }
+  .bento-eyebrow {
+    font-size: 8px;
+    letter-spacing: 1.3px;
+  }
+  .brief-row {
+    gap: 10px;
+  }
+  .brief-row .status-pill {
+    font-size: 8px;
+    padding: 5px 7px;
+  }
+  .monogram {
+    width: 32px;
+    height: 32px;
+    font-size: 10px;
+  }
+  .brief-row-copy small {
+    font-size: 9px;
+  }
+  .brief-row > svg {
+    display: none;
+  }
+  .config-actions .primary-button {
+    padding: 11px 15px;
+  }
+  .next-step-card h3 {
+    font-size: 26px;
+  }
+  .aerospace-shell .mission-register {
+    margin: 0 0 20px;
+  }
+  .new-destinations {
+    grid-template-columns: 1fr 1fr;
+  }
+  .new-mission-dialog {
+    padding: 22px;
+  }
+  .new-destinations button {
+    padding: 13px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .allocation-bar,
+  .ios-switch > span {
+    transition: none;
+  }
+}
+@font-face {
+  font-family: "Mission Geist";
+  src: url("/fonts/geist-latin.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+body {
+  font-family: "Mission Geist", Inter, "Helvetica Neue", Arial, sans-serif;
+}
+.aerospace-shell
+  :is(.bento-eyebrow, .top-pill, .eyebrow, .brand small, .page-footer) {
+  font-family: "Mission Geist", Inter, Arial, sans-serif;
+}
+
+/* Keep keyboard navigation and recovery controls clear at every width. */
+.aerospace-shell :is(button, a, input, select):focus-visible {
+  outline: 2px solid #0095ff;
+  outline-offset: 4px;
+}
+.storage-warning {
+  padding: 14px 18px;
+  margin-bottom: 18px;
+  border: 1px solid #e8b45a66;
+  border-radius: 16px;
+  background: #362816;
+  color: #ffe0a1;
+}
+@media (max-width: 680px) {
+  .aerospace-shell .topbar-right {
+    flex-wrap: wrap;
+  }
+  .aerospace-shell .install-control {
+    order: 3;
+  }
+  .aerospace-shell .install-help {
+    max-width: calc(100vw - 40px);
+  }
+  .aerospace-shell .sidebar {
+    bottom: max(10px, env(safe-area-inset-bottom));
+  }
+  .aerospace-shell .main {
+    padding-bottom: calc(100px + env(safe-area-inset-bottom));
+  }
+}

@@ -1,0 +1,602 @@
+.preference-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+}
+.language-control select {
+  border: 1px solid #617189;
+  background: #152238;
+  color: #f6f8fb;
+  padding: 9px 6px;
+  font-size: 12px;
+  max-width: 115px;
+  border-radius: 2px;
+}
+.theme-control {
+  min-width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #617189;
+  background: #152238;
+  color: white;
+}
+.preference-warning {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  padding: 10px;
+  background: #38211d;
+  color: #ffe0d8;
+  width: 230px;
+  z-index: 20;
+  font-size: 11px;
+}
+html[lang="ru"] .topbar-center,
+html[lang="kk"] .topbar-center {
+  display: none;
+}
+html[lang="ru"] .stepper strong,
+html[lang="kk"] .stepper strong {
+  line-height: 1.5;
+}
+.mission-guidance {
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--blue);
+  background: var(--panel);
+  padding: 18px 20px;
+  margin: 22px 0;
+}
+.mission-guidance h2 {
+  font-size: 18px;
+  margin: 8px 0;
+}
+.mission-guidance p {
+  color: var(--muted);
+  line-height: 1.7;
+  font-size: 13px;
+  max-width: 760px;
+}
+.mission-guidance summary {
+  cursor: pointer;
+  margin-top: 10px;
+  color: var(--blue);
+  font-size: 12px;
+}
+.mission-guidance ol {
+  padding-left: 20px;
+  line-height: 1.9;
+  color: var(--muted);
+  font-size: 12px;
+}
+.science-notebook {
+  margin: 26px 0;
+  border: 1px solid var(--line);
+  padding: 24px;
+  background: var(--panel);
+}
+.science-notebook h2 {
+  font-size: 25px;
+  margin-bottom: 12px;
+}
+.science-notebook p {
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--muted);
+}
+.science-notebook details {
+  border-top: 1px solid var(--line);
+  padding: 17px 0;
+}
+.science-notebook summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+}
+.science-notebook details p {
+  margin: 12px 0;
+}
+.science-notebook a {
+  color: var(--blue);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.solar-experiment {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+  border-block: 1px solid var(--line);
+  padding: 22px 0;
+  margin: 20px 0;
+}
+.solar-experiment label {
+  display: block;
+  line-height: 1.6;
+}
+.solar-experiment input {
+  display: block;
+  width: 100%;
+  margin-top: 15px;
+  accent-color: var(--blue);
+}
+.solar-experiment output {
+  display: block;
+  font: 40px var(--mono);
+  margin: 10px 0;
+  color: var(--text);
+}
+.solar-experiment .meter {
+  height: 8px;
+}
+.solar-experiment small {
+  color: var(--muted);
+}
+html[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f4f6f9;
+  --panel: #fff;
+  --panel-2: #eaf0f7;
+  --line: #b9c5d4;
+  --text: #122139;
+  --muted: #475b73;
+  --blue: #175c9c;
+  --green: #20694e;
+  --purple: #63459b;
+  --accent: #b52c29;
+  --selection: #e2edfa;
+  --selection-line: #2b64a2;
+}
+html[data-theme="light"] body,
+html[data-theme="light"] .app-shell {
+  background: var(--bg);
+  color: var(--text);
+}
+html[data-theme="light"] :is(.topbar, .sidebar, .mission-register) {
+  background: #f3f5f8;
+  border-color: var(--line);
+  color: var(--text);
+}
+html[data-theme="light"]
+  :is(.brand, .brand-mark, .academy-card strong, .academy-card button) {
+  color: #152238;
+}
+html[data-theme="light"]
+  :is(
+    .nav-item,
+    .workflow-item,
+    .nav-group-title,
+    .top-pill,
+    .top-version,
+    .sidebar-caption,
+    .brand small,
+    .saved
+  ) {
+  color: #425670;
+}
+html[data-theme="light"]
+  :is(.nav-item.active, .nav-item:hover, .workflow-item:hover) {
+  color: #123b69;
+  background: #e0eafa;
+  border-color: #285b97;
+}
+html[data-theme="light"]
+  :is(
+    .step-number,
+    .avatar,
+    .install-button,
+    .language-control select,
+    .theme-control
+  ) {
+  color: #152f50;
+  background: #fff;
+  border-color: #8a9eb6;
+}
+html[data-theme="light"] .workflow-item.selected .step-number {
+  background: #193b65;
+  color: white;
+}
+html[data-theme="light"] .page-heading {
+  background: #fff;
+  color: #10243f;
+  border-color: #c4332d;
+}
+html[data-theme="light"] :is(.mission-register span, .mission-register small) {
+  color: #4c6079;
+}
+html[data-theme="light"] .register-hold {
+  color: #8b4810;
+}
+html[data-theme="light"]
+  :is(
+    .learning-entry,
+    .project-library,
+    .library-content,
+    .library-card,
+    .design-comparison,
+    .resource-panel,
+    .tuning-panel,
+    .preflight,
+    .review-identity,
+    .review-assumptions,
+    .review-table-wrap,
+    .review-budget-summary,
+    .budget-chart,
+    .trade-card,
+    .trade-summary,
+    .review-model,
+    .decision-impact,
+    .score-explanation,
+    .debrief-panel,
+    .mission-log,
+    .records-table-wrap,
+    .glossary-card,
+    .model-note,
+    .search-field,
+    .lab-story,
+    .lab-workbench,
+    .lab-defense,
+    .lab-flight,
+    .lab-progress,
+    .lab-teacher,
+    .telemetry-chart,
+    .record-highlights > div,
+    .result-score-grid > div
+  ) {
+  background: #fff;
+  color: #152c49;
+  border-color: var(--line);
+  box-shadow: none;
+}
+html[data-theme="light"]
+  :is(
+    .mission-card,
+    .part-card,
+    .launcher-card,
+    .orbit-option,
+    .challenge-card,
+    .lab-concepts > article,
+    .lab-learning-grid > article,
+    .event-choices button
+  ) {
+  background: #fff;
+  color: #162b46;
+  border-color: #a6b9cf;
+  box-shadow: none;
+}
+html[data-theme="light"]
+  :is(
+    .mission-card.selected,
+    .part-card.selected,
+    .launcher-card.selected,
+    .orbit-option.selected,
+    .lab-concepts > article.selected
+  ) {
+  background: #e3eefb;
+  border-color: #3c6ca5;
+  box-shadow: inset 3px 0 #2d65a6;
+}
+html[data-theme="light"]
+  :is(
+    .mission-card:hover,
+    .part-card:hover,
+    .launcher-card:hover,
+    .challenge-card:hover,
+    .event-choices button:hover
+  ) {
+  background: #edf3fa;
+}
+html[data-theme="light"]
+  :is(
+    .panel-heading,
+    .science-summary,
+    .lab-brief-card,
+    .lab-current,
+    .lab-flight-evidence,
+    .review-table thead,
+    .review-table caption,
+    .library-notice,
+    .mobile-resource-strip,
+    .flight-resource-strip,
+    .flight-metrics > div,
+    .flight-timeline,
+    .flight-resource-strip,
+    .orbit-properties,
+    .launch-banner,
+    .challenge-intro,
+    .academy-intro,
+    .active-challenge,
+    .lab-hero,
+    .result-hero,
+    .record-grade
+  ) {
+  background: #e6eef8;
+  color: #142e50;
+  border-color: #a1b4cd;
+}
+html[data-theme="light"]
+  :is(.guided-tip, .nominal-card, .review-verdict, .readiness, .lab-complete) {
+  background: #e6f1ec;
+  color: #205540;
+  border-color: #82ad99;
+}
+html[data-theme="light"]
+  :is(
+    .readiness.has-issues,
+    .review-verdict.blocked,
+    .event-card,
+    .launch-warning,
+    .lab-open-checks,
+    .checkpoint-warning
+  ) {
+  background: #fff0e6;
+  color: #853f16;
+  border-color: #bf8a61;
+}
+html[data-theme="light"] .event-card.discovery {
+  background: #e6f1ec;
+  border-color: #82ad99;
+}
+html[data-theme="light"]
+  :is(.stepper, .component-tabs, .workspace-switch, .review-tabs) {
+  background: transparent;
+}
+html[data-theme="light"]
+  :is(
+    .stepper button.current,
+    .component-tabs button.active,
+    .module-buttons button.active,
+    .review-tabs button.active,
+    .telemetry-tabs button[aria-pressed="true"],
+    .telemetry-samples button[aria-pressed="true"],
+    .lab-choice button[aria-pressed="true"]
+  ) {
+  background: #dbe9fb;
+  color: #173b67;
+  border-color: #3f70a7;
+}
+html[data-theme="light"] .workspace-switch button[aria-pressed="true"] {
+  color: #133960;
+  border-color: #133960;
+}
+html[data-theme="light"] .workspace-switch button span {
+  background: #dfebf9;
+  color: #24456c;
+}
+html[data-theme="light"] .selected .selection-circle,
+html[data-theme="light"] .selected .checkbox {
+  color: #fff;
+  background: #275a98;
+  border-color: #275a98;
+}
+html[data-theme="light"] :is(.main, .sidebar) :is(h1, h2, h3, h4, strong) {
+  color: #142a46;
+}
+html[data-theme="light"]
+  :is(.main, .sidebar)
+  :is(p, small, dt, dd, label, summary, th, td) {
+  color: #465a72;
+}
+html[data-theme="light"]
+  :is(
+    .eyebrow,
+    .section-index,
+    .library-toggle-label,
+    .mission-icon,
+    .part-symbol,
+    .orbit-code,
+    .science-icon,
+    .learning-entry-icon,
+    .learning-entry-link,
+    .lab-checkpoints svg,
+    .lab-complete svg,
+    .challenge-start
+  ) {
+  color: #275a90;
+}
+html[data-theme="light"]
+  :is(
+    .resource-name,
+    .resource-value > span,
+    .compact-resources > div,
+    .compact-resources svg,
+    .resource-foot,
+    .science-summary span,
+    .stepper strong,
+    .stepper small,
+    .current small,
+    .mission-tag,
+    .mission-card.selected p,
+    .stepper-icon,
+    .lab-concept-heading,
+    .lab-note > span,
+    .lab-checkpoints strong,
+    .flight-metrics span,
+    .final-telemetry span,
+    .telemetry-readout > div > span,
+    .result-score-grid span,
+    .record-highlights span,
+    .total-score span,
+    .part-stats,
+    .sub-heading > span,
+    .capability,
+    .supported-objectives span,
+    .challenge-number,
+    .records-table th,
+    .record-name small,
+    .view-top
+  ) {
+  color: #455c79;
+}
+html[data-theme="light"] :is(.text-green, .live-label, .readiness > div) {
+  color: #20694e !important;
+}
+html[data-theme="light"] :is(.text-danger, .text-amber, .has-issues > div) {
+  color: #a53623 !important;
+}
+html[data-theme="light"] .text-purple {
+  color: #674199 !important;
+}
+html[data-theme="light"]
+  :is(
+    .secondary-button,
+    .component-tabs button,
+    .workspace-switch button,
+    .review-tabs button,
+    .telemetry-tabs button,
+    .telemetry-samples button,
+    .module-buttons button
+  ) {
+  color: #294969;
+  border-color: #829ab6;
+}
+html[data-theme="light"] .secondary-button:hover {
+  background: #e0eafa;
+}
+html[data-theme="light"] :is(input:not([type="range"]), select, textarea) {
+  background: #fff;
+  color: #152b46;
+  border-color: #8399b3;
+}
+html[data-theme="light"] .meter,
+html[data-theme="light"] .contribution-track {
+  background: #d4deeb;
+}
+html[data-theme="light"] .meter i {
+  background: #426b9b;
+}
+html[data-theme="light"] .meter.green i {
+  background: #3c8467;
+}
+html[data-theme="light"] .meter.blue i {
+  background: #3275b1;
+}
+html[data-theme="light"] .primary-button {
+  background: #b82e29;
+  color: #fff;
+}
+html[data-theme="light"] .primary-button:hover {
+  background: #95201c;
+}
+html[data-theme="light"] .primary-button :is(span, strong) {
+  color: #fff;
+}
+html[data-theme="light"]
+  :is(.advisor-popover, .install-help, .advisor-launcher > button) {
+  background: #e5eef9;
+  color: #193b66;
+  border-color: #829ab6;
+}
+html[data-theme="light"] :is(.result-badges > span, .challenge-limits > span) {
+  background: #dfeafa;
+  color: #244365;
+  border-color: #9cb1ce;
+}
+html[data-theme="light"] .page-footer,
+html[data-theme="light"] .page-footer > span:first-child {
+  color: #4b607b;
+  border-color: #a4b5cc;
+}
+/* Orbital and spacecraft diagrams retain a dark plotting field in both themes. */
+html[data-theme="light"] :is(.orbit-view, .craft-view) {
+  background-color: #091522;
+  color: #edf4ff;
+}
+html[data-theme="light"]
+  :is(.orbit-view, .craft-view)
+  :is(span, strong, p, small) {
+  color: #d5e4f9;
+}
+html[data-theme="light"] .destination-caption {
+  background: #e3edf8;
+}
+html[data-theme="light"] .destination-caption :is(span, strong) {
+  color: #234364;
+}
+html[data-theme="light"] .grade-emblem {
+  color: #234364;
+  border-color: #6d86a7;
+}
+@media (max-width: 1100px) {
+  .topbar .saved {
+    display: none;
+  }
+  .topbar {
+    gap: 14px;
+  }
+  .topbar-center {
+    display: none;
+  }
+  .title-row h1 {
+    overflow-wrap: anywhere;
+  }
+}
+@media (max-width: 680px) {
+  .topbar {
+    height: auto;
+    min-height: 112px;
+    flex-wrap: wrap;
+    padding: 14px 17px;
+    gap: 12px;
+  }
+  .brand {
+    width: 100%;
+  }
+  .topbar-right {
+    margin-left: 0;
+    width: 100%;
+    justify-content: space-between;
+  }
+  .topbar-right .avatar {
+    display: none;
+  }
+  .preference-controls {
+    gap: 10px;
+  }
+  .language-control select {
+    max-width: 145px;
+    min-width: 120px;
+    padding: 8px;
+  }
+  .nav-item {
+    font-size: 9px;
+    line-height: 1.3;
+    min-height: 58px;
+    overflow-wrap: anywhere;
+  }
+  .stepper strong {
+    font-size: 10px;
+    overflow-wrap: anywhere;
+  }
+  .stepper button {
+    min-width: 0;
+  }
+  .title-row h1 {
+    font-size: 32px;
+  }
+  .mission-guidance {
+    padding: 16px;
+  }
+  .science-notebook {
+    padding: 18px;
+  }
+  .solar-experiment {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .workspace-switch button {
+    flex-wrap: wrap;
+    justify-content: center;
+    flex: 1;
+    min-width: 0;
+  }
+  .workspace-switch button span {
+    font-size: 9px;
+  }
+  .stage-footer .primary-button {
+    gap: 8px;
+  }
+  .lab-concept-actions {
+    flex-wrap: wrap;
+  }
+}

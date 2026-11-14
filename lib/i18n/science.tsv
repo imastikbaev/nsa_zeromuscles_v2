@@ -1,0 +1,36 @@
+Scientific basis	Научная основа	Ғылыми негіз
+SCIENCE / SOURCES & ASSUMPTIONS	НАУКА / ИСТОЧНИКИ И ДОПУЩЕНИЯ	ҒЫЛЫМ / ДЕРЕККӨЗДЕР МЕН ЖОРАМАЛДАР
+What is physics, and what is a game rule?	Где физика, а где правила симулятора?	Физика қайда, симулятор ережелері қайда?
+Use this experiment to understand one relationship. The mission simulator adds simplified engineering assumptions. These sources explain the principles; they do not validate our spacecraft designs.	Этот опыт объясняет одну зависимость. Симулятор миссий добавляет упрощённые инженерные допущения. Источники объясняют принципы, но не подтверждают правильность наших проектов аппаратов.	Бұл тәжірибе бір тәуелділікті түсіндіреді. Миссия симуляторы жеңілдетілген инженерлік жорамалдарды қолданады. Дереккөздер қағидаларды түсіндіреді, бірақ біздің аппарат жобаларын растамайды.
+Distance from the Sun	Расстояние до Солнца	Күннен қашықтық
+1 AU is the mean Earth–Sun distance. Move the slider to 2 AU and predict the result first.	1 а.е. — среднее расстояние от Земли до Солнца. Сначала предположите результат, затем передвиньте ползунок на 2 а.е.	1 а.б. — Жер мен Күн арасындағы орташа қашықтық. Алдымен нәтижені болжаңыз, содан кейін жүгірткіні 2 а.б.-ке жылжытыңыз.
+Sunlight compared with Earth	Солнечный свет относительно Земли	Жермен салыстырғандағы күн сәулесі
+Relative sunlight = 1 / distance². This is incoming light, not electrical output.	Относительный поток = 1 / расстояние². Это падающий свет, а не электрическая мощность.	Салыстырмалы ағын = 1 / қашықтық². Бұл — түсетін жарық, электр қуаты емес.
+Solar power and distance	Солнечная энергия и расстояние	Күн энергиясы және қашықтық
+Sunlight spreads with distance. Twice as far from the Sun means one quarter of the incoming solar energy per square meter.	При удалении от Солнца световой поток ослабевает. На удвоенном расстоянии на квадратный метр приходится вчетверо меньше энергии.	Күннен алыстаған сайын жарық ағыны азаяды. Қашықтық екі есе артса, шаршы метрге түсетін энергия төрт есе кемиді.
+Our mission model uses panel area, a catalog orbit coefficient, and optional annual degradation. Panel orientation and temperature are not solved.	Модель использует площадь панелей, заданный коэффициент орбиты и годовую деградацию. Ориентация и температура панелей не рассчитываются.	Модель панель ауданын, орбита коэффициентін және жылдық тозуды қолданады. Панель бағыты мен температурасы есептелмейді.
+Heat must leave the spacecraft	Тепло нужно отводить	Жылуды сыртқа шығару қажет
+Electronics produce heat. Spacecraft use coatings, insulation, heat paths, and radiators to keep equipment within operating temperatures.	Электроника выделяет тепло. Покрытия, изоляция, теплопроводящие элементы и радиаторы помогают поддерживать рабочую температуру.	Электроника жылу бөледі. Жабындар, оқшаулау, жылу өткізгіштер және радиаторлар жұмыс температурасын сақтайды.
+Our thermal systems use simplified protection ratings. The simulator does not calculate temperatures or prove thermal safety.	Защита оценивается упрощённым коэффициентом. Симулятор не рассчитывает температуры и не подтверждает тепловую безопасность.	Қорғаныс жеңілдетілген коэффициентпен бағаланады. Симулятор температураны есептемейді және жылулық қауіпсіздікті растамайды.
+Subsystems depend on each other	Системы зависят друг от друга	Жүйелер бір-біріне тәуелді
+A spacecraft needs power, communication, data handling, propulsion, and thermal control together. A scientific instrument cannot operate in isolation.	Аппарату одновременно нужны питание, связь, обработка данных, двигатели и терморегулирование. Прибор не работает сам по себе.	Аппаратқа қуат, байланыс, деректерді өңдеу, қозғалтқыш және жылу реттеу бірге қажет. Ғылыми құрал жеке жұмыс істей алмайды.
+Equipment masses, prices, science points, and reliability ratings in this catalog are fictional teaching assumptions, not NASA hardware specifications.	Массы, цены, научные баллы и показатели надёжности в каталоге — учебные допущения, а не характеристики оборудования NASA.	Каталогтағы массалар, бағалар, ғылыми ұпайлар және сенімділік көрсеткіштері — NASA жабдығының сипаттамалары емес, оқу жорамалдары.
+In this simulator:	В нашем симуляторе:	Біздің симуляторда:
+Read the NASA source	Открыть источник NASA	NASA дереккөзін ашу
+How to use Mission Architect	Как пользоваться Mission Architect	Mission Architect қолдану жолы
+YOUR NEXT DECISION	ВАШ СЛЕДУЮЩИЙ ШАГ	КЕЛЕСІ ҚАДАМЫҢЫЗ
+Define a useful measurement	Определите, что нужно измерить	Нені өлшеу керектігін анықтаңыз
+Choose a destination and a science objective. Your instruments must be able to make that measurement.	Выберите направление и научную задачу. Установленные приборы должны уметь выполнять нужные измерения.	Бағыт пен ғылыми міндетті таңдаңыз. Орнатылған құралдар қажетті өлшеулерді жасай алуы керек.
+Give each instrument the resources it needs	Обеспечьте приборы ресурсами	Құралдарды ресурстармен қамтамасыз етіңіз
+Add instruments, then balance power, memory, communication, and mass. More equipment is not always a better mission.	Добавьте приборы, затем проверьте питание, память, связь и массу. Больше оборудования не всегда означает лучшую миссию.	Құралдарды қосып, қуатты, жадты, байланысты және массаны тексеріңіз. Жабдықтың көптігі миссияның жақсы болуын білдірмейді.
+Choose a rocket that can deliver the design	Подберите ракету для аппарата	Аппаратқа лайық зымыран таңдаңыз
+Compare capacity and destination compatibility first, then cost. A cheap launch is not useful if it cannot deliver your spacecraft.	Сначала проверьте грузоподъёмность и направление, затем цену. Дешёвый запуск бесполезен, если ракета не доставит аппарат.	Алдымен жүк көтергіштігі мен бағытын, кейін бағасын тексеріңіз. Зымыран аппаратты жеткізе алмаса, арзан ұшырудың пайдасы жоқ.
+Check the complete mission before launch	Проверьте миссию целиком	Миссияны толық тексеріңіз
+Review the orbit, resolve every launch blocker, and leave reserves for unexpected events. Then test your design in flight.	Проверьте орбиту, устраните запреты на запуск и оставьте запас ресурсов. Затем испытайте проект в полёте.	Орбитаны тексеріңіз, ұшыру кедергілерін жойып, ресурс қорын қалдырыңыз. Содан кейін жобаны ұшуда сынаңыз.
+What am I trying to achieve?	Какова цель работы?	Жұмыстың мақсаты қандай?
+Design a spacecraft that can answer a science question.	Спроектировать аппарат для ответа на научный вопрос.	Ғылыми сұраққа жауап беретін аппаратты жобалау.
+Resolve the resource limits shown on the right or in the mobile resource bar.	Уложиться в ограничения панели ресурсов справа или в мобильной строке.	Оң жақтағы немесе мобильді жолақтағы ресурс шектеулерін сақтау.
+Launch, respond to events, and explain what you would improve.	Запустить миссию, реагировать на события и объяснить, что можно улучшить.	Миссияны ұшырып, оқиғаларға жауап беру және нені жақсартуға болатынын түсіндіру.
+The score summarizes this teaching model. It is not a real-world mission success probability.	Баллы подводят итог учебной модели. Это не вероятность успеха реального полёта.	Ұпайлар оқу моделінің нәтижесін көрсетеді. Бұл нақты ұшудың сәттілік ықтималдығы емес.
+Try the guided Climate Watch activity	Пройти миссию Climate Watch с подсказками	Climate Watch миссиясын кеңестермен орындау
+First issue to resolve:	Сначала исправьте:	Алдымен түзетіңіз:

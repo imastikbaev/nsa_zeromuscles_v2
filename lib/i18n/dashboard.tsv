@@ -1,0 +1,63 @@
+Overview	Обзор	Шолу
+Resource budget	Ресурсы	Ресурстар
+Mission workspace sections	Разделы проекта	Жоба бөлімдері
+ACTIVE MISSION	ТЕКУЩАЯ МИССИЯ	АҒЫМДАҒЫ МИССИЯ
+Review required	Нужна проверка	Тексеру қажет
+Simulation	Симуляция	Симуляция
+Explore spacecraft	Открыть аппарат	Аппаратты ашу
+remaining	осталось	қалды
+kg remaining	кг в запасе	кг қорда
+Power reserve	Запас мощности	Қуат қоры
+After end-of-life allowance	С учётом старения	Тозуды ескергенде
+ENGINEERING TELEMETRY	ИНЖЕНЕРНЫЕ ПОКАЗАТЕЛИ	ИНЖЕНЕРЛІК КӨРСЕТКІШТЕР
+Live estimates	Текущий расчёт	Ағымдағы есеп
+Snapshot	Снимок	Сақталған күй
+Chart metric	Параметр графика	График параметрі
+Subsystem allocation	Ресурсы по подсистемам	Ішкі жүйелер ресурстары
+Resources	Ресурсы	Ресурстар
+Design estimates · not flight measurements	Расчёт проекта · не полётные измерения	Жоба есебі · ұшу өлшемдері емес
+Export telemetry	Экспорт показателей	Көрсеткіштерді экспорттау
+MISSION PARAMETERS	ПАРАМЕТРЫ МИССИИ	МИССИЯ ПАРАМЕТРЛЕРІ
+Active configuration	Текущая конфигурация	Ағымдағы конфигурация
+Target orbit	Целевая орбита	Мақсатты орбита
+Auto-verify requirements	Автопроверка требований	Талаптарды автоматты тексеру
+Check edits as you make them	Проверять во время редактирования	Өңдеу кезінде тексеру
+Telemetry sync	Синхронизация графика	Графикті синхрондау
+Keep the allocation chart up to date	Обновлять график ресурсов	Ресурстар графигін жаңарту
+Manual verification enabled	Проверка по запросу	Сұрау бойынша тексеру
+Unsaved edits	Несохранённые изменения	Сақталмаған өзгерістер
+Cancel	Отмена	Болдырмау
+Validate design	Проверить проект	Жобаны тексеру
+YOUR WORKSPACE	ВАШИ ПРОЕКТЫ	СІЗДІҢ ЖОБАЛАРЫҢЫЗ
+Mission briefs & library	Задания и библиотека	Тапсырмалар мен кітапхана
+Compare two Earth observation concepts	Сравните два проекта спутника Земли	Жер серігінің екі жобасын салыстырыңыз
+Active design	Текущий проект	Ағымдағы жоба
+Review	Проверить	Тексеру
+Nominal	В норме	Қалыпты
+Saved	Сохранено	Сақталған
+NEXT STEP	СЛЕДУЮЩИЙ ШАГ	КЕЛЕСІ ҚАДАМ
+Resolve. Verify. Launch.	Исправьте. Проверьте. Запустите.	Түзетіңіз. Тексеріңіз. Ұшырыңыз.
+Your mission starts with a question.	Миссия начинается с вопроса.	Миссия сұрақтан басталады.
+Choose the measurements you need, then give your instruments the resources to make them.	Выберите нужные измерения и обеспечьте приборы ресурсами для их выполнения.	Қажетті өлшемдерді таңдап, құралдарды ресурстармен қамтамасыз етіңіз.
+Review constraints	Проверить ограничения	Шектеулерді тексеру
+Configure spacecraft	Настроить аппарат	Аппаратты баптау
+NEW MISSION	НОВАЯ МИССИЯ	ЖАҢА МИССИЯ
+New mission	Новая миссия	Жаңа миссия
+Create mission	Создать миссию	Миссия жасау
+Choose your destination	Выберите направление	Бағытты таңдаңыз
+Your current design will be backed up in the mission library.	Текущий проект будет сохранён в библиотеке миссий.	Ағымдағы жоба миссиялар кітапханасында сақталады.
+Enter a mission name.	Введите название миссии.	Миссия атауын енгізіңіз.
+Design saved. Resolve the listed checks before launch.	Проект сохранён. Исправьте замечания перед запуском.	Жоба сақталды. Ұшыру алдында ескертулерді түзетіңіз.
+Design validated and saved.	Проект проверен и сохранён.	Жоба тексеріліп сақталды.
+Resource allocation exported.	Распределение ресурсов экспортировано.	Ресурстар үлестірімі экспортталды.
+Saved mission opened.	Сохранённая миссия открыта.	Сақталған миссия ашылды.
+All configured checks passed	Все проверки пройдены	Барлық тексерулер өтті
+Available delta-v	Запас изменения скорости	Жылдамдық өзгерісінің қоры
+Maneuver capability	Возможности манёвров	Маневр мүмкіндіктері
+Mission library	Библиотека миссий	Миссиялар кітапханасы
+Export design	Экспорт проекта	Жобаны экспорттау
+Open library	Открыть библиотеку	Кітапхананы ашу
+saved projects	сохранённых проектов	сақталған жобалар
+
+Platform & resources	Платформа и ресурсы	Платформа және ресурстар
+Storage unavailable. Export your design before closing this tab.	Хранилище недоступно. Экспортируйте проект перед закрытием вкладки.	Сақтау орны қолжетімсіз. Қойындыны жаппас бұрын жобаны экспорттаңыз.
