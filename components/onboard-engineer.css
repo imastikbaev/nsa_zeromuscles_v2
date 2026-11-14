@@ -24,6 +24,12 @@
 .engineer-panel textarea { display:block; width:100%; margin:0 0 8px; padding:10px; color:#edf4ff; background:#0c1523; border:1px solid #6484aa; border-radius:8px; resize:none; font:inherit; font-size:.9rem; box-sizing:border-box; }
 .engineer-panel textarea:focus { outline:2px solid #90bfff; outline-offset:1px; }
 .engineer-error { color:#ffd18b !important; }
+.engineer-panel .engineer-mode { color:#8ee3be; font-size:.75rem; }
+.engineer-panel { box-sizing:border-box; overflow-y:auto; }
+.engineer-messages { flex-shrink:0; }
+@media (max-width:480px), (max-height:500px) {
+  .engineer-panel { left:8px !important; right:8px; top:8px !important; bottom:80px !important; width:auto !important; max-height:none !important; }
+}
 .engineer-sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
 .engineer-typing { display:flex; gap:4px; }
 .engineer-typing span { width:7px; height:7px; border-radius:50%; background:#90bfff; animation:engineer-dot 1s ease-in-out infinite; }

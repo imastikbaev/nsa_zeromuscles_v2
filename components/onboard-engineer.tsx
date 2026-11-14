@@ -1,11 +1,12 @@
 "use client";
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { onboardAdvice, engineerEndpoint, type AdviceTopic } from "@/lib/onboard-advice";
 import type { Design } from "@/lib/data";
 import { phases, type Flight } from "@/lib/simulation";
 import { useI18n } from "./preferences";
 import "./onboard-engineer.css";
 
-type Message = { role: "user" | "assistant"; content: string; phase: number };
+type Message = { role: "user" | "assistant"; content: string; phase: number; hours?: number; source?: "local" | "ai" };
 const POS_KEY = "mission-architect:pet-position:v1";
 const SIZE = 64;
 const clampPos = (x: number, y: number) => ({
@@ -20,11 +21,37 @@ export function OnboardEngineer({ design, flight }: { design: Design; flight: Fl
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [open, setOpen] = useState(false);
+  const [aiAvailable, setAiAvailable] = useState(false);
   const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
   const [dragging, setDragging] = useState(false);
   const request = useRef<AbortController | null>(null);
   const drag = useRef<{ dx: number; dy: number; moved: boolean; sx: number; sy: number } | null>(null);
   const log = useRef<HTMLDivElement | null>(null);
+  const closeButton = useRef<HTMLButtonElement | null>(null);
+  const botButton = useRef<HTMLButtonElement | null>(null);
+  const endpoint = typeof window === "undefined" ? null : engineerEndpoint(window.location.hostname, process.env.NEXT_PUBLIC_ENGINEER_URL);
+  useEffect(() => {
+    if (!open) return;
+    closeButton.current?.focus();
+    setAiAvailable(false);
+    if (!endpoint) return;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 3000);
+    const healthUrl = new URL(endpoint, window.location.href);
+    healthUrl.pathname = healthUrl.pathname.replace(/\/ask\/?$/, '/health');
+    fetch(healthUrl, { signal: controller.signal, cache: 'no-store' })
+      .then(async response => { if (!response.ok) return; const data = await response.json(); if (!controller.signal.aborted) setAiAvailable(data.available === true); })
+      .catch(() => {})
+      .finally(() => clearTimeout(timeout));
+    return () => { controller.abort(); clearTimeout(timeout); };
+  }, [open, endpoint]);
+  function closePanel() { setOpen(false); botButton.current?.focus(); }
+  function explain(topic: AdviceTopic, label: string) {
+    const stamp = { phase: flight.phase, hours: flight.operations?.elapsedHours };
+    setError("");
+    setMessages(current => [...current, { role: "user", content: label, source: "local", ...stamp },
+      { role: "assistant", content: onboardAdvice(design, flight, topic, locale), source: "local", ...stamp }].slice(-20) as Message[]);
+  }
   useEffect(() => () => request.current?.abort(), []);
   useEffect(() => {
     let start = { x: window.innerWidth - SIZE - 24, y: window.innerHeight - SIZE - 24 };
@@ -76,33 +103,32 @@ export function OnboardEngineer({ design, flight }: { design: Design; flight: Fl
       const next = clampPos(pos.x + move[e.key][0], pos.y + move[e.key][1]);
       setPos(next);
       try { localStorage.setItem(POS_KEY, JSON.stringify(next)); } catch { /* storage unavailable */ }
-    } else if (e.key === "Escape") setOpen(false);
+    } else if (e.key === "Escape") closePanel();
   }
 
   async function ask(text: string) {
-    if (!text.trim() || request.current) return;
+    if (!text.trim() || request.current || !aiAvailable || !endpoint) return;
     const controller = new AbortController();
     request.current = controller;
     setBusy(true); setError("");
     const phase = flight.phase;
     const timeout = setTimeout(() => controller.abort(), 50_000);
     try {
-      const response = await fetch(process.env.NEXT_PUBLIC_ENGINEER_URL || "http://127.0.0.1:3013/ask", {
+      const response = await fetch(endpoint, {
         method: "POST", headers: { "Content-Type": "application/json" },
         signal: controller.signal,
-        body: JSON.stringify({ design, flight, question: text, history: messages.slice(-10).map(({role, content}) => ({role, content})) }),
+        body: JSON.stringify({ design, flight, question: text, history: messages.filter(m => m.source !== "local").slice(-10).map(({role, content}) => ({role, content})) }),
       });
       const data = await response.json();
       if (!response.ok) {
-        setError(data.error === "missing_key"
-          ? c("Добавь OPENAI_API_KEY в .env.engineer и перезапусти npm run engineer.", "Add OPENAI_API_KEY to .env.engineer and restart npm run engineer.", ".env.engineer файлына OPENAI_API_KEY қосып, npm run engineer қайта іске қос.")
-          : c("Не удалось получить ответ. Проверь ключ, баланс API и доступ к модели, затем повтори.", "Could not get a reply. Check the API key, credit and model access, then retry.", "Жауап алынбады. API кілтін, теңгерімді және модельге қолжетімділікті тексеріп, қайтала."));
+        setError(c("ИИ сейчас недоступен. Встроенные подсказки продолжают работать.", "AI is currently unavailable. Built-in guidance still works.", "ЖИ қазір қолжетімсіз. Кірістірілген кеңестер жұмыс істейді."));
         return;
       }
-      setMessages(current => [...current, {role: "user", content: text, phase}, {role: "assistant", content: data.answer, phase}].slice(-20) as Message[]);
+      if (typeof data.answer !== "string" || !data.answer.trim()) throw new Error("Empty reply");
+      setMessages(current => [...current, {role: "user", content: text, phase, source: "ai"}, {role: "assistant", content: data.answer, phase, source: "ai"}].slice(-20) as Message[]);
       setQuestion("");
     } catch {
-      if (!controller.signal.aborted) setError(c("Сервис недоступен. Запусти npm run engineer и проверь подключение.", "Service unavailable. Run npm run engineer and check your connection.", "Қызмет қолжетімсіз. npm run engineer іске қосып, байланысты тексер."));
+      if (!controller.signal.aborted) setError(c("Нет связи с ИИ. Воспользуйся встроенными подсказками.", "Cannot reach AI. Use the built-in guidance.", "ЖИ байланысы жоқ. Кірістірілген кеңестерді қолдан."));
       else setError(c("Ответ занял слишком много времени. Попробуй ещё раз.", "The request timed out. Try again.", "Жауап күту уақыты аяқталды. Қайталап көр."));
     } finally { clearTimeout(timeout); request.current = null; setBusy(false); }
   }
@@ -117,28 +143,30 @@ export function OnboardEngineer({ design, flight }: { design: Design; flight: Fl
     : { left: panelLeft, top: pos.y + SIZE + 10, width: panelW, maxHeight: Math.max(240, window.innerHeight - pos.y - SIZE - 20) };
 
   return <div className="engineer-pet" aria-label={label}>
-    {open && <section className="engineer-panel" style={panelStyle} role="dialog" aria-label={label}>
+    {open && <section className="engineer-panel" style={panelStyle} role="dialog" aria-label={label} onKeyDown={e => { if (e.key === "Escape") { e.stopPropagation(); closePanel(); } }}>
       <header>
         <h3>{label}</h3>
-        <button type="button" className="engineer-close" onClick={() => setOpen(false)} aria-label={c("Закрыть", "Close", "Жабу")}>×</button>
+        <button type="button" ref={closeButton} className="engineer-close" onClick={closePanel} aria-label={c("Закрыть", "Close", "Жабу")}>×</button>
       </header>
       <p>{c("Объясняет текущий этап, риски и последствия решений по данным твоей миссии.", "Explains the current phase, risks and decisions using your mission data.", "Миссия деректері бойынша кезеңді, қауіптерді және шешімдерді түсіндіреді.")}</p>
-      <div className="engineer-prompts">{prompts.map(prompt => <button type="button" key={prompt} disabled={busy} onClick={() => ask(prompt)}>{prompt}</button>)}</div>
+      <p className="engineer-mode">{c("Встроенный помощник · работает без интернета", "Built-in guidance · works offline", "Кірістірілген көмекші · интернетсіз жұмыс істейді")}</p>
+      <div className="engineer-prompts">{[...prompts, c("Что с энергией?", "How is the power reserve?", "Қуат қоры қандай?")].map((prompt, index) => <button type="button" key={prompt} onClick={() => explain((['phase', 'risk', 'data', 'power'] as AdviceTopic[])[index], prompt)}>{prompt}</button>)}</div>
+      {messages.length === 0 && <p>{c("Выбери вопрос выше. Ответ рассчитывается по текущему состоянию миссии и не выполняет команды за тебя.", "Choose a question above. Guidance uses the current mission state and never executes commands for you.", "Жоғарыдан сұрақ таңда. Кеңес ағымдағы миссияға негізделеді және сенің орныңа команда орындамайды.")}</p>}
       <div className="engineer-messages" role="log" aria-live="polite" ref={log}>
-        {messages.map((message, i) => <article key={i} data-role={message.role}><small>{message.role === "user" ? c("Ты", "You", "Сен") : c("Инженер", "Engineer", "Инженер")} · {t(phases[message.phase])}</small><p>{message.content}</p></article>)}
+        {messages.map((message, i) => <article key={i} data-role={message.role}><small>{message.role === "user" ? c("Ты", "You", "Сен") : c("Инженер", "Engineer", "Инженер")} · {t(phases[message.phase])}{message.hours !== undefined && <> · {message.hours.toLocaleString(locale)} {t("hours")}</>}{message.role === "assistant" && <> · {message.source === "local" ? c("По данным миссии", "Mission-based guidance", "Миссия деректері бойынша") : c("ИИ", "AI", "ЖИ")}</>}</small><p>{message.content}</p></article>)}
         {busy && <article data-role="assistant"><small>{c("Инженер", "Engineer", "Инженер")}</small><p className="engineer-typing"><span/><span/><span/></p></article>}
       </div>
-      <form onSubmit={event => { event.preventDefault(); void ask(question); }}>
+      {aiAvailable ? <><p>{c("Свободный вопрос отправит состояние миссии и переписку в OpenAI.", "A free-form question sends mission state and conversation to OpenAI.", "Еркін сұрақ миссия күйі мен хат алмасуды OpenAI-ға жібереді.")}</p><form onSubmit={event => { event.preventDefault(); void ask(question); }}>
         <label><span className="engineer-sr">{c("Вопрос о миссии", "Mission question", "Миссия туралы сұрақ")}</span>
           <textarea maxLength={2000} value={question} placeholder={c("Вопрос о миссии…", "Ask about your mission…", "Миссия туралы сұрақ…")} onChange={event => setQuestion(event.target.value)} onKeyDown={event => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); void ask(question); } }} disabled={busy} rows={2}/></label>
         <button type="submit" disabled={busy || !question.trim()}>{busy ? c("Инженер отвечает…", "Thinking…", "Инженер жауап беруде…") : c("Спросить", "Ask", "Сұрау")}</button>
-      </form>
+      </form></> : <p>{c("Свободный диалог с ИИ не подключён. Четыре темы выше доступны без ключа и оплаты.", "AI chat is not connected. The four topics above need no key or payment.", "ЖИ чаты қосылмаған. Жоғарыдағы төрт тақырып кілтсіз және тегін қолжетімді.")}</p>}
       {error && <p role="alert" className="engineer-error">{error}</p>}
     </section>}
-    <button type="button" className={`engineer-bot${dragging ? " is-dragging" : ""}${busy ? " is-busy" : ""}${open ? " is-open" : ""}`}
+    <button ref={botButton} type="button" className={`engineer-bot${dragging ? " is-dragging" : ""}${busy ? " is-busy" : ""}${open ? " is-open" : ""}`}
       style={{ left: pos.x, top: pos.y }} aria-expanded={open}
       aria-label={`${label}. ${c("Нажми, чтобы спросить; перетащи или стрелками перемести", "Click to ask; drag or use arrow keys to move", "Сұрау үшін бас; сүйреп немесе көрсеткілермен жылжыт")}`}
-      onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp} onKeyDown={onKey}>
+      onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={() => { drag.current = null; setDragging(false); }} onKeyDown={onKey} onClick={e => { if (e.detail === 0) setOpen(o => !o); }}>
       <svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true" focusable="false">
         <line x1="32" y1="8" x2="32" y2="2" stroke="#90bfff" strokeWidth="2.5" strokeLinecap="round"/>
         <circle className="engineer-antenna" cx="32" cy="4" r="3" fill="#6ee7b7"/>

@@ -18,7 +18,6 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { OperationsControl } from "./operations-control";
-import { OnboardEngineer } from "./onboard-engineer";
 import { FlightChanges, FlightLog } from "./flight-changes";
 import { IntervalSummary } from "./interval-summary";
 import { Design } from "@/lib/data";
@@ -152,7 +151,6 @@ export function FlightControl({
         </span>
       </div>
       <FlightChanges before={previousFlight} flight={flight} design={design} />
-      <OnboardEngineer key={flight.id} design={design} flight={flight} />
       <div className="flight-timeline">
         {tx(
           phases.map((p, i) => (

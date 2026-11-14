@@ -52,7 +52,6 @@ import {
 import { ExpeditionShell, useExpeditionCopy } from './expedition-shell';
 import { FlightStageScene } from './flight-stage-scene';
 import { OperationsControl } from './operations-control';
-import { OnboardEngineer } from "./onboard-engineer";
 import { FlightChanges, FlightLog } from './flight-changes';
 import { IntervalSummary } from './interval-summary';
 import { LaunchIntro } from './launch-intro';
@@ -952,7 +951,6 @@ export function IntuitiveBuilder() {
                 )}
 
                 {flight && <FlightChanges before={previousFlight} flight={flight} design={design} />}
-                {flight && <OnboardEngineer key={flight.id} design={design} flight={flight} />}
                 {/* Active Flight Console */}
                 {flight && !flight.completed && (
                   <section className="ib-panel">

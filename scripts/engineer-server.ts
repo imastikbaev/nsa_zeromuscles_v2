@@ -16,8 +16,9 @@ createServer(async (req, res) => {
   }
   if (origin) { res.setHeader('Access-Control-Allow-Origin', origin); res.setHeader('Vary', 'Origin'); }
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   if (req.method === 'OPTIONS') { res.writeHead(204).end(); return; }
+  if (req.url === '/health' && req.method === 'GET') { send(200, { available: !!process.env.OPENAI_API_KEY?.trim() }); return; }
   if (req.url !== '/ask' || req.method !== 'POST') { send(404, { error: 'not_found' }); return; }
   if (!process.env.OPENAI_API_KEY) { send(503, { error: 'missing_key' }); return; }
   if (active) { send(429, { error: 'busy' }); return; }
