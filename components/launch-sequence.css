@@ -1,3 +1,18 @@
+.ls-player {
+  width: 100%;
+  color: #f2ece1;
+  background: #02040a;
+  font-family: 'Expedition Geist', sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+.ls-details {
+  position: relative;
+  padding: 10px 16px 12px;
+  border-top: 1px solid #354353;
+  background: #0b1420;
+}
+
 .ls-root {
   position: relative;
   width: 100%;
@@ -260,3 +275,5 @@
 .ls-intro button:focus-visible { outline:2px solid #9bc7ff; outline-offset:3px; }
 .ls-intro>p { font-size:13px; color:#b6c6d6; margin:10px 0 0; }
 @media(max-width:640px){.ls-intro header{flex-wrap:wrap;}.ls-intro h2{font-size:16px;}.ls-intro{padding:10px;}}
+
+@media (max-width: 640px) { .ls-details { padding: 8px 10px 10px; } }

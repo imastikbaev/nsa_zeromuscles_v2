@@ -226,6 +226,7 @@ export function LaunchSequence({
   const labelPhase = phaseIndex === 4 ? c("Предпросмотр завершён", "Preview complete", "Алдын ала көру аяқталды") : t(phases[phaseIndex]);
 
   return (
+    <div className="ls-player">
     <div className={`ls-root ${threeReady ? "ls-has-3d" : ""}`} role="group" aria-label={c("Кат-сцена запуска", "Launch cinematic", "Ұшыру көрінісі")}>
       <LaunchScene3D viewMode={viewMode} time={time} design={design} onReady={setThreeReady}/>
       <svg
@@ -405,29 +406,6 @@ export function LaunchSequence({
             {c("Предпросмотр завершён", "Preview complete", "Алдын ала көру аяқталды")}
           </div>
         )}
-        <div className="ls-hud-bottom">
-          <div>
-            <span>{c("Нагрузка ракеты", "Rocket load", "Зымыран жүктемесі")}</span>
-            <strong>
-              {(load * 100).toFixed(0)}% · {t(m.launcher.name)}
-            </strong>
-          </div>
-          <div>
-            <span>{c("Масса аппарата", "Spacecraft mass", "Аппарат массасы")}</span>
-            <strong>{m.mass.toFixed(0)}{t(" kg")}</strong>
-          </div>
-          <div>
-            <span>{c("Солнечные панели", "Solar panels", "Күн панельдері")}</span>
-            <strong>{design.panels}{t(" m²")}</strong>
-          </div>
-        </div>
-        <p className="ls-note">
-          {c(
-            "Постановочная кат-сцена. Время сжато, ресурсы миссии не меняются.",
-            "Scripted cinematic. Time is compressed; mission resources are unchanged.",
-            "Алдын ала көру. Миссия кезеңін, уақытын немесе ресурстарын өзгертпейді.",
-          )}
-        </p>
       </div>
 
       {showControls && threeReady && <label className="ls-camera-control">
@@ -457,6 +435,32 @@ export function LaunchSequence({
           )}
         </div>
       )}
+    </div>
+    <div className="ls-details">
+        <div className="ls-hud-bottom">
+          <div>
+            <span>{c("Нагрузка ракеты", "Rocket load", "Зымыран жүктемесі")}</span>
+            <strong>
+              {(load * 100).toFixed(0)}% · {t(m.launcher.name)}
+            </strong>
+          </div>
+          <div>
+            <span>{c("Масса аппарата", "Spacecraft mass", "Аппарат массасы")}</span>
+            <strong>{m.mass.toFixed(0)}{t(" kg")}</strong>
+          </div>
+          <div>
+            <span>{c("Солнечные панели", "Solar panels", "Күн панельдері")}</span>
+            <strong>{design.panels}{t(" m²")}</strong>
+          </div>
+        </div>
+        <p className="ls-note">
+          {c(
+            "Постановочная кат-сцена. Время сжато, ресурсы миссии не меняются.",
+            "Scripted cinematic. Time is compressed; mission resources are unchanged.",
+            "Алдын ала көру. Миссия кезеңін, уақытын немесе ресурстарын өзгертпейді.",
+          )}
+        </p>
+    </div>
     </div>
   );
 }
