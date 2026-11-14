@@ -21,6 +21,7 @@ export interface Choice {
   risk: number;
   fuel: number;
   power?: number;
+  dutyMultiplier?: number;
 }
 export interface MissionEvent {
   id: string;
@@ -105,7 +106,8 @@ export const events: MissionEvent[] = [
     choices: [
       {
         label: "Reduce instrument duty cycle",
-        description: "−7 science · preserve battery health",
+        description: "−7 science · halve current instrument duty cycle",
+        dutyMultiplier: 0.5,
         science: -7,
         damage: 0,
         risk: 0,
@@ -527,6 +529,9 @@ export function resolveEvent(
         },
       ],
       health,
+      operations: f.operations && choice.dutyMultiplier !== undefined
+        ? { ...f.operations, duty: f.operations.duty * choice.dutyMultiplier }
+        : f.operations,
       scienceDelta: f.scienceDelta + choice.science,
       fuel: f.fuel - choice.fuel,
       powerDelta: f.powerDelta + (hit ? (choice.power ?? 0) : 0),

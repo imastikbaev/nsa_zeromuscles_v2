@@ -185,7 +185,7 @@ export default function LaunchScene3D({ time, design, onReady, viewMode = "cinem
       (scene.background as THREE.Color).copy(sky).lerp(night,orbit?1:ease((time-5)/7));
       if(!orbit) {
         rocket.position.set(climb*7,climb*70,0);
-        rocket.rotation.z=-climb*.22;
+        rocket.rotation.set(0,0,-climb*.22);
         const separation=ease((time-9.5)/2.5);
         booster.position.set(-separation*2,-separation*10,0);booster.rotation.z=-separation*.22;
         flame.visible=flameCore.visible=time>=3&&time<9.5;
@@ -209,7 +209,7 @@ export default function LaunchScene3D({ time, design, onReady, viewMode = "cinem
       } else {
         exhaustLight.intensity=0;
         const reveal=ease((time-18)/3);
-        rocket.position.set(7,70,0);rocket.rotation.z=-.22-.65*ease((time-12)/8);
+        rocket.position.set(7,70,0);rocket.rotation.set(0,0,-.22-.65*ease((time-12)/8));
         booster.position.set(-2-(time-12)*.7,-10-(time-12)*4,0);booster.rotation.z=-.22-(time-12)*.1;
         flame.visible=flameCore.visible=false;
         craft.position.set(0,9.95+reveal*3,0);

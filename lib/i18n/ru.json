@@ -180,7 +180,7 @@
   "Battery capacity falling": "Ёмкость аккумулятора снижается",
   "Repeated charge cycles have reduced the energy reserve. Choose how to manage the next eclipse.": "Повторные циклы зарядки уменьшили запас энергии. Выберите режим работы на следующий период затенения.",
   "Reduce instrument duty cycle": "Снизить интенсивность работы приборов",
-  "−7 science · preserve battery health": "−7 научных баллов · сохранение аккумулятора",
+  "−7 science · halve current instrument duty cycle": "−7 научных баллов · текущая активность приборов снижается вдвое",
   "Deep-cycle the battery": "Провести глубокий цикл аккумулятора",
   "+3 science · 35% battery damage risk": "+3 научных балла · риск повреждения аккумулятора 35%",
   "Warm and recalibrate": "Прогреть и откалибровать",
