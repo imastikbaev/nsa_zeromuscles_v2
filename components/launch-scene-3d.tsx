@@ -12,7 +12,7 @@ const ease = (v: number) => { const x = Math.max(0, Math.min(1, v)); return x * 
 
 /** A cinematic only: this component never reads or writes mission checkpoints. */
 export default function LaunchScene3D({ time, design, onReady, viewMode = "cinematic" }: {
-  time: number; design: Design; viewMode?: "cinematic" | "vehicle" | "engines" | "spaceport"; onReady: (ready: boolean) => void;
+  time: number; design: Design; viewMode?: "cinematic" | "vehicle" | "engines" | "spaceport"; onReady: (ready: boolean | null) => void;
 }) {
   const host = useRef<HTMLDivElement>(null);
   const draw = useRef<((time: number) => void) | null>(null);
@@ -26,11 +26,12 @@ export default function LaunchScene3D({ time, design, onReady, viewMode = "cinem
     const container = host.current;
     if (!container) return;
     let renderer: THREE.WebGLRenderer;
-    onReady(false);
+    onReady(null);
     try {
       renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "low-power" });
     } catch {
-      return; // The SVG remains visible if WebGL is unavailable.
+      onReady(false);
+      return; // Use the SVG only when WebGL is actually unavailable.
     }
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.outputColorSpace = THREE.SRGBColorSpace;

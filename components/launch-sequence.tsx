@@ -115,7 +115,8 @@ export function LaunchSequence({
   const m = useMemo(() => calculate(design), [design]);
   const stars = useMemo(() => makeStars(90), []);
   const [time, setTime] = useState(0);
-  const [threeReady, setThreeReady] = useState(false);
+  // null: loading; false: WebGL failed; true: the first 3D frame was rendered.
+  const [threeReady, setThreeReady] = useState<boolean | null>(null);
   const [viewMode, setViewMode] = useState<"cinematic" | "vehicle" | "engines" | "spaceport">("cinematic");
   const [playing, setPlaying] = useState(false);
   const finished = useRef(false);
@@ -138,7 +139,7 @@ export function LaunchSequence({
   }, [autoPlay]);
 
   useEffect(() => {
-    if (!playing) return;
+    if (!playing || threeReady === null) return;
     let raf = 0;
     let last = performance.now();
     const tick = (now: number) => {
@@ -149,7 +150,7 @@ export function LaunchSequence({
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [playing]);
+  }, [playing, threeReady]);
 
   useEffect(() => {
     if (time >= LAUNCH_DURATION) {
@@ -229,9 +230,12 @@ export function LaunchSequence({
     <div className="ls-player">
     <div className={`ls-root ${threeReady ? "ls-has-3d" : ""}`} role="group" aria-label={c("Кат-сцена запуска", "Launch cinematic", "Ұшыру көрінісі")}>
       <LaunchScene3D viewMode={viewMode} time={time} design={design} onReady={setThreeReady}/>
-      <svg
+      {threeReady === null && <div className="ls-loading" role="status">
+        {c("Подготовка запуска…", "Preparing launch…", "Ұшыруға дайындық…")}
+      </div>}
+      {threeReady === false && <svg
         className="ls-svg"
-        aria-hidden={threeReady}
+        aria-hidden={false}
         viewBox="0 0 800 520"
         role="img"
         aria-label={c(
@@ -385,7 +389,7 @@ export function LaunchSequence({
             </g>
           </g>
         )}
-      </svg>
+      </svg>}
 
       <div className="ls-hud">
         <div className="ls-hud-top">
@@ -396,7 +400,7 @@ export function LaunchSequence({
             {labelPhase}
           </span>
         </div>
-        {countdown > 0 && (
+        {threeReady !== null && countdown > 0 && (
           <div className="ls-countdown" aria-hidden="true">
             {countdown}
           </div>
