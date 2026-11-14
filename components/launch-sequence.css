@@ -1,0 +1,227 @@
+.ls-root {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 800 / 520;
+  max-height: 100%;
+  background: #02040a;
+  overflow: hidden;
+  color: #f2ece1;
+  font-family: 'Expedition Geist', sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+.ls-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.ls-hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 14px 16px;
+}
+
+.ls-hud-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.ls-clock,
+.ls-phase {
+  padding: 4px 9px;
+  background: rgba(2, 4, 10, 0.72);
+  border: 1px solid rgba(242, 236, 225, 0.5);
+}
+
+.ls-phase {
+  background: #d62828;
+  border-color: #d62828;
+  color: #fff;
+}
+
+.ls-countdown {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: clamp(72px, 16vw, 160px);
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.55);
+}
+
+.ls-banner {
+  align-self: center;
+  margin-top: 8px;
+  padding: 8px 18px;
+  background: #f2ece1;
+  color: #141311;
+  border: 2px solid #141311;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.ls-hud-bottom {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  background: rgba(242, 236, 225, 0.4);
+  border: 1px solid rgba(242, 236, 225, 0.4);
+}
+
+.ls-hud-bottom > div {
+  padding: 7px 10px;
+  background: rgba(2, 4, 10, 0.78);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ls-hud-bottom span {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #b8b0a2;
+}
+
+.ls-hud-bottom strong {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 12px;
+}
+
+.ls-note {
+  margin: 6px 0 0;
+  font-size: 10px;
+  color: #b8b0a2;
+  text-align: right;
+}
+
+.ls-controls {
+  position: absolute;
+  top: 48px;
+  right: 16px;
+  display: flex;
+  gap: 8px;
+}
+
+.ls-controls button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  background: #f2ece1;
+  color: #141311;
+  border: 2px solid #141311;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.ls-controls button:hover {
+  background: #fff;
+}
+
+.ls-controls button:focus-visible {
+  outline: 2px solid #d62828;
+  outline-offset: 2px;
+}
+
+/* Full-screen overlay used when a page wants to play the launch before navigating */
+.ls-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  background: #02040a;
+}
+
+.ls-overlay .ls-root {
+  width: min(100vw, calc(100dvh * 800 / 520));
+}
+
+/* Standalone preview page */
+.ls-page {
+  min-height: 100dvh;
+  background: #121110;
+  color: #f2ece1;
+  padding: 24px;
+  font-family: 'Expedition Geist', sans-serif;
+}
+
+.ls-page-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  gap: 20px;
+}
+
+.ls-page h1 {
+  margin: 0;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+
+.ls-page p {
+  margin: 6px 0 0;
+  color: #b8b0a2;
+  max-width: 70ch;
+}
+
+.ls-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 14px;
+  border: 1px solid rgba(242, 236, 225, 0.35);
+}
+
+.ls-options label {
+  display: grid;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ls-options select,
+.ls-options input {
+  background: #1b1917;
+  color: #f2ece1;
+  border: 1px solid rgba(242, 236, 225, 0.5);
+  padding: 6px 8px;
+  font: inherit;
+  font-size: 13px;
+  text-transform: none;
+}
+
+@media (max-width: 640px) {
+  .ls-hud-bottom {
+    grid-template-columns: 1fr;
+  }
+
+  .ls-note {
+    display: none;
+  }
+}

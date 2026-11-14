@@ -27,9 +27,10 @@ createServer(async (req, res) => {
       res.writeHead(403).end();
       return;
     }
-    const data = await readFile(path);
+    const filePath = pathname === "/" || extname(path) ? path : path.replace(/\/$/, "") + ".html";
+    const data = await readFile(filePath);
     res.writeHead(200, {
-      "Content-Type": types[extname(path)] || "application/octet-stream",
+      "Content-Type": types[extname(filePath)] || "application/octet-stream",
       "Cache-Control": path.endsWith("sw.js")
         ? "no-cache"
         : "public, max-age=0",

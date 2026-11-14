@@ -121,7 +121,7 @@ export function TeamPanel({ design, onLoad }: {
    <button className="secondary-button" onClick={disconnect}>{t('Disconnect this tab')}</button>
    {room && <>
     <p>{t('Room code')}: <code>{room.id}</code> · {t('Revision')}: {room.revision}</p>
-    <label>{t('Invitation link')}<input readOnly value={typeof window === 'undefined' ? '' : `${location.origin}/?room=${room.id}`} onFocus={e => e.target.select()}/></label>
+    <label>{t('Invitation link')}<input readOnly value={typeof window === 'undefined' ? '' : `${location.origin}/simulator/?room=${room.id}`} onFocus={e => e.target.select()}/></label>
     <ul>{room.members.map(m => <li key={m.id}>{m.name} — {t(m.role)}</li>)}</ul>
     <p>{t('Shared design')}: {room.design.name} · {calculate(room.design).mass.toFixed(1)} kg · ${calculate(room.design).cost.toFixed(1)}M</p>
     {!room.flight ? <>
