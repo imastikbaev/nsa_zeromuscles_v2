@@ -1,3 +1,4 @@
+import { createOperations, operateInterval, discardBuffered, scienceYield, dataTotals, operationalAdvice, Operations } from "./operations";
 import { recordTelemetry, TelemetrySample } from "./telemetry";
 import { configurationKey } from "./design-identity";
 import { Design, objectives, scenarios } from "./data";
@@ -309,12 +310,14 @@ export interface DecisionRecord {
   risk: number;
 }
 export interface ScoreBreakdown {
+  deliveryMultiplier?: number;
   baseScience: number;
   decisionScience: number;
   healthMultiplier: number;
   contributions: { label: string; points: number; maximum: number }[];
 }
 export interface Flight {
+  operations?: Operations;
   telemetry?: TelemetrySample[];
   id: string;
   phase: number;
@@ -345,6 +348,7 @@ export function createFlight(d: Design, random = Math.random): Flight {
     {
       id: globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${random()}`,
       phase: 0,
+      operations: createOperations(d),
       health: 100,
       scienceDelta: 0,
       fuel: d.fuel - m.fuelNeeded,
@@ -393,6 +397,10 @@ export function advanceFlight(
   random?: () => number,
 ): Flight {
   if (f.completed || f.paused || pendingEvent(f)) return f;
+  if (f.operations) {
+    const hours = f.phase >= 4 ? calculate(d).duration * 30 * 24 / 3 : 1;
+    f = {...f, operations: operateInterval(d, f.operations, f.powerDelta, hours, f.phase >= 4)};
+  }
   const phase = f.phase + 1;
   const m = calculate(d);
   if (phase >= 7)
@@ -440,6 +448,21 @@ export function advanceFlight(
     d,
     phases[phase],
   );
+}
+export function setFlightOperations(f: Flight, patch: { duty?: number; downlink?: boolean; priority?: string | null; disabledInstruments?: string[]; discard?: boolean }): Flight {
+  if (f.paused || f.completed || !f.operations) return f;
+  if (patch.duty !== undefined && (![0, 0.5, 1].includes(patch.duty))) throw new Error("Invalid instrument duty cycle.");
+  if (patch.downlink !== undefined && typeof patch.downlink !== "boolean") throw new Error("Invalid transmitter state.");
+  if (patch.priority !== undefined && patch.priority !== null && !f.operations.data.some(r=>r.id===patch.priority)) throw new Error("Unknown data priority.");
+  if (patch.disabledInstruments !== undefined && (!Array.isArray(patch.disabledInstruments) || patch.disabledInstruments.some(id=>!f.operations!.data.some(r=>r.id===id)) || new Set(patch.disabledInstruments).size!==patch.disabledInstruments.length)) throw new Error("Unknown disabled instrument.");
+  if (patch.discard !== undefined && typeof patch.discard !== "boolean") throw new Error("Invalid discard command.");
+  const o=patch.discard?discardBuffered(f.operations):f.operations;
+  // Whitelist settings: a room command can never overwrite generated telemetry or scores.
+  return { ...f, operations: { ...o,
+    duty:patch.duty??o.duty, downlink:patch.downlink??o.downlink,
+    priority:patch.priority===undefined?o.priority:patch.priority,
+    disabledInstruments:patch.disabledInstruments?[...patch.disabledInstruments]:o.disabledInstruments,
+  } };
 }
 export function responseRisk(
   baseRisk: number,
@@ -506,6 +529,9 @@ export function resolveEvent(
   );
 }
 export interface Result {
+  scoringVersion?: 1 | 2;
+  operations?: Operations;
+  plannedDurationMonths?: number;
   telemetry?: TelemetrySample[];
   configurationKey?: string;
   id: string;
@@ -540,13 +566,14 @@ export function scoreFlight(d: Design, f: Flight): Result {
   const healthFactor = f.health / 100;
   const science = Math.max(
     0,
-    Math.round((m.science + f.scienceDelta) * healthFactor),
+    Math.round((m.science + f.scienceDelta) * healthFactor * (f.operations ? scienceYield(d, f.operations) : 1)),
   );
-  const completed = m.covered.filter(() => f.health >= 35 && science >= 15);
+  const completed = m.covered.filter(id => f.health >= 35 && science >= 15 &&
+    (!f.operations || m.payload.some(p=>p.supports.includes(id) && (f.operations!.data.find(r=>r.id===p.id)?.delivered??0)>0)));
   const completion = completed.length / Math.max(1, d.objectives.length);
   const engineering = clamp(
     40 +
-      Math.min(20, (m.margin / Math.max(1, m.generation)) * 40) +
+      Math.min(20, ((f.operations ? Math.max(0, m.margin + f.powerDelta) : m.margin) / Math.max(1, m.generation)) * 40) +
       Math.min(20, (1 - m.mass / m.massLimit) * 35) +
       Math.min(20, m.payloadFraction),
   );
@@ -597,11 +624,21 @@ export function scoreFlight(d: Design, f: Flight): Result {
     `${m.reliability.toFixed(1)}% design reliability and ${f.health}% remaining health ${failed ? "could not preserve the science mission" : "kept the mission operational"}.`,
     `Engineering efficiency rewards usable power headroom, launch mass headroom, and scientific payload fraction. Budget efficiency rewards money saved against the mission allocation.`,
   ];
+  if (f.operations) {
+    const totals=dataTotals(f.operations);
+    reasons.push(`Operations model v2: ${m.duration.toFixed(1)} planned months; ${(Math.max(0,f.operations.elapsedHours-4)/720).toFixed(1)} simulated science months.`,
+      `Data: ${totals.generated.toFixed(1)} GB generated, ${totals.delivered.toFixed(1)} GB delivered, ${totals.buffered.toFixed(1)} GB buffered, ${totals.lost.toFixed(1)} GB lost.`,
+      `Delivered science × duration multiplier: ${scienceYield(d,f.operations).toFixed(3)}. Unserved energy: ${f.operations.unservedKWh.toFixed(2)} kWh.`,
+      ...operationalAdvice(d,f.operations));
+  }
   if (d.scenario)
     reasons.push(
       `${scenarios.find((s) => s.id === d.scenario)?.name}: ${challengePassed ? "challenge completed" : "challenge target not met"}.`,
     );
   return {
+    scoringVersion: f.operations ? 2 : 1,
+    operations: f.operations,
+    plannedDurationMonths: m.duration,
     id: f.id,
     configurationKey: configurationKey(d),
     telemetry: f.telemetry,
@@ -630,6 +667,7 @@ export function scoreFlight(d: Design, f: Flight): Result {
     challengePassed,
     decisions: f.decisions,
     breakdown: {
+      deliveryMultiplier: f.operations ? scienceYield(d,f.operations) : undefined,
       baseScience: m.science,
       decisionScience: f.scienceDelta,
       healthMultiplier: healthFactor,

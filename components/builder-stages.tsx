@@ -1,4 +1,5 @@
 "use client";
+import { operatingProfile } from "@/lib/orbit-operations";
 import { useI18n } from "./preferences";
 import { useState } from "react";
 import {
@@ -513,6 +514,14 @@ export function TrajectoryStage({
         </div>
         <OrbitView design={d} m={m} />
       </div>
+      <label className="duration-control">{t("Planned mission duration")}
+        <select value={d.durationMonths ?? "catalog"} onChange={e=>onChange({...d,durationMonths:e.target.value==="catalog"?undefined:Number(e.target.value)})}>
+          <option value="catalog">{t("Catalog duration")}</option>
+          {[...new Set([3,6,12,24,36,60,120,...(d.durationMonths?[d.durationMonths]:[])])].sort((a,b)=>a-b).map(n=><option key={n} value={n}>{n} {t("months")}</option>)}
+        </select>
+      </label>
+      <p>{t("Longer missions cost more and age solar panels, but allow more science observations.")}</p>
+      <p>{t("Teaching schedule: observation / eclipse / contact")}: {Math.round(operatingProfile(d.orbit).observation*100)}% / {Math.round(operatingProfile(d.orbit).eclipse*100)}% / {Math.round(operatingProfile(d.orbit).contact*100)}%. {t("Representative cycles, not propagated orbits.")}</p>
       <div className="orbit-properties">
         {tx(
           [

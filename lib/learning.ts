@@ -87,6 +87,7 @@ export function briefIssues(d: Design): string[] {
     issues.push("Keep total mission cost at or below $180M.");
   if (m.mass > climateBrief.mass)
     issues.push("Keep spacecraft mass at or below 850 kg.");
+  if (d.durationMonths !== undefined) issues.push("Use catalog duration for a fair comparison in Climate Watch.");
   const r = d.requirements;
   if (!r || r.massReserve < 10 || r.powerReserve < 20 || r.solarDegradation < 2)
     issues.push(

@@ -159,6 +159,7 @@ export function Records({
             {t(" missions · stored on this device · latest 50 retained")}
           </p>
         </div>
+        <p>{t("Scores from different model versions are not directly comparable.")}</p>
         <div className="record-filters">
           <select
             aria-label={t("Filter records by mode")}
@@ -214,7 +215,7 @@ export function Records({
                             </button>
                             <small>
                               {tx(r.mission)} {t(" · ")}
-                              {tx(r.mode)} {t(" ·")}
+                              {tx(r.mode)} · {t("Scoring model")} v{r.scoringVersion ?? 1} {t(" ·")}
                               {tx(" ")}
                               {tx(
                                 new Date(r.date).toLocaleDateString(localeTag),

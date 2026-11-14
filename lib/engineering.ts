@@ -35,7 +35,7 @@ export function calculate(d: Design) {
       : (scenario?.budget ??
         mission.budget * (d.mode === "challenge" ? 0.82 : 1));
   const duration =
-    mission.duration * orbit.duration * (propulsion.id === "ion" ? 1.35 : 1);
+    d.durationMonths ?? mission.duration * orbit.duration * (propulsion.id === "ion" ? 1.35 : 1);
   // A single auditable ledger drives all mass, cost and operating power totals.
   // Bus cost represents integration; operations and launch are not spacecraft mass.
   const ledger = [
@@ -139,7 +139,7 @@ export function calculate(d: Design) {
   const bandwidth = (comms.bandwidth * antenna.bandwidth) / orbit.distance;
   const data = payload.reduce((n, p) => n + p.data, 0);
   const storage = computer.storage ?? 128;
-  const dataNeed = data * 2; // two orbits of buffered data, GB.
+  const dataNeed = data * 2; // two days at full observation duty, GB.
   const requiredBandwidth = Math.max(0.8, data * 0.12);
   const linkQuality = clamp((bandwidth / requiredBandwidth) * 100);
   // Reliability uses the geometric mean of subsystem survival, launcher reliability,

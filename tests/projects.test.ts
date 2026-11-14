@@ -31,7 +31,7 @@ test("imports reject oversized, malformed, duplicate, unsupported and invalid ch
   const file = JSON.parse(encodeDesign(defaultDesign));
   assert.throws(() => decodeDesign("x".repeat(MAX_IMPORT_BYTES + 1)), /64 KB/);
   assert.throws(() => decodeDesign("{"), /valid JSON/);
-  for (const bad of [null, {}, { ...file, version: 2 }])
+  for (const bad of [null, {}, { ...file, version: 99 }])
     assert.throws(() => decodeDesign(JSON.stringify(bad)), /Unsupported/);
   for (const patch of [
     { fuel: -1 },

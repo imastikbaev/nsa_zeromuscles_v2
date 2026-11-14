@@ -125,6 +125,7 @@ export function ScoreExplanation({
           )),
         )}
       </div>
+      {b.deliveryMultiplier !== undefined && <p>{t("Delivered science × duration")}: {b.deliveryMultiplier.toFixed(3)}×. {t("This factor also multiplies the science equation below.")}</p>}
       <div className="science-equation">
         <div>
           <span>{t("DESIGN SCIENCE")}</span>
@@ -153,13 +154,13 @@ export function ScoreExplanation({
           {t(") ×")}
           {tx(" ")}
           {tx(Math.round(b.healthMultiplier * 100))}
-          {t("% =")}
+          {t("%")}{b.deliveryMultiplier !== undefined && <> × {b.deliveryMultiplier.toFixed(3)}</>} =
           {tx(" ")}
           {tx(
             Math.max(
               0,
               Math.round(
-                (b.baseScience + b.decisionScience) * b.healthMultiplier,
+                (b.baseScience + b.decisionScience) * b.healthMultiplier * (b.deliveryMultiplier ?? 1),
               ),
             ),
           )}

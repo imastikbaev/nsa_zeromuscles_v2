@@ -1,3 +1,4 @@
+import { validOperations } from "./operations";
 import { validTelemetry } from "./telemetry";
 import {
   Design,
@@ -16,6 +17,7 @@ export function validDesign(value: unknown): value is Design {
   if (!value || typeof value !== "object") return false;
   const d = value as Design;
   return (
+    (d.durationMonths === undefined || (Number.isInteger(d.durationMonths) && d.durationMonths >= 1 && d.durationMonths <= 120)) &&
     (d.requirements === undefined ||
       (!!d.requirements &&
         Number.isFinite(d.requirements.massReserve) &&
@@ -64,7 +66,7 @@ export function validDesign(value: unknown): value is Design {
 }
 export const FLIGHT_KEY = "mission-architect:flight:v1";
 export interface FlightCheckpoint {
-  version: 1;
+  version: 1 | 2;
   design: Design;
   flight: Flight;
   savedAt: string;
@@ -77,7 +79,8 @@ export function validCheckpoint(value: unknown): value is FlightCheckpoint {
   if (!value || typeof value !== "object") return false;
   const c = value as FlightCheckpoint;
   if (
-    c.version !== 1 ||
+    ![1, 2].includes(c.version) ||
+    (c.version === 2 && !c.flight?.operations) ||
     !validDesign(c.design) ||
     !c.flight ||
     typeof c.savedAt !== "string" ||
@@ -88,6 +91,7 @@ export function validCheckpoint(value: unknown): value is FlightCheckpoint {
   const maxResolved = Math.min(3, Math.floor(f.phase / 2));
   const minResolved = Math.max(0, Math.ceil(f.phase / 2) - 1);
   return (
+    (f.operations === undefined || validOperations(f.operations, c.design)) &&
     (f.telemetry === undefined || validTelemetry(f.telemetry)) &&
     typeof f.id === "string" &&
     f.id.length > 0 &&
@@ -141,7 +145,7 @@ export function saveFlight(design: Design, flight: Flight): boolean {
     localStorage.setItem(
       FLIGHT_KEY,
       JSON.stringify({
-        version: 1,
+        version: flight.operations ? 2 : 1,
         design,
         flight,
         savedAt: new Date().toISOString(),
@@ -212,7 +216,7 @@ export function saveResult(r: Result): boolean {
   }
 }
 export function downloadReport(result: Result) {
-  const text = `MISSION ARCHITECT — FLIGHT REPORT\n${result.name}\n${result.mission} | ${result.mode} mode\n\nGrade: ${result.grade} | Score: ${result.score}/100\nMission success: ${result.success}%\nScience: ${result.science}\nEngineering efficiency: ${result.engineering}%\nBudget efficiency: ${result.budgetEfficiency}%\nReliability: ${result.reliability.toFixed(1)}%\nObjectives: ${result.objectives.length}/${result.objectiveCount}\nCost: $${result.cost.toFixed(1)}M\nFinal spacecraft mass: ${result.mass.toFixed(1)} kg\nPower margin: ${Math.round(result.powerMargin)} W\nAnomalies survived: ${result.anomalies}\n\n${result.reasons.join("\n\n")}\n\nMISSION LOG\n${result.log.map((l) => `[${l.phase}] ${l.text}`).join("\n")}\n\nFLIGHT RECORDER (phase / label / health % / fuel kg / projected science / nominal power headroom W)\n${result.telemetry?.map((s) => `${s.phase + 1} | ${s.label} | ${s.health.toFixed(1)} | ${s.fuel.toFixed(1)} | ${s.science.toFixed(1)} | ${s.power.toFixed(1)}`).join("\n") ?? "No recorder data in this legacy report."}\n\nEducational simulation. These simplified values are not flight-design predictions.`;
+  const text = `MISSION ARCHITECT — FLIGHT REPORT\n${result.name}\n${result.mission} | ${result.mode} mode\nScoring model: v${result.scoringVersion ?? 1}\n\nGrade: ${result.grade} | Score: ${result.score}/100\nMission success: ${result.success}%\nScience: ${result.science}\nEngineering efficiency: ${result.engineering}%\nBudget efficiency: ${result.budgetEfficiency}%\nReliability: ${result.reliability.toFixed(1)}%\nObjectives: ${result.objectives.length}/${result.objectiveCount}\nCost: $${result.cost.toFixed(1)}M\nFinal spacecraft mass: ${result.mass.toFixed(1)} kg\nPower margin: ${Math.round(result.powerMargin)} W\nAnomalies survived: ${result.anomalies}\n\n${result.reasons.join("\n\n")}\n\nMISSION LOG\n${result.log.map((l) => `[${l.phase}] ${l.text}`).join("\n")}\n\nFLIGHT RECORDER (phase / label / health % / fuel kg / projected science / nominal power headroom W)\n${result.telemetry?.map((s) => `${s.phase + 1} | ${s.label} | ${s.health.toFixed(1)} | ${s.fuel.toFixed(1)} | ${s.science.toFixed(1)} | ${s.power.toFixed(1)}`).join("\n") ?? "No recorder data in this legacy report."}\n\nEducational simulation. These simplified values are not flight-design predictions.`;
   const url = URL.createObjectURL(new Blob([text], { type: "text/plain" }));
   const a = document.createElement("a");
   a.href = url;

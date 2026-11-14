@@ -696,6 +696,7 @@ export const nominalRequirements: EngineeringRequirements = {
   solarDegradation: 0,
 };
 export interface Design {
+  durationMonths?: number;
   requirements?: EngineeringRequirements;
   name: string;
   mission: MissionId;

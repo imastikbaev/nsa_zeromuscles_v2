@@ -14,10 +14,7 @@ import {
 } from "lucide-react";
 import { Design, missions, orbits } from "@/lib/data";
 import { calculate, designForMission } from "@/lib/engineering";
-import {
-  resourceAllocation,
-  demonstrationMassAllocation,
-} from "@/lib/allocation";
+import { resourceAllocation } from "@/lib/allocation";
 import { Project, readProjects } from "@/lib/projects";
 import { ReadinessReview } from "./readiness-review";
 import { useI18n } from "./preferences";
@@ -71,14 +68,8 @@ export function MissionOverview({
   const m = calculate(design),
     check = calculate(draft),
     chart = calculate(synced ? design : snapshot);
-  const bars =
-    metric === "mass"
-      ? demonstrationMassAllocation
-      : resourceAllocation(chart.ledger, metric);
-  const scale =
-    metric === "mass"
-      ? { max: 220, ticks: [200, 150, 100, 50, 0] }
-      : allocationScale(bars.map((b) => b.value));
+  const bars = resourceAllocation(chart.ledger, metric);
+  const scale = allocationScale(bars.map((b) => b.value));
   const total = bars.reduce((sum, b) => sum + b.value, 0);
   const geometry = referenceGeometry[design.orbit];
   const chosen = bars.find((b) => b.group === active) ?? bars[0];
@@ -102,17 +93,11 @@ export function MissionOverview({
     const rows = [
       [
         "Mission",
-        metric === "mass"
-          ? "Demonstration example"
-          : synced
-            ? design.name
-            : snapshot.name,
+        synced ? design.name : snapshot.name,
       ],
       [
         "Source",
-        metric === "mass"
-          ? "Fixed demonstration values; not the current spacecraft mass budget"
-          : "Design estimates, not measured flight telemetry",
+        "Design estimates, not measured flight telemetry",
       ],
       ["Subsystem", metric === "mass" ? "Mass (kg)" : "Operating power (W)"],
       ...bars.map((b) => [b.group, String(b.value)]),
@@ -327,11 +312,7 @@ export function MissionOverview({
             <span className="subtle-status">
               <i className={synced ? "" : "paused-dot"} />
               {t(
-                metric === "mass"
-                  ? "Demonstration example"
-                  : synced
-                    ? "Live estimates"
-                    : "Snapshot",
+                synced ? "Live estimates" : "Snapshot",
               )}
             </span>
           </div>
@@ -416,11 +397,9 @@ export function MissionOverview({
             <span>
               <Radio size={13} />
               {t(
-                metric === "mass"
-                  ? "Demonstration values · not the current design budget"
-                  : "Design estimates · not flight measurements",
+                "Design estimates · not flight measurements",
               )}{" "}
-              {metric === "power" && !synced && <span> / {snapshot.name}</span>}
+              {!synced && <span> / {snapshot.name}</span>}
             </span>
             <button onClick={exportTelemetry}>
               <ArrowDownToLine size={14} />

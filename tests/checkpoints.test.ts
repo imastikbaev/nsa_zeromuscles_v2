@@ -87,7 +87,7 @@ test("corrupt checkpoints are rejected without restoring partial flight data", (
   for (const bad of [
     null,
     {},
-    { ...c, version: 2 },
+    { ...c, version: 99 },
     { ...c, design: {} },
     { ...c, savedAt: "invalid" },
     ...[
@@ -134,7 +134,7 @@ test("score contributions reproduce the grade score and science calculation", ()
     r.science,
     Math.max(
       0,
-      Math.round((b.baseScience + b.decisionScience) * b.healthMultiplier),
+      Math.round((b.baseScience + b.decisionScience) * b.healthMultiplier * (b.deliveryMultiplier ?? 1)),
     ),
   );
   assert.equal(r.decisions?.length, 3);

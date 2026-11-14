@@ -4,6 +4,7 @@ import { Design, nominalRequirements, systems, Category } from "./data";
 // engineering inputs and game rules. It links a flight to the design actually flown.
 export function configurationKey(d: Design): string {
   return JSON.stringify({
+    ...(d.durationMonths !== undefined ? { durationMonths: d.durationMonths } : {}),
     mission: d.mission,
     mode: d.mode,
     scenario: d.scenario,

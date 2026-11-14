@@ -75,7 +75,7 @@ export function reviewDesign(d: Design) {
       unit: "GB",
       direction: "min",
       step: 1,
-      source: "Two catalog science collection cycles",
+      source: "Two days of catalog instrument data at full duty",
     },
   ].map((c) => ({
     ...c,

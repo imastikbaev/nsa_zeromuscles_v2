@@ -1,3 +1,4 @@
+import { scienceYield } from "./operations";
 import type { Design } from "./data";
 import type { Flight } from "./simulation";
 import { calculate } from "./engineering";
@@ -23,7 +24,7 @@ export function sampleFlight(
     label,
     health: f.health,
     fuel: f.fuel,
-    science: Math.max(0, ((m.science + f.scienceDelta) * f.health) / 100),
+    science: Math.max(0, ((m.science + f.scienceDelta) * f.health) / 100 * (f.operations ? scienceYield(d,f.operations) : 1)),
     power: m.margin + f.powerDelta,
   };
 }

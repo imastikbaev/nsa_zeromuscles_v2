@@ -7,3 +7,5 @@ out/
 
 .openai/
 .DS_Store
+
+.local/

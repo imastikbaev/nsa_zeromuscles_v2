@@ -18,6 +18,7 @@ import {
   Copy,
   RotateCcw,
 } from "lucide-react";
+import { OperationsControl } from "./operations-control";
 import { Design } from "@/lib/data";
 import { calculate } from "@/lib/engineering";
 import {
@@ -163,9 +164,9 @@ export function FlightControl({
             ["DRY MASS", `${Math.round(m.dryMass)} kg`],
             [
               "POWER IN / OUT",
-              `${Math.round(m.generation + flight.powerDelta)} / ${m.consumption} W`,
+              `${Math.round(flight.operations?.generationW ?? m.generation + flight.powerDelta)} / ${Math.round(flight.operations?.loadW ?? m.consumption)} W`,
             ],
-            ["STORAGE", `${m.dataNeed} / ${m.storage} GB`],
+            ["STORAGE", `${(flight.operations?.data.reduce((n,r)=>n+r.buffered,0) ?? m.dataNeed).toFixed(1)} / ${m.storage} GB`],
             ["DOWNLINK", `${m.bandwidth.toFixed(1)} Mbps`],
             ["RELIABILITY", `${m.reliability.toFixed(1)}%`],
           ].map(([k, v]) => (
@@ -176,6 +177,7 @@ export function FlightControl({
           )),
         )}
       </div>
+      <OperationsControl design={design} flight={flight} onChange={setFlight} />
       <div className="flight-layout">
         <div>
           <OrbitView design={design} m={m} phase={phases[flight.phase]} />
@@ -350,11 +352,13 @@ export function ResultView({
   onReturn,
   saved = true,
   returnLabel = "Refine your mission",
+  returnDisabled = false,
 }: {
   result: Result;
   onReturn: () => void;
   saved?: boolean;
   returnLabel?: string;
+  returnDisabled?: boolean;
 }) {
   const { t, tx, localeTag } = useI18n();
 
@@ -393,7 +397,7 @@ export function ResultView({
             )}
           </h2>
           <p>
-            {r.name} {t(" · ")}
+            {t("Scoring model")} v{r.scoringVersion ?? 1} · {r.name} {t(" · ")}
             {tx(r.mission)}
           </p>
           <div className="result-badges">
@@ -461,8 +465,7 @@ export function ResultView({
             r.reasons.map((reason, i) => (
               <div className="reason" key={reason}>
                 <span>
-                  {t("0")}
-                  {tx(i + 1)}
+                  {tx(String(i + 1).padStart(2, "0"))}
                 </span>
                 <p>{tx(reason)}</p>
               </div>
@@ -528,7 +531,7 @@ export function ResultView({
           <Copy size={15} />
           {tx(copied ? "Summary copied" : "Copy mission summary")}
         </button>
-        <button className="primary-button" onClick={onReturn}>
+        <button className="primary-button" onClick={onReturn} disabled={returnDisabled}>
           <RotateCcw size={15} /> {tx(returnLabel)}
         </button>
       </div>

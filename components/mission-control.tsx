@@ -1,4 +1,5 @@
 "use client";
+import { TeamPanel } from "./team-panel";
 import { PreferenceControls, useI18n } from "./preferences";
 import { useState, useEffect, useCallback } from "react";
 import {
@@ -721,6 +722,7 @@ export default function MissionControl() {
               )}
             </p>
           )}
+          {view === "builder" && <TeamPanel design={design} onLoad={loadLearningDesign} />}
           {view === "builder" && overview && (
             <MissionOverview
               design={design}

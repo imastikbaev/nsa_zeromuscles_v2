@@ -6219,3 +6219,25 @@ button svg {
     font-size: 9px;
   }
 }
+
+.operations-panel { margin-block: 1.5rem; padding-block: 1rem; border-block: 1px solid var(--border, #8995a5); }
+.operations-panel h3 { margin: 0 0 .75rem; }
+.operations-panel p { max-width: 70ch; line-height: 1.5; }
+.operations-metrics { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1rem; }
+.operations-metrics dt { font-size: .8rem; }
+.operations-metrics dd { margin: .35rem 0 0; font-variant-numeric: tabular-nums; }
+.operations-panel fieldset { display: flex; flex-wrap: wrap; align-items: end; gap: 1rem; border: 0; padding: .75rem 0; min-width: 0; }
+.operations-panel legend { font-weight: 600; }
+.operations-panel label { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; }
+.operations-panel select, .duration-control select { max-width: 100%; padding: .6rem; color: inherit; background: var(--panel, #18202a); border: 1px solid currentColor; }
+.operations-panel fieldset:disabled { opacity: .6; }
+@media (max-width: 600px) { .operations-panel label { width: 100%; } }
+.team-panel { margin: 1rem 0; padding: 1rem; }
+.team-panel summary { cursor: pointer; font-weight: 650; padding-block: .5rem; }
+.team-actions { display:flex; flex-wrap:wrap; align-items:end; gap:.75rem; }
+.team-panel label { display:flex; flex-direction:column; gap:.4rem; min-width:0; }
+.team-panel input { min-width:0; max-width:100%; padding:.65rem; border:1px solid currentColor; color:inherit; background:transparent; }
+.team-panel ul, .team-panel ol { padding-inline-start:1.5rem; }
+.team-flight-controls { border:0; padding:1rem 0; min-width:0; }
+.team-flight-controls > button { margin:.25rem .5rem .25rem 0; }
+.team-flight-controls:disabled { opacity:.7; }

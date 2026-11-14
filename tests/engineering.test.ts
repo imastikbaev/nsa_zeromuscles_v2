@@ -131,7 +131,8 @@ test("complete flight produces bounded and explainable scoring", () => {
 });
 test("damage lowers science and score; loss of spacecraft fails mission", () => {
   const d = copy();
-  const f = { ...createFlight(d), completed: true, phase: 7 };
+  let f = createFlight(d,()=>0.9);
+  while(!f.completed) { const e=pendingEvent(f); f=e?resolveEvent(f,d,e.choices.findIndex(c=>c.fuel<=f.fuel),()=>0.99):advanceFlight(f,d,()=>0); }
   const good = scoreFlight(d, f);
   const bad = scoreFlight(d, { ...f, health: 30 });
   assert(bad.science < good.science);

@@ -15,6 +15,7 @@ export interface Project {
 export function copyDesign(d: Design): Design {
   return {
     name: d.name.trim() || "Untitled mission",
+    ...(d.durationMonths !== undefined ? { durationMonths: d.durationMonths } : {}),
     mission: d.mission,
     mode: d.mode,
     objectives: [...d.objectives],
@@ -52,7 +53,7 @@ function validProjectDesign(value: unknown): value is Design {
 }
 export function encodeDesign(d: Design): string {
   return JSON.stringify(
-    { format: "mission-architect-design", version: 1, design: copyDesign(d) },
+    { format: "mission-architect-design", version: 2, design: copyDesign(d) },
     null,
     2,
   );
@@ -71,10 +72,10 @@ export function decodeDesign(text: string): Design {
   if (
     !value ||
     value.format !== "mission-architect-design" ||
-    value.version !== 1
+    ![1, 2].includes(value.version)
   )
     throw Error(
-      "Unsupported mission file. Use a Mission Architect design export (version 1).",
+      "Unsupported mission file. Use a Mission Architect design export (version 1 or 2).",
     );
   if (!validProjectDesign(value.design))
     throw Error(
