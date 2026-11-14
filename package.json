@@ -12,18 +12,20 @@
     "team": "node --import tsx scripts/team-server.ts"
   },
   "dependencies": {
+    "lucide-react": "^0.468.0",
     "next": "^16.2.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "lucide-react": "^0.468.0"
+    "three": "^0.187.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.2.1",
-    "tailwindcss": "^4.2.1",
-    "typescript": "^5.9.3",
     "@types/node": "^22.10.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "tsx": "^4.21.0"
+    "@types/three": "^0.187.0",
+    "tailwindcss": "^4.2.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
   }
 }

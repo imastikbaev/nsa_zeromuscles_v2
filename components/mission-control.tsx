@@ -334,7 +334,7 @@ export default function MissionControl() {
   };
   const launch = () => {
     if (!m.issues.length) {
-      const next = createFlight(design);
+      const next = { ...createFlight(design), paused: true };
       setReturnView(flightDestination(design));
       saveFlight(design, next);
       setFlight(next);

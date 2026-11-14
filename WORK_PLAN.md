@@ -65,3 +65,49 @@ Merged upstream `f2174a4` into the local manual-flight branch. Both `/builder/` 
 Verification: 75 automated tests pass, including two tutorial-to-debrief checkpoint round-trips. Production build and TypeScript checked. Upstream launch route served HTTP 200 before integration. Browser visual verification remains incomplete: macOS denies Chromium's MachPortRendezvousServer startup. This is not a visual sign-off.
 
 Next product milestone: a real 3D sandbox. Current orbit and launch scenes are SVG illustrations; mission operations use simplified time intervals. First implement a deterministic position/velocity integrator with gravity and thrust, collision/escape checks and fixed simulation steps; test circular orbit stability and fuel consumption. Then add a 3D renderer, camera controls and trajectory preview driven by that state. Finally connect a sandbox scenario (Earth launch/orbit), reset/save/load, time acceleration and resource/event controls. Keep cinematic time separate from mission physics.
+
+## 3D launch cinematic — 2026-11-14
+
+Scope adjusted at the user's request: a scripted launch cutscene, not a new flight physics engine.
+- Updated local branch to upstream `543863a` before implementation.
+- Lazy-loaded Three.js scene shares the existing 24-second preview clock: launch pad, ascent, stage separation, Earth and spacecraft array deployment. Vehicle scale, panel area, antenna and camera follow the design.
+- Shared pause/resume, skip and replay controls; reduced-motion preference displays the final frame. No mission checkpoints, fuel or elapsed mission time are changed.
+- SVG fallback remains available if WebGL initialization or rendering fails. Textures are bundled locally; resize, GPU resources and context-loss cleanup are handled.
+- Removed interpolated altitude/speed/fuel readouts from the cutscene; display actual design parameters instead.
+- Verification: 78 existing tests, TypeScript and production build passed. Additional temporary DOM integration checks passed for controls, completion callbacks, reduced motion, checkpoint isolation, SVG fallback and cleanup.
+- Visual WebGL playback remains unverified because the environment blocks browser startup. DOM checks do not verify rendering quality.
+- PR #1 was not merged: GitHub integration rejected marking the draft ready with `Resource not accessible by integration`.
+
+### Launch centre detail pass
+- Added a fictional spaceport with barrel-roof hangars, mission-control windows and dish, propellant tanks/feed pipes, access roads, service truck, lightning towers and flame trench.
+- Opening camera flies from a campus overview to the launch pad; the tower service arm retracts before liftoff. Portrait framing increases camera distance.
+- Added soft shadows, atmospheric haze, vehicle seams, a ladder and lattice bracing, exhaust illumination and soft smoke sprites. Pixel ratio capped at 2; shadow map capped at 1024.
+- Scene traversal releases geometry/material resources, smoke texture and shadow targets on unmount.
+- Existing tests and DOM cutscene control/fallback checks pass; actual GPU rendering still requires visual verification.
+
+### Detailed vehicle pass
+- Replaced primitive rocket geometry with a fictional multi-stage launch vehicle: continuous lathed fairing, radiused skirt, connected interstage, seven hollow engine bells, an upper-stage nozzle, pipework, cooling rings, servicing ports, fairing latches and instanced fasteners.
+- Authored local 2K body markings plus roughness/bump maps; surface coordinates use physical height to avoid stretched labels. Static booster fittings are batched by material.
+- Added local reflection lighting, animated translucent exhaust, whole-vehicle inspection and engine close-up cameras. Skip/replay return to the cinematic view; inspecting never advances a mission.
+- Blender was attempted but crashed in Metal backend detection before scene loading. Geometry was instead inspected through a CPU-rendered preview of the actual Three.js model. Two review passes corrected an interstage gap, engine-bell spacing and UV stretching.
+- CPU previews are geometry reviews, not screenshots of browser rendering or proof of photorealism. Final WebGL visual quality remains unverified in this environment.
+
+### Environment and hangar pass
+- Replaced the green circular ground primitive with deterministic dry terrain: gravel surface detail, varied mineral colours, level foundations and distant low ridges fading into haze.
+- Rebuilt hangars as hollow shells with shallow curved roofs, sliding door panels, recessed entrances, roof ribs, clerestory glazing, gutters, downpipes, vents, safety bollards and service doors.
+- Added concrete expansion joints and tyre tracks. Moved the main road clear of mission control and added road shoulders and marked parking.
+- Batched static architecture into nine material draws; terrain uses one mesh. All new surface textures are disposed on scene unmount.
+- Added a paused Spaceport camera option. A CPU geometry render was inspected; final browser GPU rendering remains unverified.
+
+### Continuous vehicle and landscape
+- Removed the separate simplified orbital-stage cylinder. The same detailed rocket and upper-stage objects now persist across the atmospheric/space camera transition, with continuous position and attitude at the cut.
+- Split the fairing into two independently ejected shells. The payload is fitted inside the fairing, separates after shell release and unfolds its arrays afterwards; its scale is constant throughout.
+- Added deterministic instanced scrub outside the campus, subtle wind motion tied to preview time, and a distant rocky mountain ridge with extended atmospheric haze.
+- Inspection and replay restore the intact vehicle; instanced GPU resources are released when the scene closes.
+- TypeScript, production build and all 78 existing tests pass. These checks do not constitute visual validation of the GPU animation.
+
+### Launch integration and publication checks
+- New missions automatically show a modal cinematic in the intuitive builder, engineering workspace and first-mission tutorial. Completion, Skip and Escape return to flight control without advancing the saved checkpoint.
+- Restored flights do not replay the launch; the independent preview remains available.
+- Verified with a DOM integration run: launching opens the cinematic, Skip preserves the checkpoint exactly, restoring avoids a second intro, and workspace handoffs still finish a full mission. 78 tests and production build passed.
+- Before publication, remote heads were checked: feature branch `543863a`, main `f2174a4`; local HEAD matched the feature branch and contained main. No new upstream changes required integration.

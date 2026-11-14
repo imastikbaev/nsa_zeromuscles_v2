@@ -31,8 +31,9 @@ export default function LaunchPreview() {
     <div className="ls-page">
       <div className="ls-page-inner">
         <div>
-          <h1>{t("Launch sequence")}</h1>
-          <p>{t(" Every element is driven by the design: launcher size, load vibration, engine plume, fuel gauge, array area and antenna type. ")}</p>
+          <a href="/builder/">← {t("Конструктор миссии")}</a>
+          <h1>{t("3D-кат-сцена запуска")}</h1>
+          <p>{t("Старт, отделение ступени и раскрытие спутника над Землёй. Это постановочная сцена: она не рассчитывает полёт и не изменяет вашу миссию.")}</p>
         </div>
         <div className="ls-options">
           <label>{t(" Destination ")}<select value={mission} onChange={(e) => { setMission(e.target.value as typeof mission); setRun((n) => n + 1); }}>

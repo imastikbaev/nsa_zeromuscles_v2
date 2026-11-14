@@ -52,6 +52,7 @@ import { ExpeditionShell, useExpeditionCopy } from './expedition-shell';
 import { FlightStageScene } from './flight-stage-scene';
 import { OperationsControl } from './operations-control';
 import { IntervalSummary } from './interval-summary';
+import { LaunchIntro } from './launch-intro';
 import { LaunchSequence } from './launch-sequence';
 import { useI18n } from './preferences';
 import './intuitive-builder.css';
@@ -68,6 +69,7 @@ export function IntuitiveBuilder() {
   const [flight, setFlight] = useState<Flight | null>(null);
   const [result, setResult] = useState<Result | null>(null);
   const [showLaunchModal, setShowLaunchModal] = useState(false);
+  const [showLaunchIntro, setShowLaunchIntro] = useState(false);
   const [storageWarning, setStorageWarning] = useState(false);
   const [hydrated, setHydrated] = useState(false);
   const launchDialog = useRef<HTMLDialogElement>(null);
@@ -191,7 +193,8 @@ export function IntuitiveBuilder() {
     setResult(null);
     setStorageWarning(!saveFlight(design, newFlight));
     setStep(3);
-
+    setShowLaunchModal(false);
+    setShowLaunchIntro(true);
   };
 
   const handleNextPhase = () => {
@@ -1210,6 +1213,7 @@ export function IntuitiveBuilder() {
           </aside>
         </div>
 
+        {showLaunchIntro && <LaunchIntro design={design} onDone={() => setShowLaunchIntro(false)}/>}
         {/* Full-Screen Rocket Launch Cinematic Modal */}
         {showLaunchModal && (
           <dialog

@@ -1,4 +1,5 @@
 "use client";
+import { LaunchIntro } from "./launch-intro";
 import { useI18n } from "./preferences";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -58,6 +59,7 @@ export function FlightControl({
   const { t, tx, localeTag, number } = useI18n();
 
   const [flight, setFlight] = useState(() => ({ ...initial, paused: true }));
+  const [showLaunchIntro, setShowLaunchIntro] = useState(!restored && initial.phase === 0 && !initial.completed);
   const [checkpointSaved, setCheckpointSaved] = useState(true);
   const [saved, setSaved] = useState(true);
   const [result, setResult] = useState<Result | null>(null);
@@ -89,6 +91,7 @@ export function FlightControl({
     );
   return (
     <div className="flight-screen">
+      {showLaunchIntro && <LaunchIntro design={design} onDone={() => setShowLaunchIntro(false)}/>}
       <div
         className={`checkpoint-status ${checkpointSaved ? "" : "checkpoint-warning"}`}
         role="status"
