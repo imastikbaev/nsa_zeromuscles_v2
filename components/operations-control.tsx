@@ -23,7 +23,7 @@ export function OperationsControl({ design, flight, onChange }: {
     <div><dt>{t("Delivered data")}</dt><dd>{number(totals.delivered, 2)} GB</dd></div>
     <div><dt>{t("Lost data")}</dt><dd>{number(totals.lost, 2)} GB</dd></div>
    </dl>
-   <fieldset disabled={flight.paused || flight.completed}>
+   <fieldset disabled={flight.completed}>
     <legend>{t("Commands for the next interval")}</legend>
     <label>{t("Instrument duty cycle")}<select value={o.duty} onChange={e => update({ duty: Number(e.target.value) })}>
      <option value={1}>{t("Full observations")}</option><option value={0.5}>{t("Half observations")}</option><option value={0}>{t("Instruments off")}</option>

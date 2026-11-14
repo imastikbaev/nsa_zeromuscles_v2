@@ -1,4 +1,4 @@
-import { validOperations } from "./operations";
+import { validOperations, validIntervalReport } from "./operations";
 import { validTelemetry } from "./telemetry";
 import {
   Design,
@@ -92,6 +92,7 @@ export function validCheckpoint(value: unknown): value is FlightCheckpoint {
   const minResolved = Math.max(0, Math.ceil(f.phase / 2) - 1);
   return (
     (f.operations === undefined || validOperations(f.operations, c.design)) &&
+    (f.lastInterval === undefined || validIntervalReport(f.lastInterval)) &&
     (f.telemetry === undefined || validTelemetry(f.telemetry)) &&
     typeof f.id === "string" &&
     f.id.length > 0 &&
@@ -194,6 +195,7 @@ export function readRecords(): Result[] {
               Array.isArray(x.reasons) &&
               Array.isArray(x.objectives) &&
               Array.isArray(x.log) &&
+              (x.lastInterval === undefined || validIntervalReport(x.lastInterval)) &&
               (x.telemetry === undefined || validTelemetry(x.telemetry)),
           )
           .slice(0, 50)

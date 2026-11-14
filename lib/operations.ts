@@ -87,6 +87,40 @@ export function discardBuffered(state: Operations): Operations {
 export function dataTotals(state: Operations) {
     return state.data.reduce((a, r) => ({ generated: a.generated + r.generated, buffered: a.buffered + r.buffered, delivered: a.delivered + r.delivered, lost: a.lost + r.lost }), { generated: 0, buffered: 0, delivered: 0, lost: 0 });
 }
+export interface IntervalReport {
+    hours: number;
+    scienceActive: boolean;
+    generated: number;
+    delivered: number;
+    lost: number;
+    buffered: number;
+    batteryBefore: number;
+    batteryAfter: number;
+    unservedKWh: number;
+    duty: number;
+    downlink: boolean;
+    disabledCount: number;
+}
+export function intervalReport(before: Operations, after: Operations, scienceActive: boolean): IntervalReport {
+    const a = dataTotals(before), b = dataTotals(after);
+    return {
+        hours: after.elapsedHours - before.elapsedHours, scienceActive,
+        generated: Math.max(0, b.generated - a.generated),
+        delivered: Math.max(0, b.delivered - a.delivered),
+        lost: Math.max(0, b.lost - a.lost), buffered: b.buffered,
+        batteryBefore: before.batteryKWh, batteryAfter: after.batteryKWh,
+        unservedKWh: Math.max(0, after.unservedKWh - before.unservedKWh),
+        duty: before.duty, downlink: before.downlink,
+        disabledCount: before.disabledInstruments?.length ?? 0,
+    };
+}
+export function validIntervalReport(value: unknown): value is IntervalReport {
+    if (!value || typeof value !== 'object') return false;
+    const r = value as IntervalReport;
+    return typeof r.scienceActive === 'boolean' && typeof r.downlink === 'boolean' &&
+        [r.hours, r.generated, r.delivered, r.lost, r.buffered, r.batteryBefore, r.batteryAfter, r.unservedKWh, r.duty, r.disabledCount].every(n => Number.isFinite(n) && n >= 0) &&
+        r.hours > 0 && r.duty <= 1 && Number.isInteger(r.disabledCount);
+}
 export function operateInterval(d: Design, state: Operations, damageW: number, hours: number, scienceActive = true): Operations {
     const m = calculate(d), profile = operatingProfile(d.orbit);
     let o = state;

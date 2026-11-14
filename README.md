@@ -20,7 +20,7 @@ npm run preview
 
 Open http://localhost:3001. Install through the **Install app** button or your browser menu. Safari on iOS: **Share → Add to Home Screen**; Safari on macOS: **File → Add to Dock**. Installation requires HTTPS or localhost. The development server deliberately does not register an offline worker.
 
-After the first successful online production load, the complete app shell and images are cached. Installed or browser-based, the app then opens and runs without a network connection. Updates show an **Update app** button. Browser storage retains the current design and up to 50 completed flight records. Active flights are checkpointed after every phase and response. Reopening the app restores the mission on pause with its resources, decision history, and random-generator state intact. Resume explicitly when ready; reloading cannot reroll a pending event. Completed flights are saved once, then their checkpoint is cleared. Clearing site data removes local saves.
+After the first successful online production load, the complete app shell and images are cached. Installed or browser-based, the app then opens and runs without a network connection. Updates show an **Update app** button. Browser storage retains the current design and up to 50 completed flight records. Active flights are checkpointed after every phase and response. Reopening the app restores the mission on pause with its resources, decision history, and random-generator state intact. Review settings and explicitly calculate the next interval when ready; reloading cannot reroll a pending event. Completed flights are saved once, then their checkpoint is cleared. Clearing site data removes local saves.
 
 ## Engineering workbench
 
@@ -40,7 +40,7 @@ Dark and light themes and English/Russian/Kazakh preferences persist locally. Th
 2. Choose payload instruments, propulsion, power, communications, computer, thermal protection, and antenna. Adjust fuel, battery capacity, and solar area.
 3. Select a compatible launch vehicle and trajectory.
 4. Resolve each critical constraint in the live resource panel, name the mission, and launch.
-5. Respond to three randomly selected mission events. Safe choices protect hardware; riskier choices can gain science. Flight automatically pauses at decisions.
+5. Respond to three randomly selected mission events. Safe choices protect hardware; riskier choices can gain science. Solo flight waits for your confirmation before every interval; resolve pending events before proceeding.
 6. Review the grade, exact weighted score contributions, decision-by-decision science/fuel/damage changes, achieved objectives, and final telemetry. Download a text report or copy a summary. Compare local flight records; click a mission name to reopen its debrief.
 
 Guided mode gives starter advice. Challenge mode tightens budget, mass headroom, delta-v requirements, and event risk. Sandbox removes the budget cap while retaining physical constraints. Five preset challenges provide distinct objectives. An active-challenge card keeps the target and limits visible; mission destination and game mode stay fixed until you leave the challenge. Sandbox flights cannot earn challenge completion. The local advisor is explicitly rule-based, not a remote AI service.
@@ -59,7 +59,7 @@ The activity, notes, and two snapshots persist separately from the working desig
 
 New flights store an engineering-state sample at launch, each phase transition, and each command response. The interactive recorder plots health, reserve propellant, projected science, and nominal power headroom after event damage. Select a sample to inspect its phase and value or follow the latest sample. History persists in checkpoints, completed debriefs, records, and text reports. Old flights remain compatible; resumed legacy flights begin recording from their next transition. These are discrete simulator states, not fabricated continuous sensor readings or collected climate data.
 
-Event commands display the actual reliability- and difficulty-adjusted damage probability used by the simulator. Pausing rejects command resolution in the engine as well as disabling the controls. Reported damage is capped at remaining health.
+Event commands display the actual reliability- and difficulty-adjusted damage probability used by the simulator. Passive engine advancement remains blocked while paused. Solo flight uses explicit commands to calculate one interval or resolve one event, then returns to planning hold. Instrument settings can be edited during that hold without advancing time; completed flights remain immutable. Reported damage is capped at remaining health.
 
 ## Mission library
 
@@ -164,3 +164,12 @@ To edit: **Load shared design** (backs up private work), edit in the normal buil
 - Climate Watch retains catalog duration to keep concept comparisons fair. New control labels have English, Russian and Kazakh translations; existing detailed event/report prose may still fall back to English.
 
 Validation adds energy depletion/recovery, individual instrument controls, conservation of data, overflow/discard, delivered-data scoring, duration import/export, room capacity/conflicts/permissions, server-computed flights and restart restoration. Run `npm test`, `npm run typecheck`, `npm run build`.
+
+
+## Manual flight planning
+
+Solo flight has no automatic timer. Configure instrument duty, enabled instruments and transmission while time is stopped, then select **Calculate next interval**. The screen displays the duration before confirmation: each commissioning step is one hour; each of the three science intervals is one third of the selected campaign. Pending events must be answered before the next interval. Answering an event does not advance the operational clock.
+
+Each calculated interval reports generated, delivered, overflow-lost and remaining data, starting/ending battery charge and cumulative unserved energy for that interval. Explanations identify reduced collection settings, transmitter shutdown, power shortages and overflow. Battery endpoints alone do not indicate whether a shortage occurred during the interval. Manual buffer discard remains visible in the cumulative lost-data counter; it is not labeled as interval overflow. The last interval report survives reloads and is included in the saved debrief. Legacy flights without operational state retain their previous calculations and use manual phase progression.
+
+The asteroid trajectory now resolves its explicit `transfer` operating profile. The tests cover catalog/profile consistency, manual progression, event gating, paused configuration, saved report validation and final interval persistence.
