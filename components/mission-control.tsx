@@ -385,6 +385,7 @@ export default function MissionControl() {
           <span className="top-version">{t("v1.5")}</span>
         </div>
         <div className="topbar-right">
+          <a className="secondary-button" href="/builder/">{t('Animated workspace')}</a>
           <span className="saved">
             <i />{" "}
             {tx(storageOk ? "Saved on this device" : "Storage unavailable")}

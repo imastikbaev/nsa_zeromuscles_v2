@@ -165,8 +165,13 @@ export function LaunchSequence({
 
   function replay() {
     finished.current = false;
-    setTime(0);
-    setPlaying(true);
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setTime(reduce ? LAUNCH_DURATION : 0);
+    setPlaying(!reduce);
+    if (reduce) {
+      finished.current = true;
+      completeRef.current?.();
+    }
   }
   function skip() {
     setTime(LAUNCH_DURATION);

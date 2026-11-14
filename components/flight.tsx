@@ -39,7 +39,7 @@ import {
 } from "@/lib/storage";
 import { TelemetryChart } from "./telemetry-chart";
 import { DecisionImpact, ScoreExplanation } from "./decision-impact";
-import { OrbitView } from "./visuals";
+import { FlightStageScene } from "./flight-stage-scene";
 export function FlightControl({
   design,
   initial,
@@ -176,7 +176,7 @@ export function FlightControl({
       {flight.lastInterval && <IntervalSummary report={flight.lastInterval} />}
       <div className="flight-layout">
         <div>
-          <OrbitView design={design} m={m} phase={phases[flight.phase]} />
+          <FlightStageScene design={design} flight={flight} mode="flight" />
           <div className="flight-metrics">
             {tx(
               [

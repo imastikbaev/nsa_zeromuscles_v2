@@ -1764,6 +1764,10 @@ export const catalog: Record<string, readonly [string, string]> = {
     "ч",
     "сағ"
   ],
+  "Animated workspace": [
+    "Анимированный конструктор",
+    "Анимациялық конструктор"
+  ],
   "Mission operations": [
     "Управление миссией",
     "Миссияны басқару"

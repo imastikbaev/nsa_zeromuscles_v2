@@ -22,3 +22,4 @@ Data remains onboard; delivery depends on contact windows, available power and t
 Scheduled operations completed without energy shortages or storage overflow.	Запланированная работа выполнена без нехватки энергии и переполнения памяти.	Жоспарланған жұмыс энергия тапшылығынсыз және жад толуынсыз орындалды.
 Battery values are interval endpoints; unserved energy includes shortages inside the interval.	Заряд показан на начало и конец интервала; непокрытая потребность учитывает нехватку энергии внутри него.	Заряд аралықтың басы мен соңында көрсетілген; өтелмеген қажеттілік аралық ішіндегі энергия тапшылығын қамтиды.
 hours	ч	сағ
+Animated workspace	Анимированный конструктор	Анимациялық конструктор

@@ -56,3 +56,12 @@ Review dependencies without publishing, regenerate translations, run regression 
 - New files and edits are intentionally uncommitted. Local preview: http://localhost:3001; room service: 127.0.0.1:3002.
 
 Limitations: team rooms are same-computer local prototype; roles assigned in join order, only leader can issue flight commands. Disconnecting a tab does not release its slot. Orbit schedules and power sharing are explicitly educational approximations. Existing detailed event/report prose can still fall back to English; new controls are translated.
+
+
+## Dias animation integration — 2026-11-14
+
+Merged upstream `f2174a4` into the local manual-flight branch. Both `/builder/` and `/simulator/` now use explicit interval commands, shared checkpoints and the animated orbit scene. Tutorial launch goes to the animated builder. The builder freezes hardware during flight, shows interval reports and reports storage failures. Completed checkpoints are retained when report saving fails. Scene CSS is shared independently of builder layout; SVG IDs are per instance. Launch replay respects reduced motion and its modal supports native keyboard focus containment and Escape.
+
+Verification: 75 automated tests pass, including two tutorial-to-debrief checkpoint round-trips. Production build and TypeScript checked. Upstream launch route served HTTP 200 before integration. Browser visual verification remains incomplete: macOS denies Chromium's MachPortRendezvousServer startup. This is not a visual sign-off.
+
+Next product milestone: a real 3D sandbox. Current orbit and launch scenes are SVG illustrations; mission operations use simplified time intervals. First implement a deterministic position/velocity integrator with gravity and thrust, collision/escape checks and fixed simulation steps; test circular orbit stability and fuel consumption. Then add a 3D renderer, camera controls and trajectory preview driven by that state. Finally connect a sandbox scenario (Earth launch/orbit), reset/save/load, time acceleration and resource/event controls. Keep cinematic time separate from mission physics.

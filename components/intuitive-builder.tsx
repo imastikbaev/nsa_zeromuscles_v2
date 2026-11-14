@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   categoryLabels,
   defaultDesign,
@@ -28,11 +28,12 @@ import { calculate } from '@/lib/engineering';
 import { dataTotals } from '@/lib/operations';
 import { operatingProfile } from '@/lib/orbit-operations';
 import {
-  advanceFlight,
+  advanceByCommand,
+  nextIntervalHours,
   createFlight,
   pendingEvent,
   phases,
-  resolveEvent,
+  respondByCommand,
   responseRisk,
   scoreFlight,
   setFlightOperations,
@@ -50,6 +51,7 @@ import {
 } from '@/lib/storage';
 import { ExpeditionShell, useExpeditionCopy } from './expedition-shell';
 import { FlightStageScene } from './flight-stage-scene';
+import { IntervalSummary } from './interval-summary';
 import { LaunchSequence } from './launch-sequence';
 import { useI18n } from './preferences';
 import './intuitive-builder.css';
@@ -66,8 +68,12 @@ export function IntuitiveBuilder() {
   const [flight, setFlight] = useState<Flight | null>(null);
   const [result, setResult] = useState<Result | null>(null);
   const [showLaunchModal, setShowLaunchModal] = useState(false);
-  const [autoAdvance, setAutoAdvance] = useState(false);
+  const [storageWarning, setStorageWarning] = useState(false);
   const [hydrated, setHydrated] = useState(false);
+  const launchDialog = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    if (showLaunchModal && !launchDialog.current?.open) launchDialog.current?.showModal();
+  }, [showLaunchModal]);
 
   // Load saved design / active flight on mount
   useEffect(() => {
@@ -78,10 +84,14 @@ export function IntuitiveBuilder() {
     const checkpoint = readFlight();
     if (checkpoint) {
       setDesign(checkpoint.design);
-      setFlight(checkpoint.flight);
+      setFlight({ ...checkpoint.flight, paused: true });
       setStep(3);
       if (checkpoint.flight.completed) {
-        setResult(scoreFlight(checkpoint.design, checkpoint.flight));
+        const scored = scoreFlight(checkpoint.design, checkpoint.flight);
+        setResult(scored);
+        const saved = saveResult(scored);
+        if (saved) clearFlight();
+        setStorageWarning(!saved);
       }
     }
     setHydrated(true);
@@ -93,37 +103,35 @@ export function IntuitiveBuilder() {
     try {
       localStorage.setItem(DESIGN_KEY, JSON.stringify(design));
     } catch {
-      // ignore storage quota errors
+      setStorageWarning(true);
     }
   }, [design, hydrated]);
 
   const calc = calculate(design);
   const activeEvent = flight ? pendingEvent(flight) : null;
 
-  // Auto-advance flight timer when autoAdvance is enabled and no event is blocking
-  useEffect(() => {
-    if (!flight || flight.completed || activeEvent || !autoAdvance || showLaunchModal) {
-      return;
+  // Both workspaces use the same command-based flight engine and checkpoints.
+  function commitFlight(next: Flight) {
+    setFlight(next);
+    const checkpointSaved = saveFlight(design, next);
+    if (next.completed) {
+      const scored = scoreFlight(design, next);
+      setResult(scored);
+      const resultSaved = saveResult(scored);
+      if (resultSaved) clearFlight();
+      setStorageWarning(!resultSaved);
+    } else {
+      setStorageWarning(!checkpointSaved);
     }
-    const timer = window.setTimeout(() => {
-      const next = advanceFlight(flight, design);
-      setFlight(next);
-      saveFlight(design, next);
-      if (next.completed) {
-        const scored = scoreFlight(design, next);
-        setResult(scored);
-        saveResult(scored);
-        clearFlight();
-      }
-    }, 1800);
-    return () => window.clearTimeout(timer);
-  }, [flight, activeEvent, autoAdvance, showLaunchModal, design]);
+  }
 
   const updateDesign = (patch: Partial<Design>) => {
+    if (flight) return;
     setDesign((prev) => ({ ...prev, ...patch }));
   };
 
   const selectMission = (missionId: MissionId) => {
+    if (flight) return;
     const m = missions.find((item) => item.id === missionId) ?? missions[0];
     const nextLauncher =
       launchers.find(
@@ -143,6 +151,7 @@ export function IntuitiveBuilder() {
   };
 
   const toggleObjective = (objId: string) => {
+    if (flight) return;
     setDesign((prev) => {
       const exists = prev.objectives.includes(objId);
       if (exists && prev.objectives.length <= 1) return prev;
@@ -154,6 +163,7 @@ export function IntuitiveBuilder() {
   };
 
   const toggleInstrument = (instId: string) => {
+    if (flight) return;
     setDesign((prev) => {
       const exists = prev.instruments.includes(instId);
       if (exists) {
@@ -169,16 +179,17 @@ export function IntuitiveBuilder() {
   };
 
   const handleAutoFix = () => {
+    if (flight) return;
     const fixed = autoFix(design);
     setDesign(fixed);
   };
 
   const startTestFlight = (withCinematic = true) => {
-    if (calc.issues.length > 0) return;
-    const newFlight = createFlight(design);
+    if (calc.issues.length > 0 || (flight && !flight.completed)) return;
+    const newFlight = { ...createFlight(design), paused: true };
     setFlight(newFlight);
     setResult(null);
-    saveFlight(design, newFlight);
+    setStorageWarning(!saveFlight(design, newFlight));
     setStep(3);
     if (withCinematic) {
       setShowLaunchModal(true);
@@ -187,35 +198,20 @@ export function IntuitiveBuilder() {
 
   const handleNextPhase = () => {
     if (!flight || flight.completed || activeEvent) return;
-    const next = advanceFlight(flight, design);
-    setFlight(next);
-    saveFlight(design, next);
-    if (next.completed) {
-      const scored = scoreFlight(design, next);
-      setResult(scored);
-      saveResult(scored);
-      clearFlight();
-    }
+    commitFlight(advanceByCommand(flight, design));
   };
 
   const handleResolveChoice = (choiceIdx: number) => {
     if (!flight || !activeEvent) return;
-    const next = resolveEvent(flight, design, choiceIdx);
-    setFlight(next);
-    saveFlight(design, next);
-    if (next.completed) {
-      const scored = scoreFlight(design, next);
-      setResult(scored);
-      saveResult(scored);
-      clearFlight();
-    }
+    commitFlight(respondByCommand(flight, design, choiceIdx));
   };
 
   const handleAbortFlight = () => {
     setFlight(null);
     setResult(null);
-    setAutoAdvance(false);
-    clearFlight();
+    setStep(0);
+    setShowLaunchModal(false);
+    setStorageWarning(!clearFlight());
   };
 
   const stepIssuesCount = (targetStep: 0 | 1 | 2) =>
@@ -288,6 +284,8 @@ export function IntuitiveBuilder() {
           </div>
         </header>
 
+        {storageWarning && <p role="alert">{c('Не удалось сохранить прогресс. Не закрывайте страницу; итоговый отчёт можно скачать.', 'Progress could not be saved. Keep this page open; you can download the final report.', 'Ілгерілеу сақталмады. Бетті жаппаңыз; қорытынды есепті жүктеуге болады.')}</p>}
+        {flight && <p>{c('Конструкция зафиксирована на время полёта. Настройки приборов и связи доступны ниже.', 'The spacecraft design is fixed for this flight. Instrument and downlink controls remain available below.', 'Ұшу кезінде аппарат құрылысы бекітілген. Аспап пен байланыс баптаулары төменде қолжетімді.')}</p>}
         {/* 4-Step Guided Navigation */}
         <nav className="ib-stepper" aria-label={c('Этапы проектирования', 'Design steps', 'Жобалау қадамдары')}>
           {[
@@ -324,6 +322,7 @@ export function IntuitiveBuilder() {
               key={item.idx}
               type="button"
               className={`ib-step-tab ${step === item.idx ? 'is-active' : ''}`}
+              disabled={!!flight && item.idx !== 3}
               onClick={() => setStep(item.idx)}
             >
               <div className="ib-step-tab-left">
@@ -996,8 +995,7 @@ export function IntuitiveBuilder() {
                                 className={`ib-mode-btn ${flight.operations?.duty === val ? 'is-active' : ''}`}
                                 onClick={() => {
                                   const next = setFlightOperations(flight, { duty: val });
-                                  setFlight(next);
-                                  saveFlight(design, next);
+                                  commitFlight(next);
                                 }}
                               >
                                 {val === 1
@@ -1021,8 +1019,7 @@ export function IntuitiveBuilder() {
                               className={`ib-mode-btn ${flight.operations.downlink ? 'is-active' : ''}`}
                               onClick={() => {
                                 const next = setFlightOperations(flight, { downlink: true });
-                                setFlight(next);
-                                saveFlight(design, next);
+                                commitFlight(next);
                               }}
                             >
                               {c('Вкл (Передача в ЦУП)', 'Transmitting', 'Қосулы')}
@@ -1032,8 +1029,7 @@ export function IntuitiveBuilder() {
                               className={`ib-mode-btn ${!flight.operations.downlink ? 'is-active' : ''}`}
                               onClick={() => {
                                 const next = setFlightOperations(flight, { downlink: false });
-                                setFlight(next);
-                                saveFlight(design, next);
+                                commitFlight(next);
                               }}
                             >
                               {c('Выкл (Экономия энергии)', 'Standby (Save Power)', 'Өшірулі')}
@@ -1042,6 +1038,10 @@ export function IntuitiveBuilder() {
                         </div>
                       </div>
                     )}
+
+                    <p>{t('Time advances only when you confirm. Adjust instruments and transmission before continuing.')}</p>
+                    <p><strong>{t('Next interval duration')}: </strong>{nextIntervalHours(flight, design)} {t('hours')}</p>
+                    {flight.lastInterval && <IntervalSummary report={flight.lastInterval} />}
 
                     {/* Flight Log */}
                     <div className="ib-check-list">
@@ -1056,18 +1056,9 @@ export function IntuitiveBuilder() {
 
                     <div className="ib-step-footer">
                       <button type="button" className="ib-secondary-btn" onClick={handleAbortFlight}>
-                        {c('Вернуться к настройке спутника', 'Return to Spacecraft Design', 'Конструкторға оралу')}
+                        {c('Завершить текущий полёт и изменить аппарат', 'End this flight and edit spacecraft', 'Ұшуды аяқтап, аппаратты өзгерту')}
                       </button>
                       <div className="ib-header-controls">
-                        <button
-                          type="button"
-                          className="ib-secondary-btn"
-                          onClick={() => setAutoAdvance((v) => !v)}
-                        >
-                          {autoAdvance
-                            ? c('⏸ Пауза авто-полёта', '⏸ Pause Auto-Step', '⏸ Авто-ұшуды кідірту')
-                            : c('▶ Авто-прохождение', '▶ Auto-Advance', '▶ Авто-жылжу')}
-                        </button>
                         <button
                           type="button"
                           className="ib-primary-btn"
@@ -1076,7 +1067,7 @@ export function IntuitiveBuilder() {
                         >
                           {activeEvent
                             ? c('Примите решение выше ↑', 'Resolve Event Above ↑', 'Жоғарыда шешім қабылдаңыз ↑')
-                            : c('Следующий этап полёта →', 'Advance Flight Phase →', 'Келесі ұшу кезеңі →')}
+                            : t('Calculate next interval')}
                         </button>
                       </div>
                     </div>
@@ -1107,6 +1098,7 @@ export function IntuitiveBuilder() {
                       <div className="ib-grade-pill">{result.grade}</div>
                     </div>
 
+                    {result.lastInterval && <IntervalSummary report={result.lastInterval} />}
                     {opsTotals && (
                       <div className="ib-meter-list" style={{ marginBottom: 18 }}>
                         <div className="ib-meter">
@@ -1293,10 +1285,10 @@ export function IntuitiveBuilder() {
 
         {/* Full-Screen Rocket Launch Cinematic Modal */}
         {showLaunchModal && (
-          <div
+          <dialog
+            ref={launchDialog}
             className="ib-modal-backdrop"
-            role="dialog"
-            aria-modal="true"
+            onCancel={(event) => { event.preventDefault(); setShowLaunchModal(false); }}
             aria-label={c('Анимация запуска ракеты и выведения на орбиту', 'Rocket Launch & Orbit Insertion Animation', 'Зымыран стартының анимациясы')}
           >
             <div className="ib-modal-box">
@@ -1323,7 +1315,7 @@ export function IntuitiveBuilder() {
                 }}
               />
             </div>
-          </div>
+          </dialog>
         )}
       </main>
     </ExpeditionShell>

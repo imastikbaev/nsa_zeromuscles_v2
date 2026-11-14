@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import './flight-stage-scene.css';
+import { useEffect, useId, useMemo, useState } from 'react';
 import {
   instruments as instrumentCatalog,
   launchers,
@@ -90,7 +91,8 @@ export function FlightStageScene({
   onOpenLaunchCinematic,
 }: Props) {
   const c = useExpeditionCopy();
-  const calc = calculate(design);
+  const uid = useId().replace(/:/g, '');
+  const calc = useMemo(() => calculate(design), [design]);
   const orbit = orbits.find((o) => o.id === design.orbit) ?? orbits[0];
   const launcher = launchers.find((l) => l.id === design.launcher) ?? launchers[0];
   const prop =
@@ -259,16 +261,16 @@ export function FlightStageScene({
           )}
         >
           <defs>
-            <radialGradient id="fssBodyGrad" cx="35%" cy="30%" r="70%">
+            <radialGradient id={`${uid}-fssBodyGrad`} cx="35%" cy="30%" r="70%">
               <stop offset="0%" stopColor={palette.rim} />
               <stop offset="65%" stopColor={palette.core} />
               <stop offset="100%" stopColor="#070c16" />
             </radialGradient>
-            <linearGradient id="fssEclipseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <linearGradient id={`${uid}-fssEclipseGrad`} x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="rgba(4, 8, 16, 0.05)" />
               <stop offset="100%" stopColor="rgba(4, 8, 16, 0.82)" />
             </linearGradient>
-            <linearGradient id="fssScanGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <linearGradient id={`${uid}-fssScanGrad`} x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="rgba(144, 191, 255, 0.48)" />
               <stop offset="100%" stopColor="rgba(144, 191, 255, 0.0)" />
             </linearGradient>
@@ -311,7 +313,7 @@ export function FlightStageScene({
           {/* Eclipse Shadow Zone Behind Target Body */}
           <path
             d={`M ${cx + 42} ${cy - 48} L 705 ${cy - 125} L 705 ${cy + 145} L ${cx + 32} ${cy + 58} Z`}
-            fill="url(#fssEclipseGrad)"
+            fill={`url(#${uid}-fssEclipseGrad)`}
           />
           <text x="548" y="96" fill="#9fb2cc" fontSize="11">
             ☾ {c('Тень (питание от АКБ)', 'Eclipse Shadow (Battery)', 'Көлеңке аймағы')}
@@ -363,7 +365,7 @@ export function FlightStageScene({
           {/* Central Destination Body */}
           <g transform={`translate(${cx}, ${cy})`}>
             <circle r="70" fill={palette.atmo} />
-            <circle r="56" fill="url(#fssBodyGrad)" />
+            <circle r="56" fill={`url(#${uid}-fssBodyGrad)`} />
             <circle cx="-18" cy="-14" r="11" fill={palette.crater} opacity="0.45" />
             <circle cx="16" cy="18" r="15" fill={palette.crater} opacity="0.38" />
             <circle cx="22" cy="-16" r="7" fill={palette.crater} opacity="0.35" />
@@ -419,7 +421,7 @@ export function FlightStageScene({
               <g>
                 <polygon
                   points={`${craftX},${craftY} ${cx - 24},${cy - 18} ${cx + 24},${cy + 18}`}
-                  fill="url(#fssScanGrad)"
+                  fill={`url(#${uid}-fssScanGrad)`}
                 />
                 <line
                   x1={craftX}
@@ -627,6 +629,7 @@ export function FlightStageScene({
         </div>
       </div>
 
+      <p className="fss-note">{c('Схема движения и окон связи условная. Время миссии и ресурсы пересчитываются только по команде.', 'Motion and contact windows are schematic. Mission time and resources advance only on command.', 'Қозғалыс пен байланыс терезелері шартты. Миссия уақыты мен ресурстары тек команда бойынша есептеледі.')}</p>
       {/* Flight Phase Progress Bar when in Flight Mode */}
       {mode === 'flight' && flight && (
         <div className="fss-phase-track" role="list" aria-label={c('Этапы полёта', 'Flight phases', 'Ұшу кезеңдері')}>
