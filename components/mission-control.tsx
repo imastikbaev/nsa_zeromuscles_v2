@@ -275,6 +275,7 @@ export default function MissionControl() {
   );
   const [view, setView] = useState("builder");
   const [ready, setReady] = useState(false);
+  const [teamOpen, setTeamOpen] = useState(false);
   const [records, setRecords] = useState<Result[]>([]);
   const [flight, setFlight] = useState<Flight | null>(null);
   const [advisor, setAdvisor] = useState(false);
@@ -282,6 +283,7 @@ export default function MissionControl() {
   const [restoredFlight, setRestoredFlight] = useState(false);
   const [returnView, setReturnView] = useState<"lab" | "builder">("builder");
   useEffect(() => {
+    setTeamOpen(new URLSearchParams(window.location.search).has("room"));
     const saved = readDesign();
     if (saved) setDesign(saved);
     const checkpoint = readFlight();
@@ -722,7 +724,7 @@ export default function MissionControl() {
               )}
             </p>
           )}
-          {view === "builder" && <TeamPanel design={design} onLoad={loadLearningDesign} />}
+          {view === "builder" && <details className="team-disclosure" open={teamOpen} onToggle={e => setTeamOpen(e.currentTarget.open)}><summary>{t("Local team room")}</summary><TeamPanel design={design} onLoad={loadLearningDesign} /></details>}
           {view === "builder" && overview && (
             <MissionOverview
               design={design}

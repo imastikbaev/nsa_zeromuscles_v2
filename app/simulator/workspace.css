@@ -1,0 +1,16 @@
+/* The full workbench shares the expedition's quieter typography and signal palette. */
+.mission-workspace{--accent:#90bfff;--orange:#90bfff;--blue:#90bfff;--bg:#080d16;--panel:#101b2a;--panel-2:#142236;--line:#2b394d}
+.mission-workspace .topbar{height:76px;padding-inline:24px;border-bottom-color:#29374a}
+.mission-workspace .top-version,.mission-workspace .top-pill{display:none}
+.mission-workspace .brand{font-size:14px;min-width:220px}
+.mission-workspace .brand small{font-size:8px;letter-spacing:1px}
+.mission-workspace .sidebar{padding-top:24px}
+.mission-workspace .rail-brand{display:none}
+.mission-workspace .nav-item{font-size:13px;padding-block:13px}
+.mission-workspace .primary-button{background:#9bc7ff;color:#102139;border-radius:6px}
+.mission-workspace .secondary-button{border-radius:6px}
+.mission-workspace .team-disclosure{margin:0 0 22px;border:1px solid var(--line);border-radius:8px}
+.mission-workspace .team-disclosure>summary{cursor:pointer;padding:14px 18px;font-size:14px;color:var(--muted)}
+.mission-workspace .team-disclosure[open]>summary{color:var(--text);border-bottom:1px solid var(--line)}
+.mission-workspace .team-disclosure .team-panel{margin:0;border:0}
+@media(max-width:700px){.mission-workspace .topbar{height:auto;min-height:76px;padding:14px}.mission-workspace .brand{min-width:0}.mission-workspace .brand small{display:none}}

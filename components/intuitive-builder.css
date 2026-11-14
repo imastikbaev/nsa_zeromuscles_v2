@@ -1,0 +1,780 @@
+/* Intuitive Builder & Flight Console — Expedition Aesthetic */
+
+.ib-main {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 28px 24px 72px;
+  color: #e8eef8;
+  font-family: 'Expedition Geist', sans-serif;
+}
+
+.ib-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(155, 199, 255, 0.14);
+  margin-bottom: 28px;
+}
+
+.ib-title-block h1 {
+  margin: 0 0 8px;
+  font-size: clamp(1.65rem, 2.8vw, 2.25rem);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  color: #f4f8ff;
+}
+
+.ib-title-block p {
+  margin: 0;
+  color: #9cb0cc;
+  font-size: 0.98rem;
+  max-width: 64ch;
+  line-height: 1.5;
+}
+
+.ib-header-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Novice / Expert Mode Switcher */
+.ib-mode-switch {
+  display: inline-flex;
+  background: #0d1624;
+  border: 1px solid rgba(155, 199, 255, 0.2);
+  border-radius: 10px;
+  padding: 4px;
+  gap: 4px;
+}
+
+.ib-mode-btn {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  color: #9cb0cc;
+  padding: 8px 14px;
+  border-radius: 7px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.ib-mode-btn:hover {
+  color: #f0f6ff;
+}
+
+.ib-mode-btn.is-active {
+  background: #1b2e4b;
+  color: #90bfff;
+}
+
+.ib-autofix-btn,
+.ib-primary-btn,
+.ib-secondary-btn {
+  appearance: none;
+  border-radius: 9px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 10px 16px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.ib-primary-btn {
+  background: #90bfff;
+  color: #08111f;
+  border: 1px solid #90bfff;
+}
+
+.ib-primary-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  opacity: 0.94;
+}
+
+.ib-primary-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.ib-autofix-btn {
+  background: rgba(110, 231, 183, 0.14);
+  color: #6ee7b7;
+  border: 1px solid rgba(110, 231, 183, 0.38);
+}
+
+.ib-autofix-btn:hover {
+  transform: translateY(-1px);
+}
+
+.ib-secondary-btn {
+  background: #101b2a;
+  color: #d6e4f9;
+  border: 1px solid rgba(155, 199, 255, 0.22);
+}
+
+.ib-secondary-btn:hover {
+  border-color: rgba(155, 199, 255, 0.48);
+}
+
+/* Step Navigation Bar */
+.ib-stepper {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.ib-step-tab {
+  appearance: none;
+  text-align: left;
+  background: #0e1826;
+  border: 1px solid rgba(155, 199, 255, 0.14);
+  border-radius: 12px;
+  padding: 14px 16px;
+  color: #9cb0cc;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.ib-step-tab:hover {
+  border-color: rgba(155, 199, 255, 0.34);
+  color: #e8eef8;
+}
+
+.ib-step-tab.is-active {
+  background: #142236;
+  border-color: #90bfff;
+  color: #f4f8ff;
+}
+
+.ib-step-tab-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ib-step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-grid;
+  place-items: center;
+  font-size: 0.82rem;
+  font-weight: 700;
+  background: rgba(144, 191, 255, 0.14);
+  color: #90bfff;
+  flex-shrink: 0;
+}
+
+.ib-step-tab.is-active .ib-step-num {
+  background: #90bfff;
+  color: #08111f;
+}
+
+.ib-step-label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ib-step-label strong {
+  font-size: 0.94rem;
+  color: inherit;
+}
+
+.ib-step-label span {
+  font-size: 0.78rem;
+  color: #7e95b4;
+}
+
+.ib-step-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+.ib-step-badge.is-ok {
+  background: rgba(110, 231, 183, 0.14);
+  color: #6ee7b7;
+}
+
+.ib-step-badge.is-warn {
+  background: rgba(251, 191, 36, 0.16);
+  color: #fbbf24;
+}
+
+/* Main Two-Column Workspace */
+.ib-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1.18fr) minmax(360px, 0.82fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.ib-panel {
+  background: #101b2a;
+  border: 1px solid rgba(155, 199, 255, 0.14);
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.ib-panel h2 {
+  margin: 0 0 6px;
+  font-size: 1.25rem;
+  font-weight: 650;
+  color: #f4f8ff;
+}
+
+.ib-panel > p {
+  margin: 0 0 20px;
+  color: #9cb0cc;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+/* Mission Name Input Row */
+.ib-field-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.ib-field {
+  flex: 1 1 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ib-field label {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #b8cae2;
+}
+
+.ib-input,
+.ib-select {
+  background: #09111c;
+  border: 1px solid rgba(155, 199, 255, 0.22);
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: #f4f8ff;
+  font-size: 0.94rem;
+  font-family: inherit;
+}
+
+.ib-input:focus,
+.ib-select:focus {
+  outline: 2px solid #90bfff;
+  outline-offset: 1px;
+}
+
+/* Cards Grid for Destinations, Instruments, Launchers, Orbits */
+.ib-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 14px;
+}
+
+.ib-choice-card {
+  appearance: none;
+  text-align: left;
+  background: #0b1320;
+  border: 1px solid rgba(155, 199, 255, 0.15);
+  border-radius: 12px;
+  padding: 16px;
+  color: #e8eef8;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.ib-choice-card:hover {
+  border-color: rgba(155, 199, 255, 0.42);
+  transform: translateY(-1px);
+}
+
+.ib-choice-card.is-selected {
+  background: #14243a;
+  border-color: #90bfff;
+}
+
+.ib-choice-card h3 {
+  margin: 0 0 4px;
+  font-size: 1rem;
+  font-weight: 650;
+  color: #f4f8ff;
+}
+
+.ib-choice-card p {
+  margin: 0;
+  font-size: 0.84rem;
+  color: #9cb0cc;
+  line-height: 1.45;
+}
+
+.ib-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ib-chip {
+  font-size: 0.75rem;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(144, 191, 255, 0.1);
+  color: #b9d3f8;
+  font-variant-numeric: tabular-nums;
+}
+
+.ib-chip.is-accent {
+  background: rgba(144, 191, 255, 0.22);
+  color: #90bfff;
+  font-weight: 600;
+}
+
+.ib-chip.is-good {
+  background: rgba(110, 231, 183, 0.14);
+  color: #6ee7b7;
+}
+
+.ib-chip.is-warn {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+}
+
+/* Sliders Section */
+.ib-slider-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.ib-slider-box {
+  background: #0b1320;
+  border: 1px solid rgba(155, 199, 255, 0.14);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.ib-slider-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+  font-size: 0.88rem;
+}
+
+.ib-slider-top strong {
+  color: #90bfff;
+  font-variant-numeric: tabular-nums;
+}
+
+.ib-slider-box input[type='range'] {
+  width: 100%;
+  accent-color: #90bfff;
+  cursor: pointer;
+}
+
+.ib-slider-hint {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+  font-size: 0.78rem;
+  color: #8298b5;
+}
+
+.ib-inline-link {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  color: #90bfff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Sticky Right Sidebar */
+.ib-sidebar {
+  position: sticky;
+  top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Resource Meters Card */
+.ib-meters-card {
+  background: #101b2a;
+  border: 1px solid rgba(155, 199, 255, 0.14);
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.ib-meters-card h2 {
+  margin: 0 0 14px;
+  font-size: 1.05rem;
+  font-weight: 650;
+  color: #f4f8ff;
+}
+
+.ib-meter-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.ib-meter {
+  background: #0b1320;
+  border: 1px solid rgba(155, 199, 255, 0.12);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.ib-meter-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: #9cb0cc;
+  margin-bottom: 6px;
+}
+
+.ib-meter-head strong {
+  font-size: 0.86rem;
+  color: #f0f6ff;
+  font-variant-numeric: tabular-nums;
+}
+
+.ib-meter-head strong.is-bad {
+  color: #f87171;
+}
+
+.ib-meter-head strong.is-ok {
+  color: #6ee7b7;
+}
+
+.ib-bar-track {
+  height: 6px;
+  background: rgba(155, 199, 255, 0.12);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.ib-bar-fill {
+  height: 100%;
+  background: #90bfff;
+  border-radius: 999px;
+}
+
+.ib-bar-fill.is-ok {
+  background: #6ee7b7;
+}
+
+.ib-bar-fill.is-bad {
+  background: #f87171;
+}
+
+/* Readiness Checklist in Step 4 */
+.ib-check-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.ib-check-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: #0b1320;
+  border: 1px solid rgba(155, 199, 255, 0.14);
+}
+
+.ib-check-item.is-issue {
+  border-color: rgba(248, 113, 113, 0.45);
+  background: rgba(127, 29, 29, 0.16);
+}
+
+.ib-check-item.is-ready {
+  border-color: rgba(110, 231, 183, 0.35);
+}
+
+/* FlightStageScene Styles */
+.fss-card {
+  background: #0c1523;
+  border: 1px solid rgba(155, 199, 255, 0.16);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.fss-topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 16px;
+  background: #101c2e;
+  border-bottom: 1px solid rgba(155, 199, 255, 0.12);
+  font-size: 0.85rem;
+}
+
+.fss-status-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fss-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+.fss-dot.is-nominal {
+  background: #6ee7b7;
+}
+
+.fss-dot.is-alert {
+  background: #f59e0b;
+}
+
+.fss-meta-pills {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.fss-pill {
+  font-size: 0.76rem;
+  padding: 4px 9px;
+  border-radius: 6px;
+  background: rgba(144, 191, 255, 0.1);
+  color: #bdd4f4;
+}
+
+.fss-cinematic-btn {
+  appearance: none;
+  background: rgba(144, 191, 255, 0.18);
+  color: #90bfff;
+  border: 1px solid rgba(144, 191, 255, 0.38);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.fss-canvas-wrap {
+  position: relative;
+  width: 100%;
+  background: radial-gradient(circle at 50% 50%, #101f36 0%, #070c16 100%);
+}
+
+.fss-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.fss-telemetry-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: rgba(155, 199, 255, 0.12);
+  border-top: 1px solid rgba(155, 199, 255, 0.12);
+}
+
+.fss-stat {
+  background: #0b1320;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.fss-stat span {
+  font-size: 0.74rem;
+  color: #8da3c1;
+}
+
+.fss-stat strong {
+  font-size: 0.85rem;
+  color: #eef5ff;
+  font-variant-numeric: tabular-nums;
+}
+
+.fss-stat strong.is-ok {
+  color: #6ee7b7;
+}
+
+.fss-stat strong.is-bad {
+  color: #f87171;
+}
+
+.fss-phase-track {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  padding: 12px;
+  background: #09101b;
+  border-top: 1px solid rgba(155, 199, 255, 0.12);
+}
+
+.fss-phase-step {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  color: #7d92b0;
+  background: rgba(155, 199, 255, 0.04);
+}
+
+.fss-phase-step.is-done {
+  color: #6ee7b7;
+  background: rgba(110, 231, 183, 0.1);
+}
+
+.fss-phase-step.is-current {
+  color: #08111f;
+  background: #90bfff;
+  font-weight: 700;
+}
+
+.fss-phase-num {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Modal for Full-Screen Rocket Launch Cinematic */
+.ib-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: rgba(3, 7, 14, 0.84);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+
+.ib-modal-box {
+  width: min(940px, 100%);
+  background: #0c1523;
+  border: 1px solid rgba(155, 199, 255, 0.25);
+  border-radius: 16px;
+  overflow: hidden;
+  padding: 16px;
+}
+
+.ib-modal-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.ib-modal-top h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+/* Flight Console & Debrief */
+.ib-event-card {
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.ib-event-card h3 {
+  margin: 0 0 6px;
+  color: #fcd34d;
+  font-size: 1.12rem;
+}
+
+.ib-grade-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px;
+  background: #132338;
+  border: 1px solid rgba(144, 191, 255, 0.35);
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.ib-grade-pill {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #90bfff;
+  background: rgba(144, 191, 255, 0.14);
+  padding: 10px 22px;
+  border-radius: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ib-step-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(155, 199, 255, 0.12);
+}
+
+@media (max-width: 980px) {
+  .ib-stepper {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .ib-workspace {
+    grid-template-columns: 1fr;
+  }
+  .ib-sidebar {
+    position: static;
+  }
+}
+
+@media (max-width: 560px) {
+  .ib-stepper {
+    grid-template-columns: 1fr;
+  }
+  .fss-phase-track {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

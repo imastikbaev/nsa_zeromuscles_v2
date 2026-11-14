@@ -1,4 +1,2 @@
-import MissionControl from "@/components/mission-control";
-export default function Home() {
-  return <MissionControl />;
-}
+import ExpeditionLanding from '@/components/expedition-landing';
+export default function Home() { return <ExpeditionLanding/>; }
