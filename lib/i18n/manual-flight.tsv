@@ -24,3 +24,49 @@ Battery values are interval endpoints; unserved energy includes shortages inside
 hours	ч	сағ
 Animated workspace	Анимированный конструктор	Анимациялық конструктор
 Duty cycle applies only to enabled instruments.	Интенсивность применяется только к включённым приборам.	Жұмыс қарқындылығы тек қосылған аспаптарға қолданылады.
+Restart flight	Начать полёт заново	Ұшуды қайта бастау
+Restart this flight? Current progress will be deleted.	Начать полёт заново? Прогресс текущей попытки будет удалён.	Ұшуды қайта бастау керек пе? Ағымдағы әрекеттің барысы жойылады.
+End this flight and delete its progress?	Завершить полёт и удалить прогресс этой попытки?	Ұшуды аяқтап, осы әрекеттің барысын жою керек пе?
+Delete attempt	Удалить попытку	Әрекетті жою
+Delete this attempt from flight records?	Удалить эту попытку из журнала полётов?	Бұл әрекетті ұшулар журналынан жою керек пе?
+Could not delete the attempt.	Не удалось удалить попытку.	Әрекетті жою мүмкін болмады.
+Could not restart the flight.	Не удалось начать полёт заново.	Ұшуды қайта бастау мүмкін болмады.
+Fly again	Повторить полёт	Қайта ұшу
+What changed	Что изменилось	Не өзгерді
+Result of your decision	Результат твоего решения	Шешіміңнің нәтижесі
+Settings updated	Настройки обновлены	Баптаулар жаңартылды
+Decision required	Нужно принять решение	Шешім қабылдау қажет
+Metric	Показатель	Көрсеткіш
+Before	Было	Бұрын
+Now	Стало	Қазір
+Change	Изменение	Өзгеріс
+Unchanged	Без изменений	Өзгеріссіз
+Improved	Лучше	Жақсарды
+Worsened	Хуже	Нашарлады
+Changed	Изменилось	Өзгерді
+Reserve propellant	Запас топлива	Отын қоры
+Projected science return	Прогноз научного результата	Ғылыми нәтиже болжамы
+Nominal power headroom	Номинальный запас мощности	Номиналды қуат қоры
+Battery charge	Заряд батареи	Батарея заряды
+Delivered data	Передано на Землю	Жерге жіберілді
+Lost data	Потерянные данные	Жоғалған деректер
+Why it changed and what it affects	Почему изменилось и на что влияет	Неліктен өзгерді және неге әсер етеді
+Compared with the state before your last command. An unchanged value can still be critically low.	Сравнение с состоянием до последней команды. Неизменившийся показатель может оставаться критически низким.	Соңғы пәрменге дейінгі күймен салыстыру. Өзгермеген көрсеткіш әлі де тым төмен болуы мүмкін.
+New messages	Новые сообщения	Жаңа хабарламалар
+Earlier messages	Предыдущие сообщения	Алдыңғы хабарламалар
+New	Новое	Жаңа
+Fuel was spent on the selected maneuver, leaving less reserve for later commands.	Топливо потрачено на выбранный манёвр. Для следующих команд осталось меньше запаса.	Отын таңдалған маневрге жұмсалды. Келесі пәрмендерге қор азайды.
+The event response caused damage. Lower health reduces the projected science return.	Реакция на событие привела к повреждению аппарата. Снижение его здоровья уменьшает прогноз научного результата.	Оқиғаға жауап аппаратты зақымдады. Оның күйінің нашарлауы ғылыми нәтиже болжамын төмендетеді.
+Event damage reduced available power. Reduce instrument duty or transmission demand if energy runs short.	Повреждение при событии уменьшило доступную мощность. При нехватке энергии снизь нагрузку приборов или передачи данных.	Оқиғадағы зақым қолжетімді қуатты азайтты. Энергия жетпесе, аспаптар немесе деректерді жіберу жүктемесін азайт.
+The selected response changed the science bonus. Final science also depends on health and delivered data.	Выбранное решение изменило научный бонус. Итог также зависит от здоровья аппарата и переданных на Землю данных.	Таңдалған шешім ғылыми бонусты өзгертті. Нәтиже аппарат күйі мен Жерге жіберілген деректерге де байланысты.
+The battery supplied more energy than it recovered during this interval, including time in eclipse.	За интервал батарея отдала больше энергии, чем накопила, в том числе при полёте в тени.	Аралықта, соның ішінде көлеңкеде, батарея жинағаннан көбірек энергия жұмсады.
+Surplus generation replenished the battery during this interval.	Избыток выработки энергии пополнил заряд батареи за интервал.	Артық өндірілген энергия аралықта батареяны зарядтады.
+Data reached Earth during contact windows and now contributes to the science result.	Данные переданы на Землю в окна связи и теперь учитываются в научном результате.	Деректер байланыс терезелерінде Жерге жіберіліп, ғылыми нәтижеге қосылды.
+The buffer was cleared by command. Discarded data can no longer be transmitted.	Память очищена по команде. Удалённые данные уже нельзя передать на Землю.	Жад пәрмен бойынша тазартылды. Жойылған деректерді Жерге жіберу мүмкін емес.
+More data is waiting onboard. Keep transmission enabled and check power and contact windows.	На борту накопилось больше данных. Включи передачу и проверь доступную энергию и окна связи.	Бортта деректер көбейді. Жіберуді қосып, энергия мен байланыс терезелерін тексер.
+Instrument settings apply to the next interval. Lower duty saves energy but collects less data.	Настройки приборов действуют со следующего интервала. Меньшая нагрузка экономит энергию и сокращает сбор данных.	Аспап баптаулары келесі аралықта қолданылады. Аз жүктеме энергияны үнемдеп, деректер жинауды азайтады.
+Transmission is enabled for the next interval. It uses energy during contact windows.	Передача включена на следующий интервал. В окна связи она будет расходовать энергию.	Келесі аралыққа жіберу қосылды. Байланыс терезелерінде ол энергия жұмсайды.
+Transmission is disabled. Data will accumulate onboard and may overflow storage.	Передача выключена. Данные будут накапливаться на борту, и память может переполниться.	Жіберу өшірілді. Деректер бортта жиналып, жад толуы мүмкін.
+The selected instrument will transmit first when contact capacity is limited.	При ограниченной пропускной способности выбранный прибор передаст свои данные первым.	Байланыс өткізу қабілеті шектеулі болса, таңдалған аспап деректерін бірінші жібереді.
+Science adjustment from decisions	Научный бонус решений	Шешімдердің ғылыми бонусы
+Mission time	Время миссии	Миссия уақыты

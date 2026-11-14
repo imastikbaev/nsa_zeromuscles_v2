@@ -70,7 +70,7 @@ export function ProjectLibrary({
   const save = (d: Design) => {
     if (projects.length >= PROJECT_LIMIT) {
       notice(
-        "Your library has 12 projects. Export or remove one to make room.",
+        `Your library has ${PROJECT_LIMIT} projects. Export or remove one to make room.`,
         true,
       );
       return;

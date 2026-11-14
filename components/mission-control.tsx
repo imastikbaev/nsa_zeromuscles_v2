@@ -62,6 +62,7 @@ import {
   readFlight,
   saveFlight,
   clearFlight,
+  deleteFlightResult,
   DESIGN_KEY,
 } from "@/lib/storage";
 import { readLearningSession } from "@/lib/learning";
@@ -319,6 +320,18 @@ export default function MissionControl() {
       ),
     [],
   );
+  const deleteResult = (id: string) => {
+    if (!deleteFlightResult(id)) return false;
+    setRecords((current) => current.filter((record) => record.id !== id));
+    return true;
+  };
+  const restartFlight = () => {
+    const next = createFlight(design);
+    if (!saveFlight(design, next)) return false;
+    setRestoredFlight(false);
+    setFlight(next);
+    return true;
+  };
   const m = calculate(design);
   const Icon = missionIcons[design.mission];
   const activeChallenge = scenarios.find((s) => s.id === design.scenario);
@@ -340,7 +353,7 @@ export default function MissionControl() {
       setFlight(next);
       setRestoredFlight(false);
       setView("flight");
-      window.scrollTo({ top: 0, behavior: "smooth" });
+        window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
   const changeStep = (n: number) => {
@@ -983,12 +996,25 @@ export default function MissionControl() {
                                       className={`mission-card ${design.mission === mi.id ? "selected" : ""}`}
                                       key={mi.id}
                                       aria-pressed={design.mission === mi.id}
-                                      disabled={!!activeChallenge}
-                                      onClick={() =>
-                                        setDesign(
-                                          designForMission(mi.id, design.mode),
-                                        )
-                                      }
+                                      onClick={() => {
+                                        const nextBase = designForMission(
+                                          mi.id,
+                                          design.mode,
+                                        );
+                                        const matchingScenario =
+                                          design.scenario &&
+                                          scenarios.some(
+                                            (s) =>
+                                              s.id === design.scenario &&
+                                              s.mission === mi.id,
+                                          )
+                                            ? design.scenario
+                                            : null;
+                                        setDesign({
+                                          ...nextBase,
+                                          scenario: matchingScenario,
+                                        });
+                                      }}
                                     >
                                       <div
                                         className={`mission-icon icon-${mi.id}`}
@@ -1180,7 +1206,7 @@ export default function MissionControl() {
                 }}
               />
             ) : view === "records" ? (
-              <Records records={records} onBuild={() => setView("builder")} />
+              <Records records={records} onBuild={() => setView("builder")} onDelete={deleteResult} />
             ) : view === "flight" && flight ? (
               <FlightControl
                 key={flight.id}
@@ -1197,10 +1223,12 @@ export default function MissionControl() {
                   setView(returnView);
                   setStep(1);
                   setFlight(null);
-                  clearFlight();
+                  clearFlight(flight.id);
                   setRestoredFlight(false);
                 }}
                 onResult={recordResult}
+                onRestart={restartFlight}
+                onDeleteResult={deleteResult}
               />
             ) : (
               <Academy />
