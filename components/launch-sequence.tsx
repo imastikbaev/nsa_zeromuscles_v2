@@ -2,19 +2,20 @@
 
 import "./launch-sequence.css";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
-import { Play, RotateCcw, SkipForward } from "lucide-react";
+import dynamic from "next/dynamic";
+import { Pause, Play, RotateCcw, SkipForward } from "lucide-react";
 import type { Design } from "@/lib/data";
 import { calculate } from "@/lib/engineering";
 import { phases } from "@/lib/simulation";
 import { useI18n } from "./preferences";
 
 /**
- * Illustrative launch cinematic. Everything shown is derived from the player's
- * design through the same `calculate()` engine the simulator uses: the launcher
- * decides the rocket size, mass/capacity decides vibration, propulsion decides
- * the burn plume and fuel gauge, panels and antenna decide the deployed craft.
- * The trajectory is a teaching illustration, not a propagated orbit.
+ * Scripted launch cinematic with a lazily loaded 3D scene and SVG fallback.
+ * The design determines vehicle scale, payload and deployed spacecraft.
+ * Time and trajectory are illustrative; no mission state is changed.
  */
+const LaunchScene3D = dynamic(() => import("./launch-scene-3d"), { ssr: false });
+
 export const LAUNCH_DURATION = 24;
 
 const clamp01 = (n: number) => Math.max(0, Math.min(1, n));
@@ -47,11 +48,6 @@ function makeStars(n: number) {
     r: 0.5 + next() * 1.4,
     o: 0.35 + next() * 0.65,
   }));
-}
-
-function parseKm(text: string): number | null {
-  const match = /^([\d,.]+)\s*km$/i.exec(text.trim());
-  return match ? Number(match[1].replace(/,/g, "")) : null;
 }
 
 function Craft({
@@ -119,6 +115,8 @@ export function LaunchSequence({
   const m = useMemo(() => calculate(design), [design]);
   const stars = useMemo(() => makeStars(90), []);
   const [time, setTime] = useState(0);
+  const [threeReady, setThreeReady] = useState(false);
+  const [viewMode, setViewMode] = useState<"cinematic" | "vehicle" | "engines" | "spaceport">("cinematic");
   const [playing, setPlaying] = useState(false);
   const finished = useRef(false);
   const completeRef = useRef(onComplete);
@@ -144,7 +142,7 @@ export function LaunchSequence({
     let raf = 0;
     let last = performance.now();
     const tick = (now: number) => {
-      const dt = Math.min(0.05, (now - last) / 1000);
+      const dt = document.hidden ? 0 : Math.min(0.05, (now - last) / 1000);
       last = now;
       setTime((prev) => Math.min(LAUNCH_DURATION, prev + dt));
       raf = requestAnimationFrame(tick);
@@ -164,11 +162,18 @@ export function LaunchSequence({
   }, [time]);
 
   function replay() {
+    setViewMode("cinematic");
     finished.current = false;
-    setTime(0);
-    setPlaying(true);
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setTime(reduce ? LAUNCH_DURATION : 0);
+    setPlaying(!reduce);
+    if (reduce) {
+      finished.current = true;
+      completeRef.current?.();
+    }
   }
   function skip() {
+    setViewMode("cinematic");
     setTime(LAUNCH_DURATION);
   }
 
@@ -194,14 +199,6 @@ export function LaunchSequence({
   const jet = plume[design.systems.propulsion] ?? plume.chemical;
 
   const phaseIndex = time < 9.5 ? 0 : time < 12 ? 1 : time < 19 ? 2 : time < 23.5 ? 3 : 4;
-  const orbitKm = parseKm(m.orbit.altitude);
-  const altitude =
-    time < 12
-      ? lerp(0, 160, lift)
-      : lerp(160, orbitKm ?? 400, smooth(burn));
-  const speed = lerp(0, 7.8, smooth((time - 3) / 16));
-  const burnedFuel = Math.min(design.fuel, m.fuelNeeded) * smooth(burn);
-  const remainingFuel = Math.max(0, design.fuel - burnedFuel);
   const sign = time < 3 ? "−" : "+";
   const clock = Math.abs(time - 3);
   const mm = String(Math.floor(clock / 60)).padStart(2, "0");
@@ -226,12 +223,14 @@ export function LaunchSequence({
     };
   });
 
-  const labelPhase = phaseIndex === 4 ? c("Орбита достигнута", "Orbit achieved", "Орбитаға шықты") : t(phases[phaseIndex]);
+  const labelPhase = phaseIndex === 4 ? c("Предпросмотр завершён", "Preview complete", "Алдын ала көру аяқталды") : t(phases[phaseIndex]);
 
   return (
-    <div className="ls-root">
+    <div className={`ls-root ${threeReady ? "ls-has-3d" : ""}`} role="group" aria-label={c("Кат-сцена запуска", "Launch cinematic", "Ұшыру көрінісі")}>
+      <LaunchScene3D viewMode={viewMode} time={time} design={design} onReady={setThreeReady}/>
       <svg
         className="ls-svg"
+        aria-hidden={threeReady}
         viewBox="0 0 800 520"
         role="img"
         aria-label={c(
@@ -389,8 +388,7 @@ export function LaunchSequence({
 
       <div className="ls-hud">
         <div className="ls-hud-top">
-          <span className="ls-clock">
-            T{sign}
+          <span className="ls-clock">{t(" T")}{sign}
             {mm}:{ss}
           </span>
           <span className="ls-phase" aria-live="polite">
@@ -404,7 +402,7 @@ export function LaunchSequence({
         )}
         {phaseIndex === 4 && (
           <div className="ls-banner" role="status">
-            {c("ОРБИТА ДОСТИГНУТА", "ORBIT ACHIEVED", "ОРБИТАҒА ШЫҚТЫ")} · {m.orbit.short}
+            {c("Предпросмотр завершён", "Preview complete", "Алдын ала көру аяқталды")}
           </div>
         )}
         <div className="ls-hud-bottom">
@@ -415,28 +413,36 @@ export function LaunchSequence({
             </strong>
           </div>
           <div>
-            <span>{c("Топливо", "Propellant", "Отын")}</span>
-            <strong>{remainingFuel.toFixed(0)} kg</strong>
+            <span>{c("Масса аппарата", "Spacecraft mass", "Аппарат массасы")}</span>
+            <strong>{m.mass.toFixed(0)}{t(" kg")}</strong>
           </div>
           <div>
-            <span>{c("Высота / скорость", "Altitude / speed", "Биіктік / жылдамдық")}</span>
-            <strong>
-              {altitude.toFixed(0)} km · {speed.toFixed(1)} km/s
-            </strong>
+            <span>{c("Солнечные панели", "Solar panels", "Күн панельдері")}</span>
+            <strong>{design.panels}{t(" m²")}</strong>
           </div>
         </div>
         <p className="ls-note">
           {c(
-            "Учебная иллюстрация, не расчёт траектории.",
-            "Educational illustration, not a trajectory calculation.",
-            "Оқу иллюстрациясы, траектория есебі емес.",
+            "Постановочная кат-сцена. Время сжато, ресурсы миссии не меняются.",
+            "Scripted cinematic. Time is compressed; mission resources are unchanged.",
+            "Алдын ала көру. Миссия кезеңін, уақытын немесе ресурстарын өзгертпейді.",
           )}
         </p>
       </div>
 
+      {showControls && threeReady && <label className="ls-camera-control">
+        {c("Камера", "Camera", "Камера")}
+        <select value={viewMode} onChange={e=>{setViewMode(e.target.value as typeof viewMode);setPlaying(false);}}>
+          <option value="cinematic">{c("Кат-сцена", "Cinematic", "Көрініс")}</option>
+          <option value="spaceport">{c("Космодром", "Spaceport", "Ғарыш айлағы")}</option>
+          <option value="vehicle">{c("Осмотр ракеты", "Vehicle inspection", "Зымыранды қарау")}</option>
+          <option value="engines">{c("Двигатели крупным планом", "Engine close-up", "Қозғалтқыштар")}</option>
+        </select>
+      </label>}
       {showControls && (
         <div className="ls-controls">
-          {playing ? (
+          {time < LAUNCH_DURATION && <button type="button" onClick={() => {setViewMode("cinematic");setPlaying(p => !p);}}>{playing ? <Pause size={14}/> : <Play size={14}/>} {playing ? c("Пауза", "Pause", "Кідірту") : c("Продолжить", "Resume", "Жалғастыру")}</button>}
+          {time < LAUNCH_DURATION ? (
             <button type="button" onClick={skip}>
               <SkipForward size={14} />
               {c("Пропустить", "Skip", "Өткізу")}

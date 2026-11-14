@@ -22,7 +22,7 @@ export function ScienceNotebook() {
         <div>
           <label htmlFor="solar-distance">
             {t("Distance from the Sun")}{" "}
-            <strong>{number(distance, 2)} AU</strong>
+            <strong>{number(distance, 2)}{t(" AU")}</strong>
           </label>
           <input
             id="solar-distance"

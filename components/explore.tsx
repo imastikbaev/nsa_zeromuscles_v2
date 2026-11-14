@@ -211,11 +211,11 @@ export function Records({
                               aria-label={t(`View report for ${r.name}`)}
                               onClick={() => setSelectedResult(r)}
                             >
-                              <strong>{r.name}</strong>
+                              <strong>{t(r.name)}</strong>
                             </button>
                             <small>
                               {tx(r.mission)} {t(" · ")}
-                              {tx(r.mode)} · {t("Scoring model")} v{r.scoringVersion ?? 1} {t(" ·")}
+                              {tx(r.mode)} · {t("Scoring model")}{t(" v")}{r.scoringVersion ?? 1} {t(" ·")}
                               {tx(" ")}
                               {tx(
                                 new Date(r.date).toLocaleDateString(localeTag),
@@ -315,7 +315,7 @@ export function Academy() {
         {tx(
           Object.entries(glossary)
             .filter(([term, meaning]) =>
-              `${t(term)} ${t(meaning)} ${term}`
+              `${t(term)} ${t(meaning)} ${term} ${meaning}`
                 .toLowerCase()
                 .includes(query.toLowerCase()),
             )
@@ -332,8 +332,8 @@ export function Academy() {
         )}
       </div>
       {tx(
-        !Object.entries(glossary).some(([t, m]) =>
-          `${t} ${m}`.toLowerCase().includes(query.toLowerCase()),
+        !Object.entries(glossary).some(([term, m]) =>
+          `${t(term)} ${t(m)} ${term} ${m}`.toLowerCase().includes(query.toLowerCase()),
         ) && (
           <p className="no-matches">
             {t("No matching concepts. Try “power”, “orbit”, or “fuel”.")}

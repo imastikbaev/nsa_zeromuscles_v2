@@ -1,7 +1,9 @@
 import { catalog } from "./catalog";
+import russian from "./ru.json";
+const ruCatalog: Record<string, string> = russian;
 export type Locale = "en" | "ru" | "kk";
 export type Theme = "dark" | "light";
-export const PREFERENCES_KEY = "mission-architect:preferences:v1";
+export const PREFERENCES_KEY = "mission-architect:preferences:v2";
 export const localeTags: Record<Locale, string> = {
   en: "en-US",
   ru: "ru-RU",
@@ -20,15 +22,19 @@ export function validPreferences(
   );
 }
 const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-const patterns = Object.entries(catalog)
+const combinedCatalog: Record<string, readonly [string, string]> = { ...catalog };
+for (const [key, value] of Object.entries(ruCatalog)) combinedCatalog[key] = [value, catalog[key]?.[1] ?? key];
+const patterns = Object.entries(combinedCatalog)
   .filter(([key]) => /\{\d+\}/.test(key))
   .map(([key, pair]) => ({
     regex: new RegExp(
       "^" +
-        key
-          .split(/\{\d+\}/)
-          .map(escape)
-          .join("(.+?)") +
+        key.split(/\{\d+\}/).map((literal, i, parts) => {
+          if (i === parts.length - 1) return escape(literal);
+          const next = parts[i + 1];
+          const numeric = /^\s*(?:kg\b|W\b|GB\b|Mbps\b|kWh\b|m²|km\b|AU\b|yr\b|min\b|m\/s|%)/.test(next);
+          return escape(literal) + (numeric ? "([+−\\-\\d.,]+)" : "(.+?)");
+        }).join("") +
         "$",
     ),
     pair,
@@ -37,9 +43,10 @@ const patterns = Object.entries(catalog)
  * Translation happens only at explicit UI boundaries, never by mutating the DOM or design data. */
 export function translate(source: string, locale: Locale): string {
   if (locale === "en" || !source.trim()) return source;
+  if (source.includes("\n")) return source.split("\n").map(line => translate(line, locale)).join("\n");
   const key = source.replace(/\s+/g, " ").trim();
   const index = locale === "ru" ? 0 : 1;
-  const exact = catalog[key];
+  const exact = combinedCatalog[key];
   if (exact) return source.replace(source.trim(), exact[index]);
   for (const { regex, pair } of patterns) {
     const match = key.match(regex);
@@ -49,7 +56,7 @@ export function translate(source: string, locale: Locale): string {
       );
   }
   // Compound labels, reports and telemetry use independently translated clauses.
-  for (const separator of ["\n", " · ", ": ", " / ", " + "]) {
+  for (const separator of [" · ", ": ", " / ", " + ", " | ", ", ", "; "]) {
     if (source.includes(separator))
       return source
         .split(separator)
@@ -59,7 +66,7 @@ export function translate(source: string, locale: Locale): string {
   return source;
 }
 export function preferredLocale(): Locale {
-  if (typeof window === "undefined") return "en";
+  if (typeof window === "undefined") return "ru";
   try {
     const p = JSON.parse(localStorage.getItem(PREFERENCES_KEY) || "null");
     return validPreferences(p) ? p.locale : "ru";

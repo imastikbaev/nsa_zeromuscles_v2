@@ -37,6 +37,7 @@ const initials = (s: string) =>
   s
     .trim()
     .split(/\s+/)
+    .filter(word => /\p{L}/u.test(word))
     .slice(0, 2)
     .map((w) => w[0])
     .join("")
@@ -106,7 +107,7 @@ export function MissionOverview({
       [
         rows
           .map((row) =>
-            row.map((v) => '"' + v.replaceAll('"', '""') + '"').join(","),
+            row.map((v) => '"' + t(v).replaceAll('"', '""') + '"').join(","),
           )
           .join("\r\n"),
       ],
@@ -129,10 +130,10 @@ export function MissionOverview({
               <i />
               {t("ACTIVE MISSION")}
             </span>
-            <h2>{design.name}</h2>
+            <h2>{t(design.name)}</h2>
             <p>
               {t(m.mission.name)} <span> / </span>
-              {m.orbit.short}
+              {t(m.orbit.short)}
             </p>
             <div className="hero-badges">
               <span
@@ -149,8 +150,7 @@ export function MissionOverview({
           </div>
           <div className="ground-track">
             <div className="track-caption">
-              <span>
-                MA-{design.mission.toUpperCase()} / {m.orbit.short}
+              <span>{t(" MA-")}{t(design.mission.toUpperCase())} / {t(m.orbit.short)}
               </span>
               <span>{t("Reference geometry")}</span>
             </div>
@@ -187,12 +187,8 @@ export function MissionOverview({
                 strokeWidth="1.5"
               />
               <circle cx="240" cy="55" r="4" fill="#e0f2fe" />
-              <text x="5" y="12" fill="#71829a" fontSize="8">
-                90° N
-              </text>
-              <text x="5" y="104" fill="#71829a" fontSize="8">
-                90° S
-              </text>
+              <text x="5" y="12" fill="#71829a" fontSize="8">{t(" 90° N ")}</text>
+              <text x="5" y="104" fill="#71829a" fontSize="8">{t(" 90° S ")}</text>
             </svg>
             <dl className="orbital-readouts">
               <div>
@@ -224,7 +220,7 @@ export function MissionOverview({
             <span>{t("Mission budget")}</span>
             <strong>
               ${number(m.cost, 1)}
-              <small>M</small>
+              <small>{t("M")}</small>
             </strong>
             <p>
               {Number.isFinite(m.budget)
@@ -399,7 +395,7 @@ export function MissionOverview({
               {t(
                 "Design estimates · not flight measurements",
               )}{" "}
-              {!synced && <span> / {snapshot.name}</span>}
+              {!synced && <span> / {t(snapshot.name)}</span>}
             </span>
             <button onClick={exportTelemetry}>
               <ArrowDownToLine size={14} />
@@ -413,7 +409,7 @@ export function MissionOverview({
         aria-label={t("Mission inspector")}
       >
         <div className="inspector-index">
-          {t("Mission inspector")} <span>SYS / 01</span>
+          {t("Mission inspector")} <span>{t("SYS / 01")}</span>
         </div>
         <div className="bento-heading">
           <div>
@@ -457,7 +453,7 @@ export function MissionOverview({
                 .filter((o) => o.destinations.includes(draft.mission))
                 .map((o) => (
                   <option key={o.id} value={o.id}>
-                    {t(o.name)} / {o.short}
+                    {t(o.name)} / {t(o.short)}
                   </option>
                 ))}
             </select>
@@ -574,18 +570,18 @@ export function MissionOverview({
           <Satellite size={20} />
         </div>
         <button className="brief-row" onClick={onLab}>
-          <span className="monogram cyan">CW</span>
+          <span className="monogram cyan">{t("CW")}</span>
           <span className="brief-row-copy">
-            <strong>Climate Watch</strong>
+            <strong>{t("Climate Watch")}</strong>
             <small>{t("Compare two Earth observation concepts")}</small>
           </span>
           <span className="status-pill sky">{t("Guided")}</span>
           <ChevronRight size={16} />
         </button>
         <button className="brief-row" onClick={onAnalysis}>
-          <span className="monogram">{initials(design.name)}</span>
+          <span className="monogram">{initials(t(design.name))}</span>
           <span className="brief-row-copy">
-            <strong>{design.name}</strong>
+            <strong>{t(design.name)}</strong>
             <small>
               {t("Active design")} · {t(m.mission.name)}
             </small>
@@ -614,7 +610,7 @@ export function MissionOverview({
             >
               <span className="monogram">{initials(p.design.name)}</span>
               <span className="brief-row-copy">
-                <strong>{p.design.name}</strong>
+                <strong>{t(p.design.name)}</strong>
                 <small>{t("Saved on this device")}</small>
               </span>
               <span className="status-pill amber">{t("Saved")}</span>

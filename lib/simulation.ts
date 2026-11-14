@@ -1,4 +1,4 @@
-import { createOperations, operateInterval, discardBuffered, scienceYield, dataTotals, operationalAdvice, Operations } from "./operations";
+import { createOperations, operateInterval, discardBuffered, scienceYield, dataTotals, operationalAdvice, intervalReport, type IntervalReport, Operations } from "./operations";
 import { recordTelemetry, TelemetrySample } from "./telemetry";
 import { configurationKey } from "./design-identity";
 import { Design, objectives, scenarios } from "./data";
@@ -317,6 +317,7 @@ export interface ScoreBreakdown {
   contributions: { label: string; points: number; maximum: number }[];
 }
 export interface Flight {
+  lastInterval?: IntervalReport;
   operations?: Operations;
   telemetry?: TelemetrySample[];
   id: string;
@@ -391,6 +392,18 @@ function flightRandom(f: Flight, override?: () => number) {
     state: () => state,
   };
 }
+export function nextIntervalHours(f: Flight, d: Design): number {
+  return f.completed ? 0 : f.phase >= 4 ? calculate(d).duration * 30 * 24 / 3 : 1;
+}
+// Explicit user commands can execute from planning hold. Passive engine ticks remain blocked.
+export function advanceByCommand(f: Flight, d: Design): Flight {
+  if (f.completed || pendingEvent(f)) return f;
+  return { ...advanceFlight({ ...f, paused: false }, d), paused: true };
+}
+export function respondByCommand(f: Flight, d: Design, choice: number): Flight {
+  if (f.completed || !pendingEvent(f)) return f;
+  return { ...resolveEvent({ ...f, paused: false }, d, choice), paused: true };
+}
 export function advanceFlight(
   f: Flight,
   d: Design,
@@ -398,8 +411,9 @@ export function advanceFlight(
 ): Flight {
   if (f.completed || f.paused || pendingEvent(f)) return f;
   if (f.operations) {
-    const hours = f.phase >= 4 ? calculate(d).duration * 30 * 24 / 3 : 1;
-    f = {...f, operations: operateInterval(d, f.operations, f.powerDelta, hours, f.phase >= 4)};
+    const hours = nextIntervalHours(f, d);
+    const operations = operateInterval(d, f.operations, f.powerDelta, hours, f.phase >= 4);
+    f = {...f, operations, lastInterval: intervalReport(f.operations, operations, f.phase >= 4)};
   }
   const phase = f.phase + 1;
   const m = calculate(d);
@@ -450,7 +464,7 @@ export function advanceFlight(
   );
 }
 export function setFlightOperations(f: Flight, patch: { duty?: number; downlink?: boolean; priority?: string | null; disabledInstruments?: string[]; discard?: boolean }): Flight {
-  if (f.paused || f.completed || !f.operations) return f;
+  if (f.completed || !f.operations) return f;
   if (patch.duty !== undefined && (![0, 0.5, 1].includes(patch.duty))) throw new Error("Invalid instrument duty cycle.");
   if (patch.downlink !== undefined && typeof patch.downlink !== "boolean") throw new Error("Invalid transmitter state.");
   if (patch.priority !== undefined && patch.priority !== null && !f.operations.data.some(r=>r.id===patch.priority)) throw new Error("Unknown data priority.");
@@ -529,6 +543,7 @@ export function resolveEvent(
   );
 }
 export interface Result {
+  lastInterval?: IntervalReport;
   scoringVersion?: 1 | 2;
   operations?: Operations;
   plannedDurationMonths?: number;
@@ -636,6 +651,7 @@ export function scoreFlight(d: Design, f: Flight): Result {
       `${scenarios.find((s) => s.id === d.scenario)?.name}: ${challengePassed ? "challenge completed" : "challenge target not met"}.`,
     );
   return {
+    lastInterval: f.lastInterval,
     scoringVersion: f.operations ? 2 : 1,
     operations: f.operations,
     plannedDurationMonths: m.duration,

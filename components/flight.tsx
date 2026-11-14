@@ -1,12 +1,11 @@
 "use client";
+import { LaunchIntro } from "./launch-intro";
 import { useI18n } from "./preferences";
 import { useEffect, useRef, useState } from "react";
 import {
   Rocket,
   Activity,
   Check,
-  Pause,
-  Play,
   Download,
   ArrowRight,
   ArrowLeft,
@@ -19,6 +18,7 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { OperationsControl } from "./operations-control";
+import { IntervalSummary } from "./interval-summary";
 import { Design } from "@/lib/data";
 import { calculate } from "@/lib/engineering";
 import {
@@ -26,8 +26,9 @@ import {
   Result,
   phases,
   pendingEvent,
-  resolveEvent,
-  advanceFlight,
+  respondByCommand,
+  advanceByCommand,
+  nextIntervalHours,
   scoreFlight,
   responseRisk,
 } from "@/lib/simulation";
@@ -39,7 +40,7 @@ import {
 } from "@/lib/storage";
 import { TelemetryChart } from "./telemetry-chart";
 import { DecisionImpact, ScoreExplanation } from "./decision-impact";
-import { OrbitView } from "./visuals";
+import { FlightStageScene } from "./flight-stage-scene";
 export function FlightControl({
   design,
   initial,
@@ -55,10 +56,10 @@ export function FlightControl({
   onReturn: () => void;
   onResult: (r: Result) => void;
 }) {
-  const { t, tx, localeTag } = useI18n();
+  const { t, tx, localeTag, number } = useI18n();
 
-  const [flight, setFlight] = useState(initial);
-  const [speed, setSpeed] = useState(1);
+  const [flight, setFlight] = useState(() => ({ ...initial, paused: true }));
+  const [showLaunchIntro, setShowLaunchIntro] = useState(!restored && initial.phase === 0 && !initial.completed);
   const [checkpointSaved, setCheckpointSaved] = useState(true);
   const [saved, setSaved] = useState(true);
   const [result, setResult] = useState<Result | null>(null);
@@ -68,14 +69,6 @@ export function FlightControl({
   useEffect(() => {
     setCheckpointSaved(saveFlight(design, flight));
   }, [design, flight]);
-  useEffect(() => {
-    if (flight.completed || event || flight.paused) return;
-    const timer = setTimeout(
-      () => setFlight((f) => advanceFlight(f, design)),
-      2500 / speed,
-    );
-    return () => clearTimeout(timer);
-  }, [flight, event, design, speed]);
   useEffect(() => {
     if (flight.completed && !once.current) {
       once.current = true;
@@ -98,6 +91,7 @@ export function FlightControl({
     );
   return (
     <div className="flight-screen">
+      {showLaunchIntro && <LaunchIntro design={design} onDone={() => setShowLaunchIntro(false)}/>}
       <div
         className={`checkpoint-status ${checkpointSaved ? "" : "checkpoint-warning"}`}
         role="status"
@@ -107,25 +101,18 @@ export function FlightControl({
           {tx(
             !checkpointSaved
               ? "Flight autosave unavailable. Keep this window open until the mission is complete."
-              : restored && flight.paused
-                ? "Checkpoint restored. Your decisions and resources are intact. Resume when ready."
+              : restored
+                ? "Checkpoint restored. Review your settings and calculate the next interval when ready."
                 : "Flight autosaved on this device. You can safely close and reopen the app.",
           )}
         </span>
-        {tx(
-          restored && flight.paused && (
-            <button onClick={() => setFlight((f) => ({ ...f, paused: false }))}>
-              <Play size={13} /> {t(" Resume flight")}
-            </button>
-          ),
-        )}
       </div>
       <div className="flight-title">
         <div>
           <span className="eyebrow">
             {t("MISSION CONTROL / FLIGHT IN PROGRESS")}
           </span>
-          <h2>{design.name}</h2>
+          <h2>{t(design.name)}</h2>
           <p>
             {tx(m.mission.name)} {t(" · ")}
             {tx(m.orbit.name)}
@@ -134,11 +121,9 @@ export function FlightControl({
         <span className="flight-live">
           <i />
           {tx(
-            flight.paused
-              ? "SIMULATION PAUSED"
-              : event
+            event
                 ? "AWAITING YOUR COMMAND"
-                : "MISSION ACTIVE",
+                : "Planning next interval",
           )}
         </span>
       </div>
@@ -178,9 +163,23 @@ export function FlightControl({
         )}
       </div>
       <OperationsControl design={design} flight={flight} onChange={setFlight} />
+      <section className="operations-panel interval-planning" aria-label={t("Planning next interval")}>
+        <h3>{t("Planning next interval")}</h3>
+        <p>{t("Time advances only when you confirm. Adjust instruments and transmission before continuing.")}</p>
+        <p><strong>{t("Next interval duration")}: </strong>
+          {number(nextIntervalHours(flight, design) / (flight.phase >= 4 ? 720 : 1), 2)} {t(flight.phase >= 4 ? "months" : "hours")}
+          {" · "}{t(phases[flight.phase + 1])}
+        </p>
+        <button className="primary-button" disabled={!!event || flight.completed}
+          onClick={() => setFlight(f => advanceByCommand(f, design))}>
+          {t("Calculate next interval")} <ArrowRight size={16} />
+        </button>
+        {event && <p role="status">{t("Resolve the pending event below before calculating the next interval.")}</p>}
+      </section>
+      {flight.lastInterval && <IntervalSummary report={flight.lastInterval} />}
       <div className="flight-layout">
         <div>
-          <OrbitView design={design} m={m} phase={phases[flight.phase]} />
+          <FlightStageScene design={design} flight={flight} mode="flight" />
           <div className="flight-metrics">
             {tx(
               [
@@ -198,24 +197,6 @@ export function FlightControl({
                 </div>
               )),
             )}
-          </div>
-          <div className="simulation-controls">
-            <button
-              className="secondary-button"
-              onClick={() => setFlight((f) => ({ ...f, paused: !f.paused }))}
-            >
-              {tx(flight.paused ? <Play size={13} /> : <Pause size={13} />)}
-              {tx(" ")}
-              {tx(flight.paused ? "Resume" : "Pause")}
-            </button>
-            <button
-              className="secondary-button"
-              onClick={() => setSpeed((s) => (s === 1 ? 3 : 1))}
-            >
-              {tx(speed)}
-              {t("× speed")}
-            </button>
-            <span>{t("Accelerated educational timeline")}</span>
           </div>
           {tx(
             flight.telemetry && <TelemetryChart samples={flight.telemetry} />,
@@ -251,9 +232,9 @@ export function FlightControl({
                     event.choices.map((c, i) => (
                       <button
                         key={c.label}
-                        disabled={flight.paused || c.fuel > flight.fuel}
+                        disabled={c.fuel > flight.fuel}
                         onClick={() =>
-                          setFlight((f) => resolveEvent(f, design, i))
+                          setFlight((f) => respondByCommand(f, design, i))
                         }
                       >
                         <span>{tx(String.fromCharCode(65 + i))}</span>
@@ -294,9 +275,7 @@ export function FlightControl({
                 </div>
                 <small className="event-foot">
                   {tx(
-                    flight.paused
-                      ? "Resume the flight to send a command."
-                      : "Descriptions show base risk. The adjusted risk above is used for your design and game mode.",
+                    "Descriptions show base risk. The adjusted risk above is used for your design and game mode.",
                   )}
                 </small>
               </section>
@@ -312,7 +291,7 @@ export function FlightControl({
                 <p>
                   {tx(
                     flight.paused
-                      ? "Resume the simulation when you are ready."
+                      ? "Review your settings, then calculate the next interval."
                       : "Your spacecraft is executing the mission plan. Stay ready for the unexpected.",
                   )}
                 </p>
@@ -367,7 +346,7 @@ export function ResultView({
   async function copy() {
     try {
       await navigator.clipboard.writeText(
-        `${r.name} — Mission Architect\nGrade ${r.grade} · ${r.score}/100 · Science ${r.science}\n${r.mission} · $${r.cost.toFixed(1)}M · ${r.objectives.length}/${r.objectiveCount} objectives complete\n${location.origin}`,
+        t(`${r.name} — Mission Architect\nGrade ${r.grade} · ${r.score}/100 · Science ${r.science}\n${r.mission} · $${r.cost.toFixed(1)}M · ${r.objectives.length}/${r.objectiveCount} objectives complete\n${location.origin}`),
       );
       setCopied(true);
     } catch {
@@ -397,7 +376,7 @@ export function ResultView({
             )}
           </h2>
           <p>
-            {t("Scoring model")} v{r.scoringVersion ?? 1} · {r.name} {t(" · ")}
+            {t("Scoring model")}{t(" v")}{r.scoringVersion ?? 1} · {t(r.name)} {t(" · ")}
             {tx(r.mission)}
           </p>
           <div className="result-badges">
@@ -450,6 +429,7 @@ export function ResultView({
           )),
         )}
       </div>
+      {r.lastInterval && <IntervalSummary report={r.lastInterval} />}
       {tx(
         r.breakdown && (
           <ScoreExplanation

@@ -712,7 +712,7 @@ export interface Design {
   scenario: string | null;
 }
 export const defaultDesign: Design = {
-  name: "Terra Pathfinder",
+  name: "Терра — Первопроходец",
   mission: "earth",
   mode: "guided",
   objectives: ["imaging", "climate"],

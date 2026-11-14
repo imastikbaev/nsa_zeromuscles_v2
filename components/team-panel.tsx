@@ -122,8 +122,8 @@ export function TeamPanel({ design, onLoad }: {
    {room && <>
     <p>{t('Room code')}: <code>{room.id}</code> · {t('Revision')}: {room.revision}</p>
     <label>{t('Invitation link')}<input readOnly value={typeof window === 'undefined' ? '' : `${location.origin}/simulator/?room=${room.id}`} onFocus={e => e.target.select()}/></label>
-    <ul>{room.members.map(m => <li key={m.id}>{m.name} — {t(m.role)}</li>)}</ul>
-    <p>{t('Shared design')}: {room.design.name} · {calculate(room.design).mass.toFixed(1)} kg · ${calculate(room.design).cost.toFixed(1)}M</p>
+    <ul>{room.members.map(m => <li key={m.id}>{t(m.name)} — {t(m.role)}</li>)}</ul>
+    <p>{t('Shared design')}: {t(room.design.name)} · {calculate(room.design).mass.toFixed(1)}{t(" kg · $")}{calculate(room.design).cost.toFixed(1)}{t("M")}</p>
     {!room.flight ? <>
      <p>{t('Load the shared design, edit it in the builder, then publish. Conflicting changes are rejected; your private edits are preserved.')}</p>
      <div className="team-actions">
@@ -136,7 +136,7 @@ export function TeamPanel({ design, onLoad }: {
       <button className="secondary-button" disabled={busy || !online || baseRevision === null} onClick={() => void command({ type: 'design', design }, baseRevision!)}>{t('Publish current design')}</button>
       {lead && <button className="primary-button" disabled={busy || !online || calculate(room.design).issues.length > 0} onClick={() => void command({ type: 'launch' })}>{t('Launch shared mission')}</button>}
      </div>
-     {calculate(room.design).issues.length > 0 && <ul>{calculate(room.design).issues.map(i => <li key={i.label}>{i.label}</li>)}</ul>}
+     {calculate(room.design).issues.length > 0 && <ul>{calculate(room.design).issues.map(i => <li key={i.label}>{t(i.label)}</li>)}</ul>}
     </> : room.result ? <>
      <ResultView result={room.result} onReturn={() => void command({ type: 'reset' })} returnDisabled={!lead || busy || !online} returnLabel={lead ? t('Reset shared mission') : t('Only the mission lead can reset')}/>
     </> : <>
@@ -147,7 +147,7 @@ export function TeamPanel({ design, onLoad }: {
       <button className="secondary-button" onClick={() => void command({ type: 'pause' })}>{t(room.flight.paused ? 'Resume' : 'Pause')}</button>
       <button className="primary-button" disabled={!!event || room.flight.paused} onClick={() => void command({ type: 'advance' })}>{t('Advance next phase')}</button>
       <OperationsControl design={room.design} flight={room.flight} onChange={f => { const o = f.operations!; void command({ type: 'operations', duty: o.duty, downlink: o.downlink, priority: o.priority, disabledInstruments: o.disabledInstruments, discard: o.data.some((r, i) => r.lost > room.flight!.operations!.data[i].lost) }); }}/>
-      {event && <section><h4>{t(event.title)}</h4><p>{t(event.description)}</p>{event.choices.map((c, i) => <button className="secondary-button" key={c.label} disabled={room.flight!.paused || c.fuel > room.flight!.fuel} onClick={() => void command({ type: 'respond', choice: i })}>{t(c.label)} ({c.science >= 0 ? '+' : ''}{c.science} · {c.fuel} kg)</button>)}</section>}
+      {event && <section><h4>{t(event.title)}</h4><p>{t(event.description)}</p>{event.choices.map((c, i) => <button className="secondary-button" key={c.label} disabled={room.flight!.paused || c.fuel > room.flight!.fuel} onClick={() => void command({ type: 'respond', choice: i })}>{t(c.label)} ({c.science >= 0 ? '+' : ''}{c.science} · {c.fuel}{t(" kg)")}</button>)}</section>}
      </fieldset>
     </>}
     <details><summary>{t('Room activity')}</summary><ol>{room.log.slice(-10).map((entry, i) => <li key={`${i}-${entry}`}>{entry}</li>)}</ol></details>

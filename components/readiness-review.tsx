@@ -24,8 +24,7 @@ export function ReadinessReview({
     >
       <div className="bento-heading">
         <div>
-          <span className="bento-eyebrow">
-            PDR / {t("Saved configuration")}
+          <span className="bento-eyebrow">{t(" PDR / ")}{t("Saved configuration")}
           </span>
           <h3>{t("Launch readiness")}</h3>
         </div>

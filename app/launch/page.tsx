@@ -1,4 +1,6 @@
 "use client";
+import { useI18n } from "@/components/preferences";
+
 
 import { useMemo, useState } from "react";
 import { LaunchSequence } from "@/components/launch-sequence";
@@ -6,6 +8,8 @@ import { launchers, missions, systems } from "@/lib/data";
 import { designForMission } from "@/lib/engineering";
 
 export default function LaunchPreview() {
+  const { t } = useI18n();
+
   const [mission, setMission] = useState<(typeof missions)[number]["id"]>("earth");
   const [launcher, setLauncher] = useState("swift");
   const [propulsion, setPropulsion] = useState("chemical");
@@ -27,47 +31,36 @@ export default function LaunchPreview() {
     <div className="ls-page">
       <div className="ls-page-inner">
         <div>
-          <h1>Launch sequence</h1>
-          <p>
-            Every element is driven by the design: launcher size, load vibration, engine plume, fuel gauge, array area and antenna type.
-          </p>
+          <a href="/builder/">← {t("Конструктор миссии")}</a>
+          <h1>{t("3D-кат-сцена запуска")}</h1>
+          <p>{t("Старт, отделение ступени и раскрытие спутника над Землёй. Это постановочная сцена: она не рассчитывает полёт и не изменяет вашу миссию.")}</p>
         </div>
         <div className="ls-options">
-          <label>
-            Destination
-            <select value={mission} onChange={(e) => { setMission(e.target.value as typeof mission); setRun((n) => n + 1); }}>
+          <label>{t(" Destination ")}<select value={mission} onChange={(e) => { setMission(e.target.value as typeof mission); setRun((n) => n + 1); }}>
               {missions.map((m) => (
-                <option key={m.id} value={m.id}>{m.name}</option>
+                <option key={m.id} value={m.id}>{t(m.name)}</option>
               ))}
             </select>
           </label>
-          <label>
-            Launcher
-            <select value={launcher} onChange={(e) => { setLauncher(e.target.value); setRun((n) => n + 1); }}>
+          <label>{t(" Launcher ")}<select value={launcher} onChange={(e) => { setLauncher(e.target.value); setRun((n) => n + 1); }}>
               {launchers.map((l) => (
-                <option key={l.id} value={l.id}>{l.name}</option>
+                <option key={l.id} value={l.id}>{t(l.name)}</option>
               ))}
             </select>
           </label>
-          <label>
-            Propulsion
-            <select value={propulsion} onChange={(e) => { setPropulsion(e.target.value); setRun((n) => n + 1); }}>
+          <label>{t(" Propulsion ")}<select value={propulsion} onChange={(e) => { setPropulsion(e.target.value); setRun((n) => n + 1); }}>
               {systems.propulsion.map((p) => (
-                <option key={p.id} value={p.id}>{p.name}</option>
+                <option key={p.id} value={p.id}>{t(p.name)}</option>
               ))}
             </select>
           </label>
-          <label>
-            Antenna
-            <select value={antenna} onChange={(e) => { setAntenna(e.target.value); setRun((n) => n + 1); }}>
+          <label>{t(" Antenna ")}<select value={antenna} onChange={(e) => { setAntenna(e.target.value); setRun((n) => n + 1); }}>
               {systems.antenna.map((a) => (
-                <option key={a.id} value={a.id}>{a.name}</option>
+                <option key={a.id} value={a.id}>{t(a.name)}</option>
               ))}
             </select>
           </label>
-          <label>
-            Solar array · {panels} m²
-            <input type="range" min={2} max={32} step={2} value={panels} onChange={(e) => { setPanels(Number(e.target.value)); setRun((n) => n + 1); }} />
+          <label>{t(" Solar array · ")}{panels}{t(" m² ")}<input type="range" min={2} max={32} step={2} value={panels} onChange={(e) => { setPanels(Number(e.target.value)); setRun((n) => n + 1); }} />
           </label>
         </div>
         <LaunchSequence key={run} design={design} />

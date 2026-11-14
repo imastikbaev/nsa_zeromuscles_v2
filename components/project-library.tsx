@@ -373,7 +373,7 @@ export function ProjectLibrary({
                     {t("Compare “")}
                     {tx(candidate.design.name)}
                     {t("” with your current “")}
-                    {design.name}
+                    {t(design.name)}
                     {t(
                       "”. Changes show saved minus current; more is not always better.",
                     )}

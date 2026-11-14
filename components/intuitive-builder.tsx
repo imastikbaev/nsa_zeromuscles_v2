@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   categoryLabels,
   defaultDesign,
@@ -28,14 +28,14 @@ import { calculate } from '@/lib/engineering';
 import { dataTotals } from '@/lib/operations';
 import { operatingProfile } from '@/lib/orbit-operations';
 import {
-  advanceFlight,
+  advanceByCommand,
+  nextIntervalHours,
   createFlight,
   pendingEvent,
   phases,
-  resolveEvent,
+  respondByCommand,
   responseRisk,
   scoreFlight,
-  setFlightOperations,
   type Flight,
   type Result,
 } from '@/lib/simulation';
@@ -50,6 +50,9 @@ import {
 } from '@/lib/storage';
 import { ExpeditionShell, useExpeditionCopy } from './expedition-shell';
 import { FlightStageScene } from './flight-stage-scene';
+import { OperationsControl } from './operations-control';
+import { IntervalSummary } from './interval-summary';
+import { LaunchIntro } from './launch-intro';
 import { LaunchSequence } from './launch-sequence';
 import { useI18n } from './preferences';
 import './intuitive-builder.css';
@@ -66,8 +69,13 @@ export function IntuitiveBuilder() {
   const [flight, setFlight] = useState<Flight | null>(null);
   const [result, setResult] = useState<Result | null>(null);
   const [showLaunchModal, setShowLaunchModal] = useState(false);
-  const [autoAdvance, setAutoAdvance] = useState(false);
+  const [showLaunchIntro, setShowLaunchIntro] = useState(false);
+  const [storageWarning, setStorageWarning] = useState(false);
   const [hydrated, setHydrated] = useState(false);
+  const launchDialog = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    if (showLaunchModal && !launchDialog.current?.open) launchDialog.current?.showModal();
+  }, [showLaunchModal]);
 
   // Load saved design / active flight on mount
   useEffect(() => {
@@ -78,10 +86,14 @@ export function IntuitiveBuilder() {
     const checkpoint = readFlight();
     if (checkpoint) {
       setDesign(checkpoint.design);
-      setFlight(checkpoint.flight);
+      setFlight({ ...checkpoint.flight, paused: true });
       setStep(3);
       if (checkpoint.flight.completed) {
-        setResult(scoreFlight(checkpoint.design, checkpoint.flight));
+        const scored = scoreFlight(checkpoint.design, checkpoint.flight);
+        setResult(scored);
+        const saved = saveResult(scored);
+        if (saved) clearFlight();
+        setStorageWarning(!saved);
       }
     }
     setHydrated(true);
@@ -93,37 +105,35 @@ export function IntuitiveBuilder() {
     try {
       localStorage.setItem(DESIGN_KEY, JSON.stringify(design));
     } catch {
-      // ignore storage quota errors
+      setStorageWarning(true);
     }
   }, [design, hydrated]);
 
   const calc = calculate(design);
   const activeEvent = flight ? pendingEvent(flight) : null;
 
-  // Auto-advance flight timer when autoAdvance is enabled and no event is blocking
-  useEffect(() => {
-    if (!flight || flight.completed || activeEvent || !autoAdvance || showLaunchModal) {
-      return;
+  // Both workspaces use the same command-based flight engine and checkpoints.
+  function commitFlight(next: Flight) {
+    setFlight(next);
+    const checkpointSaved = saveFlight(design, next);
+    if (next.completed) {
+      const scored = scoreFlight(design, next);
+      setResult(scored);
+      const resultSaved = saveResult(scored);
+      if (resultSaved) clearFlight();
+      setStorageWarning(!resultSaved);
+    } else {
+      setStorageWarning(!checkpointSaved);
     }
-    const timer = window.setTimeout(() => {
-      const next = advanceFlight(flight, design);
-      setFlight(next);
-      saveFlight(design, next);
-      if (next.completed) {
-        const scored = scoreFlight(design, next);
-        setResult(scored);
-        saveResult(scored);
-        clearFlight();
-      }
-    }, 1800);
-    return () => window.clearTimeout(timer);
-  }, [flight, activeEvent, autoAdvance, showLaunchModal, design]);
+  }
 
   const updateDesign = (patch: Partial<Design>) => {
+    if (flight) return;
     setDesign((prev) => ({ ...prev, ...patch }));
   };
 
   const selectMission = (missionId: MissionId) => {
+    if (flight) return;
     const m = missions.find((item) => item.id === missionId) ?? missions[0];
     const nextLauncher =
       launchers.find(
@@ -143,6 +153,7 @@ export function IntuitiveBuilder() {
   };
 
   const toggleObjective = (objId: string) => {
+    if (flight) return;
     setDesign((prev) => {
       const exists = prev.objectives.includes(objId);
       if (exists && prev.objectives.length <= 1) return prev;
@@ -154,6 +165,7 @@ export function IntuitiveBuilder() {
   };
 
   const toggleInstrument = (instId: string) => {
+    if (flight) return;
     setDesign((prev) => {
       const exists = prev.instruments.includes(instId);
       if (exists) {
@@ -169,53 +181,38 @@ export function IntuitiveBuilder() {
   };
 
   const handleAutoFix = () => {
+    if (flight) return;
     const fixed = autoFix(design);
     setDesign(fixed);
   };
 
-  const startTestFlight = (withCinematic = true) => {
-    if (calc.issues.length > 0) return;
-    const newFlight = createFlight(design);
+  const startTestFlight = () => {
+    if (calc.issues.length > 0 || (flight && !flight.completed)) return;
+    const newFlight = { ...createFlight(design), paused: true };
     setFlight(newFlight);
     setResult(null);
-    saveFlight(design, newFlight);
+    setStorageWarning(!saveFlight(design, newFlight));
     setStep(3);
-    if (withCinematic) {
-      setShowLaunchModal(true);
-    }
+    setShowLaunchModal(false);
+    setShowLaunchIntro(true);
   };
 
   const handleNextPhase = () => {
     if (!flight || flight.completed || activeEvent) return;
-    const next = advanceFlight(flight, design);
-    setFlight(next);
-    saveFlight(design, next);
-    if (next.completed) {
-      const scored = scoreFlight(design, next);
-      setResult(scored);
-      saveResult(scored);
-      clearFlight();
-    }
+    commitFlight(advanceByCommand(flight, design));
   };
 
   const handleResolveChoice = (choiceIdx: number) => {
     if (!flight || !activeEvent) return;
-    const next = resolveEvent(flight, design, choiceIdx);
-    setFlight(next);
-    saveFlight(design, next);
-    if (next.completed) {
-      const scored = scoreFlight(design, next);
-      setResult(scored);
-      saveResult(scored);
-      clearFlight();
-    }
+    commitFlight(respondByCommand(flight, design, choiceIdx));
   };
 
   const handleAbortFlight = () => {
     setFlight(null);
     setResult(null);
-    setAutoAdvance(false);
-    clearFlight();
+    setStep(0);
+    setShowLaunchModal(false);
+    setStorageWarning(!clearFlight());
   };
 
   const stepIssuesCount = (targetStep: 0 | 1 | 2) =>
@@ -283,11 +280,13 @@ export function IntuitiveBuilder() {
               className="ib-secondary-btn"
               onClick={() => setShowLaunchModal(true)}
             >
-              🚀 {c('Кино-запуск ракеты', 'Preview Rocket Launch', 'Зымыран стартын көру')}
+              🚀 {c('Предпросмотр запуска', 'Preview launch', 'Ұшыруды алдын ала көру')}
             </button>
           </div>
         </header>
 
+        {storageWarning && <p role="alert">{c('Не удалось сохранить прогресс. Не закрывайте страницу; итоговый отчёт можно скачать.', 'Progress could not be saved. Keep this page open; you can download the final report.', 'Ілгерілеу сақталмады. Бетті жаппаңыз; қорытынды есепті жүктеуге болады.')}</p>}
+        {flight && <p>{c('Конструкция зафиксирована на время полёта. Настройки приборов и связи доступны ниже.', 'The spacecraft design is fixed for this flight. Instrument and downlink controls remain available below.', 'Ұшу кезінде аппарат құрылысы бекітілген. Аспап пен байланыс баптаулары төменде қолжетімді.')}</p>}
         {/* 4-Step Guided Navigation */}
         <nav className="ib-stepper" aria-label={c('Этапы проектирования', 'Design steps', 'Жобалау қадамдары')}>
           {[
@@ -324,13 +323,14 @@ export function IntuitiveBuilder() {
               key={item.idx}
               type="button"
               className={`ib-step-tab ${step === item.idx ? 'is-active' : ''}`}
+              disabled={!!flight && item.idx !== 3}
               onClick={() => setStep(item.idx)}
             >
               <div className="ib-step-tab-left">
                 <span className="ib-step-num">{item.idx + 1}</span>
                 <div className="ib-step-label">
-                  <strong>{item.title}</strong>
-                  <span>{item.sub}</span>
+                  <strong>{t(item.title)}</strong>
+                  <span>{t(item.sub)}</span>
                 </div>
               </div>
               <span className={`ib-step-badge ${item.issues === 0 ? 'is-ok' : 'is-warn'}`}>
@@ -404,7 +404,7 @@ export function IntuitiveBuilder() {
                             <p>{t(m.description)}</p>
                           </div>
                           <div className="ib-chip-row">
-                            <span className="ib-chip is-accent">${m.budget}M</span>
+                            <span className="ib-chip is-accent">${m.budget}{t("M")}</span>
                             <span className="ib-chip">
                               {m.duration} {c('мес.', 'mo', 'ай')}
                             </span>
@@ -546,10 +546,10 @@ export function IntuitiveBuilder() {
                             <p>{t(inst.description)}</p>
                           </div>
                           <div className="ib-chip-row">
-                            <span className="ib-chip is-accent">+{inst.science} sci</span>
-                            <span className="ib-chip">{inst.mass} kg</span>
-                            <span className="ib-chip">{inst.power} W</span>
-                            <span className="ib-chip">{inst.data} GB/d</span>
+                            <span className="ib-chip is-accent">+{inst.science}{t(" sci")}</span>
+                            <span className="ib-chip">{inst.mass}{t(" kg")}</span>
+                            <span className="ib-chip">{inst.power}{t(" W")}</span>
+                            <span className="ib-chip">{inst.data}{t(" GB/d")}</span>
                             {matchesGoal && (
                               <span className="ib-chip is-good">
                                 {c('Подходит к цели', 'Matches goal', 'Мақсатқа сай')}
@@ -582,7 +582,7 @@ export function IntuitiveBuilder() {
                     <div className="ib-slider-box">
                       <div className="ib-slider-top">
                         <span>{c('Солнечные панели', 'Solar Array Area', 'Күн панельдері')}</span>
-                        <strong>{design.panels} m²</strong>
+                        <strong>{design.panels}{t(" m²")}</strong>
                       </div>
                       <input
                         type="range"
@@ -594,16 +594,15 @@ export function IntuitiveBuilder() {
                       />
                       <div className="ib-slider-hint">
                         <span>
-                          {c('Баланс EOL:', 'EOL margin:', 'EOL балансы:')}{' '}
-                          {calc.endOfLifeMargin >= 0 ? `+${Math.round(calc.endOfLifeMargin)}` : Math.round(calc.endOfLifeMargin)} W
-                        </span>
+                          {c('Баланс конец срока службы:', 'EOL margin:', 'EOL балансы:')}{' '}
+                          {calc.endOfLifeMargin >= 0 ? `+${Math.round(calc.endOfLifeMargin)}` : Math.round(calc.endOfLifeMargin)}{t(" W ")}</span>
                         {minPanels !== null && design.panels < minPanels && (
                           <button
                             type="button"
                             className="ib-inline-link"
                             onClick={() => updateDesign({ panels: minPanels })}
                           >
-                            {c(`Выставить ${minPanels} m²`, `Set ${minPanels} m²`, `${minPanels} m² қою`)}
+                            {c(`Выставить ${minPanels} м²`, `Set ${minPanels} m²`, `${minPanels} m² қою`)}
                           </button>
                         )}
                       </div>
@@ -612,7 +611,7 @@ export function IntuitiveBuilder() {
                     <div className="ib-slider-box">
                       <div className="ib-slider-top">
                         <span>{c('Аккумулятор (тень)', 'Battery Capacity', 'Аккумулятор')}</span>
-                        <strong>{design.battery.toFixed(1)} kWh</strong>
+                        <strong>{design.battery.toFixed(1)}{t(" kWh")}</strong>
                       </div>
                       <input
                         type="range"
@@ -624,8 +623,7 @@ export function IntuitiveBuilder() {
                       />
                       <div className="ib-slider-hint">
                         <span>
-                          {c('Минимум:', 'Required:', 'Минимум:')} {calc.batteryNeed.toFixed(1)} kWh
-                        </span>
+                          {c('Минимум:', 'Required:', 'Минимум:')} {calc.batteryNeed.toFixed(1)}{t(" kWh ")}</span>
                         {design.battery < calc.batteryNeed && (
                           <button
                             type="button"
@@ -645,7 +643,7 @@ export function IntuitiveBuilder() {
                     <div className="ib-slider-box">
                       <div className="ib-slider-top">
                         <span>{c('Топливо для манёвров', 'Propellant Load', 'Маневр отыны')}</span>
-                        <strong>{design.fuel} kg</strong>
+                        <strong>{design.fuel}{t(" kg")}</strong>
                       </div>
                       <input
                         type="range"
@@ -656,9 +654,7 @@ export function IntuitiveBuilder() {
                         onChange={(e) => updateDesign({ fuel: Number(e.target.value) })}
                       />
                       <div className="ib-slider-hint">
-                        <span>
-                          Δv: {Math.round(calc.deltaV)} / {calc.requiredDeltaV} m/s
-                        </span>
+                        <span>{t(" Δv: ")}{Math.round(calc.deltaV)} / {calc.requiredDeltaV}{t(" m/s ")}</span>
                         {design.fuel < calc.fuelNeeded && (
                           <button
                             type="button"
@@ -669,7 +665,7 @@ export function IntuitiveBuilder() {
                               })
                             }
                           >
-                            {c(`Нужно ${calc.fuelNeeded} kg`, `Need ${calc.fuelNeeded} kg`, `${calc.fuelNeeded} kg қажет`)}
+                            {c(`Нужно ${calc.fuelNeeded} кг`, `Need ${calc.fuelNeeded} kg`, `${calc.fuelNeeded} kg қажет`)}
                           </button>
                         )}
                       </div>
@@ -718,11 +714,11 @@ export function IntuitiveBuilder() {
                                   <p>{t(comp.pro)}</p>
                                 </div>
                                 <div className="ib-chip-row">
-                                  <span className="ib-chip">${comp.cost}M</span>
-                                  <span className="ib-chip">{comp.mass} kg</span>
-                                  <span className="ib-chip">{comp.power} W</span>
-                                  {comp.isp && <span className="ib-chip is-accent">Isp {comp.isp}s</span>}
-                                  {comp.storage && <span className="ib-chip is-accent">{comp.storage} GB</span>}
+                                  <span className="ib-chip">${comp.cost}{t("M")}</span>
+                                  <span className="ib-chip">{comp.mass}{t(" kg")}</span>
+                                  <span className="ib-chip">{comp.power}{t(" W")}</span>
+                                  {comp.isp && <span className="ib-chip is-accent">{t("Isp ")}{comp.isp}{t("s")}</span>}
+                                  {comp.storage && <span className="ib-chip is-accent">{comp.storage}{t(" GB")}</span>}
                                 </div>
                               </button>
                             );
@@ -768,15 +764,14 @@ export function IntuitiveBuilder() {
                           onClick={() => updateDesign({ launcher: l.id })}
                         >
                           <div>
-                            <h3>{l.name}</h3>
+                            <h3>{t(l.name)}</h3>
                             <p>{t(l.description)}</p>
                           </div>
                           <div className="ib-chip-row">
-                            <span className="ib-chip is-accent">${l.cost}M</span>
+                            <span className="ib-chip is-accent">${l.cost}{t("M")}</span>
                             <span className={`ib-chip ${fitsMass ? 'is-good' : 'is-warn'}`}>
-                              {c('До', 'Up to', 'Дейін')} {l.payload} kg
-                            </span>
-                            <span className="ib-chip">{Math.round(l.reliability * 100)}% rel</span>
+                              {c('До', 'Up to', 'Дейін')} {l.payload}{t(" kg ")}</span>
+                            <span className="ib-chip">{Math.round(l.reliability * 100)}{t("% rel")}</span>
                           </div>
                         </button>
                       );
@@ -806,14 +801,14 @@ export function IntuitiveBuilder() {
                         >
                           <div>
                             <h3>
-                              {t(o.name)} ({o.short})
+                              {t(o.name)} ({t(o.short)})
                             </h3>
                             <p>{t(o.description)}</p>
                           </div>
                           <div className="ib-chip-row">
-                            <span className="ib-chip is-accent">×{o.science} sci</span>
-                            <span className="ib-chip">{o.altitude}</span>
-                            <span className="ib-chip">Δv {o.deltaV} m/s</span>
+                            <span className="ib-chip is-accent">×{o.science}{t(" sci")}</span>
+                            <span className="ib-chip">{t(o.altitude)}</span>
+                            <span className="ib-chip">{t("Δv ")}{o.deltaV}{t(" m/s")}</span>
                             <span className="ib-chip">☀ {Math.round(o.sun * 100)}%</span>
                           </div>
                         </button>
@@ -868,13 +863,13 @@ export function IntuitiveBuilder() {
                             </strong>
                             <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: '#9cb0cc' }}>
                               {c(
-                                `Масса ${calc.mass}/${calc.launchMassLimit} кг · Энергия EOL +${Math.round(calc.endOfLifeMargin)} Вт · Δv ${Math.round(calc.deltaV)}/${calc.requiredDeltaV} м/с`,
+                                `Масса ${calc.mass}/${calc.launchMassLimit} кг · Энергия конец срока службы +${Math.round(calc.endOfLifeMargin)} Вт · Δv ${Math.round(calc.deltaV)}/${calc.requiredDeltaV} м/с`,
                                 `Mass ${calc.mass}/${calc.launchMassLimit} kg · Power EOL +${Math.round(calc.endOfLifeMargin)} W · Δv ${Math.round(calc.deltaV)}/${calc.requiredDeltaV} m/s`,
                                 `Масса ${calc.mass}/${calc.launchMassLimit} кг · Қуат EOL +${Math.round(calc.endOfLifeMargin)} Вт · Δv ${Math.round(calc.deltaV)}/${calc.requiredDeltaV} м/с`,
                               )}
                             </p>
                           </div>
-                          <span className="ib-chip is-good">GO</span>
+                          <span className="ib-chip is-good">{t("GO")}</span>
                         </div>
                       ) : (
                         calc.issues.map((iss, idx) => {
@@ -916,9 +911,9 @@ export function IntuitiveBuilder() {
                           type="button"
                           className="ib-primary-btn"
                           disabled={calc.issues.length > 0}
-                          onClick={() => startTestFlight(true)}
+                          onClick={() => startTestFlight()}
                         >
-                          🚀 {c('Запустить тестовый полёт (с анимацией)', 'Launch Animated Test Flight', 'Анимациялық сынақ ұшуын бастау')}
+                          🚀 {c('Начать миссию с первого этапа', 'Begin mission at the first phase', 'Миссияны бірінші кезеңнен бастау')}
                         </button>
                       </div>
                     </div>
@@ -966,9 +961,8 @@ export function IntuitiveBuilder() {
                                 </div>
                                 <div className="ib-chip-row">
                                   <span className="ib-chip is-accent">
-                                    {ch.science >= 0 ? `+${ch.science}` : ch.science} sci
-                                  </span>
-                                  <span className="ib-chip">{ch.fuel} kg fuel</span>
+                                    {ch.science >= 0 ? `+${ch.science}` : ch.science}{t(" sci ")}</span>
+                                  <span className="ib-chip">{ch.fuel}{t(" kg fuel")}</span>
                                   <span className={`ib-chip ${actualRisk <= 15 ? 'is-good' : 'is-warn'}`}>
                                     {actualRisk}% {c('риск', 'risk', 'тәуекел')}
                                   </span>
@@ -980,68 +974,11 @@ export function IntuitiveBuilder() {
                       </div>
                     )}
 
-                    {/* Orbital Operations Duty & Downlink Controls */}
-                    {flight.operations && (
-                      <div className="ib-slider-grid" style={{ marginBottom: 18 }}>
-                        <div className="ib-slider-box">
-                          <div className="ib-slider-top">
-                            <span>{c('Интенсивность съёмки приборов', 'Instrument Duty Cycle', 'Аспаптардың жұмыс режимі')}</span>
-                            <strong>{Math.round(flight.operations.duty * 100)}%</strong>
-                          </div>
-                          <div className="ib-chip-row">
-                            {[1, 0.5, 0].map((val) => (
-                              <button
-                                key={val}
-                                type="button"
-                                className={`ib-mode-btn ${flight.operations?.duty === val ? 'is-active' : ''}`}
-                                onClick={() => {
-                                  const next = setFlightOperations(flight, { duty: val });
-                                  setFlight(next);
-                                  saveFlight(design, next);
-                                }}
-                              >
-                                {val === 1
-                                  ? c('100% Полная', '100% Full', '100% Толық')
-                                  : val === 0.5
-                                    ? c('50% Эконом', '50% Half', '50% Үнемді')
-                                    : c('0% Пауза', '0% Off', '0% Тоқтату')}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
+                    <OperationsControl design={design} flight={flight} onChange={commitFlight} />
 
-                        <div className="ib-slider-box">
-                          <div className="ib-slider-top">
-                            <span>{c('Передача данных на Землю', 'Radio Downlink Transmitter', 'Жерге деректерді жіберу')}</span>
-                            <strong>{flight.operations.downlink ? 'ON' : 'OFF'}</strong>
-                          </div>
-                          <div className="ib-chip-row">
-                            <button
-                              type="button"
-                              className={`ib-mode-btn ${flight.operations.downlink ? 'is-active' : ''}`}
-                              onClick={() => {
-                                const next = setFlightOperations(flight, { downlink: true });
-                                setFlight(next);
-                                saveFlight(design, next);
-                              }}
-                            >
-                              {c('Вкл (Передача в ЦУП)', 'Transmitting', 'Қосулы')}
-                            </button>
-                            <button
-                              type="button"
-                              className={`ib-mode-btn ${!flight.operations.downlink ? 'is-active' : ''}`}
-                              onClick={() => {
-                                const next = setFlightOperations(flight, { downlink: false });
-                                setFlight(next);
-                                saveFlight(design, next);
-                              }}
-                            >
-                              {c('Выкл (Экономия энергии)', 'Standby (Save Power)', 'Өшірулі')}
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                    <p>{t('Time advances only when you confirm. Adjust instruments and transmission before continuing.')}</p>
+                    <p><strong>{t('Next interval duration')}: </strong>{nextIntervalHours(flight, design)} {t('hours')}</p>
+                    {flight.lastInterval && <IntervalSummary report={flight.lastInterval} />}
 
                     {/* Flight Log */}
                     <div className="ib-check-list">
@@ -1056,18 +993,9 @@ export function IntuitiveBuilder() {
 
                     <div className="ib-step-footer">
                       <button type="button" className="ib-secondary-btn" onClick={handleAbortFlight}>
-                        {c('Вернуться к настройке спутника', 'Return to Spacecraft Design', 'Конструкторға оралу')}
+                        {c('Завершить текущий полёт и изменить аппарат', 'End this flight and edit spacecraft', 'Ұшуды аяқтап, аппаратты өзгерту')}
                       </button>
                       <div className="ib-header-controls">
-                        <button
-                          type="button"
-                          className="ib-secondary-btn"
-                          onClick={() => setAutoAdvance((v) => !v)}
-                        >
-                          {autoAdvance
-                            ? c('⏸ Пауза авто-полёта', '⏸ Pause Auto-Step', '⏸ Авто-ұшуды кідірту')
-                            : c('▶ Авто-прохождение', '▶ Auto-Advance', '▶ Авто-жылжу')}
-                        </button>
                         <button
                           type="button"
                           className="ib-primary-btn"
@@ -1076,7 +1004,7 @@ export function IntuitiveBuilder() {
                         >
                           {activeEvent
                             ? c('Примите решение выше ↑', 'Resolve Event Above ↑', 'Жоғарыда шешім қабылдаңыз ↑')
-                            : c('Следующий этап полёта →', 'Advance Flight Phase →', 'Келесі ұшу кезеңі →')}
+                            : t('Calculate next interval')}
                         </button>
                       </div>
                     </div>
@@ -1097,42 +1025,42 @@ export function IntuitiveBuilder() {
 
                     <div className="ib-grade-banner">
                       <div>
-                        <strong style={{ fontSize: '1.2rem', color: '#f4f8ff' }}>{result.name}</strong>
+                        <strong style={{ fontSize: '1.2rem', color: '#f4f8ff' }}>{t(result.name)}</strong>
                         <p style={{ margin: '4px 0 0', color: '#9cb0cc' }}>
                           {c('Итоговый рейтинг:', 'Final Score:', 'Жалпы ұпай:')} {result.score}/100 ·{' '}
-                          {c('Наука:', 'Science:', 'Ғылым:')} {result.science} pts ·{' '}
+                          {c('Наука:', 'Science:', 'Ғылым:')} {result.science}{t(" pts ·")}{' '}
                           {c('Здоровье:', 'Health:', 'Күйі:')} {result.health}%
                         </p>
                       </div>
-                      <div className="ib-grade-pill">{result.grade}</div>
+                      <div className="ib-grade-pill">{t(result.grade)}</div>
                     </div>
 
+                    {result.lastInterval && <IntervalSummary report={result.lastInterval} />}
                     {opsTotals && (
                       <div className="ib-meter-list" style={{ marginBottom: 18 }}>
                         <div className="ib-meter">
                           <div className="ib-meter-head">
                             <span>{c('Собрано приборами', 'Generated Data', 'Жиналған деректер')}</span>
-                            <strong>{opsTotals.generated.toFixed(1)} GB</strong>
+                            <strong>{opsTotals.generated.toFixed(1)}{t(" GB")}</strong>
                           </div>
                         </div>
                         <div className="ib-meter">
                           <div className="ib-meter-head">
                             <span>{c('Передано на Землю', 'Delivered to Earth', 'Жерге жеткізілді')}</span>
-                            <strong className="is-ok">{opsTotals.delivered.toFixed(1)} GB</strong>
+                            <strong className="is-ok">{opsTotals.delivered.toFixed(1)}{t(" GB")}</strong>
                           </div>
                         </div>
                         <div className="ib-meter">
                           <div className="ib-meter-head">
                             <span>{c('Осталось в буфере', 'Remaining in Buffer', 'Буферде қалды')}</span>
-                            <strong>{opsTotals.buffered.toFixed(1)} GB</strong>
+                            <strong>{opsTotals.buffered.toFixed(1)}{t(" GB")}</strong>
                           </div>
                         </div>
                         <div className="ib-meter">
                           <div className="ib-meter-head">
                             <span>{c('Потеряно (переполнение)', 'Lost (Overflow)', 'Жоғалған деректер')}</span>
                             <strong className={opsTotals.lost > 0 ? 'is-bad' : 'is-ok'}>
-                              {opsTotals.lost.toFixed(1)} GB
-                            </strong>
+                              {opsTotals.lost.toFixed(1)}{t(" GB ")}</strong>
                           </div>
                         </div>
                       </div>
@@ -1161,7 +1089,7 @@ export function IntuitiveBuilder() {
                         <button
                           type="button"
                           className="ib-primary-btn"
-                          onClick={() => startTestFlight(true)}
+                          onClick={() => startTestFlight()}
                         >
                           ↻ {c('Повторить тестовый полёт', 'Fly Again', 'Қайта ұшыру')}
                         </button>
@@ -1190,8 +1118,7 @@ export function IntuitiveBuilder() {
                   <div className="ib-meter-head">
                     <span>{c('Бюджет миссии', 'Budget', 'Бюджет')}</span>
                     <strong className={calc.cost <= calc.budget ? 'is-ok' : 'is-bad'}>
-                      ${calc.cost}M / ${calc.budget}M
-                    </strong>
+                      ${calc.cost}{t("M / $")}{calc.budget}{t("M ")}</strong>
                   </div>
                   <div className="ib-bar-track">
                     <div
@@ -1206,8 +1133,7 @@ export function IntuitiveBuilder() {
                   <div className="ib-meter-head">
                     <span>{c('Масса / Грузоподъёмность', 'Wet Mass', 'Масса')}</span>
                     <strong className={calc.mass <= calc.massLimit ? 'is-ok' : 'is-bad'}>
-                      {calc.mass} / {calc.massLimit} kg
-                    </strong>
+                      {calc.mass} / {calc.massLimit}{t(" kg ")}</strong>
                   </div>
                   <div className="ib-bar-track">
                     <div
@@ -1220,10 +1146,9 @@ export function IntuitiveBuilder() {
                 {/* Power */}
                 <div className="ib-meter">
                   <div className="ib-meter-head">
-                    <span>{c('Мощность (EOL)', 'Power EOL', 'Қуат (EOL)')}</span>
+                    <span>{c('Мощность (конец срока службы)', 'Power EOL', 'Қуат (EOL)')}</span>
                     <strong className={calc.endOfLifeGeneration >= calc.requiredGeneration ? 'is-ok' : 'is-bad'}>
-                      {Math.round(calc.endOfLifeGeneration)} / {Math.round(calc.requiredGeneration)} W
-                    </strong>
+                      {Math.round(calc.endOfLifeGeneration)} / {Math.round(calc.requiredGeneration)}{t(" W ")}</strong>
                   </div>
                   <div className="ib-bar-track">
                     <div
@@ -1240,8 +1165,7 @@ export function IntuitiveBuilder() {
                   <div className="ib-meter-head">
                     <span>{c('Запас скорости Δv', 'Delta-v', 'Δv қоры')}</span>
                     <strong className={calc.deltaV >= calc.requiredDeltaV ? 'is-ok' : 'is-bad'}>
-                      {Math.round(calc.deltaV)} / {calc.requiredDeltaV} m/s
-                    </strong>
+                      {Math.round(calc.deltaV)} / {calc.requiredDeltaV}{t(" m/s ")}</strong>
                   </div>
                   <div className="ib-bar-track">
                     <div
@@ -1258,8 +1182,7 @@ export function IntuitiveBuilder() {
                   <div className="ib-meter-head">
                     <span>{c('Передача данных', 'Downlink', 'Деректер арнасы')}</span>
                     <strong className={calc.bandwidth >= calc.requiredBandwidth ? 'is-ok' : 'is-bad'}>
-                      {Math.round(calc.bandwidth)} / {calc.requiredBandwidth} GB/d
-                    </strong>
+                      {Math.round(calc.bandwidth)} / {calc.requiredBandwidth}{t(" Mbps ")}</strong>
                   </div>
                   <div className="ib-bar-track">
                     <div
@@ -1276,8 +1199,7 @@ export function IntuitiveBuilder() {
                   <div className="ib-meter-head">
                     <span>{c('Надёжность и Наука', 'Reliability & Sci', 'Сенімділік пен Ғылым')}</span>
                     <strong className="is-ok">
-                      {calc.reliability.toFixed(1)}% · {calc.science} pts
-                    </strong>
+                      {calc.reliability.toFixed(1)}% · {calc.science}{t(" pts ")}</strong>
                   </div>
                   <div className="ib-bar-track">
                     <div
@@ -1291,18 +1213,19 @@ export function IntuitiveBuilder() {
           </aside>
         </div>
 
+        {showLaunchIntro && <LaunchIntro design={design} onDone={() => setShowLaunchIntro(false)}/>}
         {/* Full-Screen Rocket Launch Cinematic Modal */}
         {showLaunchModal && (
-          <div
+          <dialog
+            ref={launchDialog}
             className="ib-modal-backdrop"
-            role="dialog"
-            aria-modal="true"
-            aria-label={c('Анимация запуска ракеты и выведения на орбиту', 'Rocket Launch & Orbit Insertion Animation', 'Зымыран стартының анимациясы')}
+            onCancel={(event) => { event.preventDefault(); setShowLaunchModal(false); }}
+            aria-label={c('Предпросмотр запуска', 'Launch preview', 'Ұшыруды алдын ала көру')}
           >
             <div className="ib-modal-box">
               <div className="ib-modal-top">
                 <h2>
-                  🚀 {design.name} · {calc.launcher.name} → {calc.orbit.name}
+                  {c('Предпросмотр', 'Preview', 'Алдын ала көру')} · {t(design.name)}
                 </h2>
                 <button
                   type="button"
@@ -1310,20 +1233,15 @@ export function IntuitiveBuilder() {
                   onClick={() => setShowLaunchModal(false)}
                 >
                   {flight
-                    ? c('Перейти к управлению на орбите →', 'Continue to Orbital Control →', 'Орбиталық басқаруға өту →')
+                    ? c('Вернуться к текущему этапу миссии →', 'Return to the current mission phase →', 'Миссияның ағымдағы кезеңіне оралу →')
                     : c('Закрыть окно', 'Close Preview', 'Жабу')}
                 </button>
               </div>
-              <LaunchSequence
-                design={design}
-                onComplete={() => {
-                  if (flight) {
-                    setShowLaunchModal(false);
-                  }
-                }}
-              />
+              <p>{c('Это предпросмотр: просмотр, пропуск и повтор не запускают миссию и не расходуют её ресурсы.', 'This is a preview: watching, skipping and replaying do not start the mission or consume its resources.', 'Бұл алдын ала көру: қарау, өткізу және қайталау миссияны бастамайды және ресурстарын жұмсамайды.')}</p>
+              {flight && <p>{c('Текущий этап миссии:', 'Current mission phase:', 'Миссияның ағымдағы кезеңі:')} {t(phases[flight.phase])}</p>}
+              <LaunchSequence design={design} />
             </div>
-          </div>
+          </dialog>
         )}
       </main>
     </ExpeditionShell>

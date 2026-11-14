@@ -1,0 +1,26 @@
+Planning next interval	Подготовка следующего интервала	Келесі аралықты жоспарлау
+Time advances only when you confirm. Adjust instruments and transmission before continuing.	Время идёт только после подтверждения. Настройте приборы и передачу данных перед расчётом.	Уақыт тек сіз растағаннан кейін өтеді. Есептеу алдында аспаптар мен деректерді жіберуді реттеңіз.
+Next interval duration	Длительность следующего интервала	Келесі аралықтың ұзақтығы
+Calculate next interval	Рассчитать следующий интервал	Келесі аралықты есептеу
+Resolve the pending event below before calculating the next interval.	Сначала выберите ответ на событие ниже, затем рассчитайте следующий интервал.	Алдымен төмендегі оқиғаға жауап таңдаңыз, содан кейін келесі аралықты есептеңіз.
+Checkpoint restored. Review your settings and calculate the next interval when ready.	Полёт восстановлен. Проверьте настройки и рассчитайте следующий интервал, когда будете готовы.	Ұшу қалпына келтірілді. Баптауларды тексеріп, дайын болғанда келесі аралықты есептеңіз.
+Review your settings, then calculate the next interval.	Проверьте настройки, затем рассчитайте следующий интервал.	Баптауларды тексеріп, келесі аралықты есептеңіз.
+Last interval result	Результат последнего интервала	Соңғы аралықтың нәтижесі
+Calculated duration	Рассчитанный период	Есептелген кезең
+Data generated this interval	Собрано за интервал	Аралықта жиналған деректер
+Data delivered this interval	Передано за интервал	Аралықта жіберілген деректер
+Overflow loss this interval	Потери при переполнении	Жад толуынан жоғалған деректер
+Data remaining onboard	Осталось на борту	Бортта қалған деректер
+Battery before / after	Заряд до / после	Батарея заряды: дейін / кейін
+Unserved energy this interval	Непокрытая потребность в энергии	Өтелмеген энергия қажеттілігі
+Commissioning interval: science collection has not started yet.	Проверка систем: сбор научных данных ещё не начался.	Жүйелерді тексеру: ғылыми деректерді жинау әлі басталған жоқ.
+Reduced duty or disabled instruments limited collection and lowered the requested load.	Сокращённое время работы или отключённые приборы уменьшили сбор данных и потребление энергии.	Қысқартылған жұмыс уақыты немесе өшірілген аспаптар деректер жинауды және энергия тұтынуды азайтты.
+Power shortages reduced observation and transmission throughput.	Нехватка энергии сократила наблюдения и передачу данных.	Энергия тапшылығы бақылау мен деректерді жіберуді азайтты.
+The transmitter was off: no data could be delivered this interval.	Передатчик был выключен: данные за этот интервал не передавались.	Таратқыш өшірулі болды: осы аралықта деректер жіберілген жоқ.
+Storage filled before transmission: excess incoming data was lost.	Память заполнилась до передачи: часть новых данных потеряна.	Деректер жіберілгенше жад толды: жаңа деректердің бір бөлігі жоғалды.
+Data remains onboard; delivery depends on contact windows, available power and transmission settings.	Данные остались на борту; передача зависит от окон связи, доступной энергии и настроек передатчика.	Деректер бортта қалды; жіберу байланыс терезелеріне, қолжетімді энергияға және таратқыш баптауларына байланысты.
+Scheduled operations completed without energy shortages or storage overflow.	Запланированная работа выполнена без нехватки энергии и переполнения памяти.	Жоспарланған жұмыс энергия тапшылығынсыз және жад толуынсыз орындалды.
+Battery values are interval endpoints; unserved energy includes shortages inside the interval.	Заряд показан на начало и конец интервала; непокрытая потребность учитывает нехватку энергии внутри него.	Заряд аралықтың басы мен соңында көрсетілген; өтелмеген қажеттілік аралық ішіндегі энергия тапшылығын қамтиды.
+hours	ч	сағ
+Animated workspace	Анимированный конструктор	Анимациялық конструктор
+Duty cycle applies only to enabled instruments.	Интенсивность применяется только к включённым приборам.	Жұмыс қарқындылығы тек қосылған аспаптарға қолданылады.

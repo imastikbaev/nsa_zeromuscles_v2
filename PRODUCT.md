@@ -16,15 +16,17 @@ Mission Architect is an interactive educational space mission design game and pr
 An offline-capable, zero-cloud preliminary mission engineering workbench and operational flight simulator where every choice couples across six physical and programmatic budgets—Mass, Power (BOL/EOL solar degradation & eclipse battery cycles), Cost, Delta-v (Tsiolkovsky rocket equation), Data generation/storage (GB/day vs. buffer), and RF Link bandwidth (Mbps)—with deterministic checkpoints, Climate Watch trade-study lab, and 4-player role-based local team rooms.
 
 ## Operating Context
-Used in classrooms, hackathons (NASA Space Apps Challenge), and self-paced learning on desktop and mobile browsers (online or offline PWA), in solo or 4-member team sessions, with full localization in English, Russian, and Kazakh.
+Used in classrooms, hackathons (NASA Space Apps Challenge), and self-paced learning on desktop and mobile browsers (online or offline PWA), in solo or 4-member team sessions, with Russian as the default language. Russian catalog, event, glossary and report translations have regression coverage; English and Kazakh remain selectable.
 
 ## Capabilities and Constraints
-- Six mission destinations: Earth (Sun-synchronous / LEO), Moon, Mars, Venus, Jupiter's moon Europa, and Near-Earth Asteroid Belt.
+- Six catalog missions: Earth Observation, Lunar Mission, Mars Orbiter, Asteroid Explorer, Solar Observation, and Deep Space Mission.
 - Three game modes: Guided, Challenge (tighter reserves and anomaly risk), and Sandbox, plus five preset challenges and the Climate Watch Mission Lab.
 - Real-time engineering calculation engine (`lib/engineering.ts`): wet/dry mass, $\Delta v$, power generation/degradation, link margin, reliability index, and 7 quantitative launch readiness gates.
 - Version-2 operational flight engine (`lib/operations.ts`, `lib/orbit-operations.ts`): 6-hour orbital cycles with sunlight, eclipse, ground-station contact, and target observation windows; payload duty cycle, transmitter downlink, priority routing, buffer overflow protection, and stochastic anomaly decisions.
 - Local 4-participant team room service (`127.0.0.1:3002`) with revision-checked design publishing and shared server-authoritative flight state.
-- Core simulator files (`app/page.tsx`, `components/*`, `lib/*`) must remain untouched when adding the new standalone landing route (`/home`).
+- Routes: `/` landing, `/learn` tutorial, `/builder` animated builder, `/simulator` engineering workspace, `/launch` standalone cinematic preview.
+- Solo workspaces share flight checkpoints and operations controls. Mission time advances through explicit interval commands; cinematic playback never advances mission state.
+- Launch and orbit visuals are illustrative SVG scenes, not a 3D physics engine. A propagated-trajectory 3D sandbox remains a future milestone.
 
 ## Brand Commitments
 - Identity: Mission Architect (`MA`) — NASA editorial typography and mission-operations visual authority (Helvetica/Geist hierarchy, monochrome surfaces, signal red primary actions, telemetry blue selections, crisp hairlines, tabular numerals).

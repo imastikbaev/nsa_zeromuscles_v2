@@ -225,3 +225,38 @@
     display: none;
   }
 }
+
+/* 3D stays behind the shared timeline and controls; SVG covers unsupported GPUs. */
+.ls-3d { position: absolute; inset: 0; visibility: hidden; }
+.ls-3d canvas { display: block; width: 100%; height: 100%; }
+.ls-has-3d .ls-3d { visibility: visible; }
+.ls-has-3d .ls-svg { visibility: hidden; }
+.ls-hud { z-index: 1; }
+.ls-controls { z-index: 2; }
+.ls-note { background: #02040ae0; padding: 5px 8px; color: #e0e8ef; }
+@media (max-width: 640px) {
+  .ls-root { aspect-ratio: 4 / 5; min-height: 390px; }
+  .ls-hud { padding: 10px; }
+  .ls-hud-top { align-items: flex-start; font-size: 10px; letter-spacing: 0; }
+  .ls-phase { max-width: 65%; text-align: right; }
+  .ls-controls { top: 58px; right: 10px; gap: 4px; }
+  .ls-controls button { padding: 6px; font-size: 10px; }
+  .ls-hud-bottom { grid-template-columns: repeat(3,minmax(0,1fr)); margin-top: auto; }
+  .ls-hud-bottom > div { padding: 6px; min-width: 0; }
+  .ls-hud-bottom strong { font-size: 10px; overflow-wrap: anywhere; }
+  .ls-hud-bottom span { font-size: 9px; letter-spacing: 0; }
+  .ls-note { display: block; font-size: 9px; text-align: left; }
+  .ls-banner { font-size: 11px; margin-top: 60px; }
+}
+.ls-camera-control { position:absolute; left:16px; top:58px; z-index:2; display:grid; gap:4px; font-size:11px; color:#dce6ee; }
+.ls-camera-control select { max-width:210px; padding:7px 9px; border:1px solid #657684; border-radius:3px; background:#101a24e8; color:#fff; font:inherit; }
+.ls-camera-control select:focus-visible { outline:2px solid #9bc7ff; outline-offset:3px; }
+@media(max-width:640px){.ls-camera-control{left:10px;top:102px;}.ls-camera-control select{max-width:185px;}}
+.ls-intro { width:min(1000px,96vw); max-width:96vw; max-height:96dvh; margin:auto; padding:14px; background:#080e17; color:#e5edf5; border:1px solid #526376; border-radius:8px; overflow:auto; }
+.ls-intro::backdrop { background:#02060dec; }
+.ls-intro header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
+.ls-intro h2 { margin:0; font-size:18px; }
+.ls-intro header button { padding:8px 12px; border:1px solid #8499ae; border-radius:4px; color:#e5edf5; background:#152435; cursor:pointer; }
+.ls-intro button:focus-visible { outline:2px solid #9bc7ff; outline-offset:3px; }
+.ls-intro>p { font-size:13px; color:#b6c6d6; margin:10px 0 0; }
+@media(max-width:640px){.ls-intro header{flex-wrap:wrap;}.ls-intro h2{font-size:16px;}.ls-intro{padding:10px;}}

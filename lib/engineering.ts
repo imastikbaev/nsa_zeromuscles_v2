@@ -1,3 +1,4 @@
+import { translate } from "./i18n";
 import {
   Design,
   Category,
@@ -297,8 +298,8 @@ export function designForMission(
   return {
     name:
       id === "earth"
-        ? "Terra Pathfinder"
-        : `${mission.name.split(" ")[0]} Pathfinder`,
+        ? "Терра — Первопроходец"
+        : translate(`${mission.name.split(" ")[0]} Pathfinder`, "ru"),
     mission: id,
     mode,
     objectives: [mission.objectives[0]],

@@ -151,7 +151,7 @@ export function ResourcePanel({ d, m }: { d: Design; m: Metrics }) {
             <div className="resource" key={r.name}>
               <div className="resource-name">
                 <r.icon size={15} />
-                {r.name}
+                {t(r.name)}
                 {tx(
                   r.name === "End-of-life power" && (
                     <Help term="Power margin" />
@@ -334,7 +334,7 @@ export default function MissionControl() {
   };
   const launch = () => {
     if (!m.issues.length) {
-      const next = createFlight(design);
+      const next = { ...createFlight(design), paused: true };
       setReturnView(flightDestination(design));
       saveFlight(design, next);
       setFlight(next);
@@ -366,8 +366,7 @@ export default function MissionControl() {
             </svg>
           </span>
           <span>
-            {t("MISSION")}
-            <span className="brand-light">{t("ARCHITECT")}</span>
+            {t("MISSION ARCHITECT")}
             <small>{t("SPACE MISSION DESIGN & SIMULATION")}</small>
           </span>
         </a>
@@ -385,6 +384,7 @@ export default function MissionControl() {
           <span className="top-version">{t("v1.5")}</span>
         </div>
         <div className="topbar-right">
+          <a className="secondary-button" href="/builder/">{t('Animated workspace')}</a>
           <span className="saved">
             <i />{" "}
             {tx(storageOk ? "Saved on this device" : "Storage unavailable")}
@@ -418,9 +418,7 @@ export default function MissionControl() {
               <path d="M8 30 20 6l12 24-12-7Z" fill="currentColor" />
               <path d="M5 34 35 16" stroke="#0284c7" strokeWidth="2" />
             </svg>
-            <strong>
-              MISSION ARCHITECT
-              <small>{t("MISSION LABORATORY • SIMULATION")}</small>
+            <strong>{t(" MISSION ARCHITECT ")}<small>{t("MISSION LABORATORY • SIMULATION")}</small>
             </strong>
           </div>
           <div className="rail-section">{t("Mission workspace")}</div>
@@ -747,7 +745,7 @@ export default function MissionControl() {
               >
                 <div>
                   <span>{t("ACTIVE PROJECT")}</span>
-                  <strong>{design.name}</strong>
+                  <strong>{t(design.name)}</strong>
                 </div>
                 <div>
                   <span>{t("DESTINATION / ORBIT")}</span>

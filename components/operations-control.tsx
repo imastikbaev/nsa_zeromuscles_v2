@@ -18,16 +18,17 @@ export function OperationsControl({ design, flight, onChange }: {
    <h3>{t("Mission operations")}</h3>
    <p role="status">{t(o.safeMode ? "Energy shortage: observations are reduced automatically." : "Energy available for scheduled operations.")}</p>
    <dl className="operations-metrics">
-    <div><dt>{t("Battery charge")}</dt><dd>{number(o.batteryKWh, 2)} / {number(design.battery, 2)} kWh</dd></div>
-    <div><dt>{t("Buffered data")}</dt><dd>{number(totals.buffered, 2)} GB</dd></div>
-    <div><dt>{t("Delivered data")}</dt><dd>{number(totals.delivered, 2)} GB</dd></div>
-    <div><dt>{t("Lost data")}</dt><dd>{number(totals.lost, 2)} GB</dd></div>
+    <div><dt>{t("Battery charge")}</dt><dd>{number(o.batteryKWh, 2)} / {number(design.battery, 2)}{t(" kWh")}</dd></div>
+    <div><dt>{t("Buffered data")}</dt><dd>{number(totals.buffered, 2)}{t(" GB")}</dd></div>
+    <div><dt>{t("Delivered data")}</dt><dd>{number(totals.delivered, 2)}{t(" GB")}</dd></div>
+    <div><dt>{t("Lost data")}</dt><dd>{number(totals.lost, 2)}{t(" GB")}</dd></div>
    </dl>
-   <fieldset disabled={flight.paused || flight.completed}>
+   <fieldset disabled={flight.completed}>
     <legend>{t("Commands for the next interval")}</legend>
     <label>{t("Instrument duty cycle")}<select value={o.duty} onChange={e => update({ duty: Number(e.target.value) })}>
      <option value={1}>{t("Full observations")}</option><option value={0.5}>{t("Half observations")}</option><option value={0}>{t("Instruments off")}</option>
     </select></label>
+    <p>{t("Duty cycle applies only to enabled instruments.")}</p>
     {o.data.map(r => <label key={r.id}><input type="checkbox" checked={!(o.disabledInstruments ?? []).includes(r.id)} onChange={e => update({ disabledInstruments: e.target.checked ? (o.disabledInstruments ?? []).filter(id => id !== r.id) : [...(o.disabledInstruments ?? []), r.id] })}/>{t(instruments.find(i => i.id === r.id)!.name)}</label>)}
     <label><input type="checkbox" checked={o.downlink} onChange={e => update({ downlink: e.target.checked })}/>{t("Transmit during contact windows")}</label>
     <label>{t("Data transmission priority")}<select value={o.priority ?? ""} onChange={e => update({ priority: e.target.value || null })}>

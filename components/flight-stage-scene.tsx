@@ -1,6 +1,9 @@
 'use client';
+import { useI18n } from "@/components/preferences";
 
-import { useEffect, useState } from 'react';
+
+import './flight-stage-scene.css';
+import { useEffect, useId, useMemo, useState } from 'react';
 import {
   instruments as instrumentCatalog,
   launchers,
@@ -89,8 +92,11 @@ export function FlightStageScene({
   mode = 'preview',
   onOpenLaunchCinematic,
 }: Props) {
+  const { t } = useI18n();
+
   const c = useExpeditionCopy();
-  const calc = calculate(design);
+  const uid = useId().replace(/:/g, '');
+  const calc = useMemo(() => calculate(design), [design]);
   const orbit = orbits.find((o) => o.id === design.orbit) ?? orbits[0];
   const launcher = launchers.find((l) => l.id === design.launcher) ?? launchers[0];
   const prop =
@@ -234,10 +240,10 @@ export function FlightStageScene({
         </div>
         <div className="fss-meta-pills">
           <span className="fss-pill">
-            {c('Носитель:', 'Launcher:', 'Зымыран:')} {launcher.name}
+            {c('Носитель:', 'Launcher:', 'Зымыран:')} {t(launcher.name)}
           </span>
           <span className="fss-pill">
-            {c('Орбита:', 'Orbit:', 'Орбита:')} {orbit.short} ({orbit.altitude})
+            {c('Орбита:', 'Orbit:', 'Орбита:')} {t(orbit.short)} ({t(orbit.altitude)})
           </span>
           {onOpenLaunchCinematic && (
             <button type="button" className="fss-cinematic-btn" onClick={onOpenLaunchCinematic}>
@@ -259,16 +265,16 @@ export function FlightStageScene({
           )}
         >
           <defs>
-            <radialGradient id="fssBodyGrad" cx="35%" cy="30%" r="70%">
+            <radialGradient id={`${uid}-fssBodyGrad`} cx="35%" cy="30%" r="70%">
               <stop offset="0%" stopColor={palette.rim} />
               <stop offset="65%" stopColor={palette.core} />
               <stop offset="100%" stopColor="#070c16" />
             </radialGradient>
-            <linearGradient id="fssEclipseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <linearGradient id={`${uid}-fssEclipseGrad`} x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="rgba(4, 8, 16, 0.05)" />
               <stop offset="100%" stopColor="rgba(4, 8, 16, 0.82)" />
             </linearGradient>
-            <linearGradient id="fssScanGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <linearGradient id={`${uid}-fssScanGrad`} x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="rgba(144, 191, 255, 0.48)" />
               <stop offset="100%" stopColor="rgba(144, 191, 255, 0.0)" />
             </linearGradient>
@@ -311,7 +317,7 @@ export function FlightStageScene({
           {/* Eclipse Shadow Zone Behind Target Body */}
           <path
             d={`M ${cx + 42} ${cy - 48} L 705 ${cy - 125} L 705 ${cy + 145} L ${cx + 32} ${cy + 58} Z`}
-            fill="url(#fssEclipseGrad)"
+            fill={`url(#${uid}-fssEclipseGrad)`}
           />
           <text x="548" y="96" fill="#9fb2cc" fontSize="11">
             ☾ {c('Тень (питание от АКБ)', 'Eclipse Shadow (Battery)', 'Көлеңке аймағы')}
@@ -363,7 +369,7 @@ export function FlightStageScene({
           {/* Central Destination Body */}
           <g transform={`translate(${cx}, ${cy})`}>
             <circle r="70" fill={palette.atmo} />
-            <circle r="56" fill="url(#fssBodyGrad)" />
+            <circle r="56" fill={`url(#${uid}-fssBodyGrad)`} />
             <circle cx="-18" cy="-14" r="11" fill={palette.crater} opacity="0.45" />
             <circle cx="16" cy="18" r="15" fill={palette.crater} opacity="0.38" />
             <circle cx="22" cy="-16" r="7" fill={palette.crater} opacity="0.35" />
@@ -387,7 +393,7 @@ export function FlightStageScene({
               fontSize="12"
               fontWeight="600"
             >
-              {c(palette.labelRu, palette.labelEn, palette.labelKk)} · {orbit.altitude}
+              {c(palette.labelRu, palette.labelEn, palette.labelKk)} · {t(orbit.altitude)}
             </text>
           </g>
 
@@ -419,7 +425,7 @@ export function FlightStageScene({
               <g>
                 <polygon
                   points={`${craftX},${craftY} ${cx - 24},${cy - 18} ${cx + 24},${cy + 18}`}
-                  fill="url(#fssScanGrad)"
+                  fill={`url(#${uid}-fssScanGrad)`}
                 />
                 <line
                   x1={craftX}
@@ -482,7 +488,7 @@ export function FlightStageScene({
                 fontSize="12"
                 fontWeight="700"
               >
-                ⚠ {activeEvent.title}
+                ⚠ {t(activeEvent.title)}
               </text>
             </g>
           )}
@@ -568,7 +574,7 @@ export function FlightStageScene({
                   stroke="#08111f"
                   strokeWidth="0.8"
                 >
-                  <title>{inst.name}</title>
+                  <title>{t(inst.name)}</title>
                 </circle>
               );
             })}
@@ -595,23 +601,20 @@ export function FlightStageScene({
       {/* Bottom Live Telemetry Strip */}
       <div className="fss-telemetry-grid">
         <div className="fss-stat">
-          <span>{c('Энергобаланс (EOL)', 'Power Margin (EOL)', 'Энергия балансы (EOL)')}</span>
+          <span>{c('Энергобаланс (конец срока службы)', 'Power Margin (EOL)', 'Энергия балансы (EOL)')}</span>
           <strong className={calc.endOfLifeMargin >= calc.designPowerMargin ? 'is-ok' : 'is-bad'}>
-            {design.panels} m² · {calc.endOfLifeMargin >= 0 ? '+' : ''}
-            {Math.round(calc.endOfLifeMargin)} W
-          </strong>
+            {design.panels}{t(" m² · ")}{calc.endOfLifeMargin >= 0 ? '+' : ''}
+            {Math.round(calc.endOfLifeMargin)}{t(" W ")}</strong>
         </div>
         <div className="fss-stat">
           <span>{c('Двигатель и манёвр Δv', 'Propulsion & Δv', 'Қозғалтқыш және Δv')}</span>
           <strong className={calc.deltaV >= calc.requiredDeltaV ? 'is-ok' : 'is-bad'}>
-            {prop.name} · {Math.round(calc.deltaV)} / {calc.requiredDeltaV} m/s
-          </strong>
+            {t(prop.name)} · {Math.round(calc.deltaV)} / {calc.requiredDeltaV}{t(" m/s ")}</strong>
         </div>
         <div className="fss-stat">
           <span>{c('Канал связи и антенна', 'Radio Link & Antenna', 'Радиоарна және антенна')}</span>
           <strong className={calc.bandwidth >= calc.requiredBandwidth ? 'is-ok' : 'is-bad'}>
-            {ant.name} · {Math.round(calc.bandwidth)} / {calc.requiredBandwidth} GB/d
-          </strong>
+            {t(ant.name)} · {Math.round(calc.bandwidth)} / {calc.requiredBandwidth}{t(" GB/d ")}</strong>
         </div>
         <div className="fss-stat">
           <span>
@@ -620,13 +623,14 @@ export function FlightStageScene({
               : c('Режим 6-часового витка', '6-Hour Orbit Profile', '6 сағаттық орбита циклі')}
           </span>
           <strong>
-            {totals
+            {t(totals
               ? `${totals.buffered.toFixed(0)}/${calc.storage} GB (${bufferPct}%) · ↓${totals.delivered.toFixed(0)} GB`
-              : `${Math.round(profile.observation * 6 * 10) / 10}h obs · ${Math.round(profile.eclipse * 6 * 10) / 10}h ecl · ${Math.round(profile.contact * 6 * 10) / 10}h link`}
+              : `${Math.round(profile.observation * 6 * 10) / 10}h obs · ${Math.round(profile.eclipse * 6 * 10) / 10}h ecl · ${Math.round(profile.contact * 6 * 10) / 10}h link`)}
           </strong>
         </div>
       </div>
 
+      <p className="fss-note">{c('Схема движения и окон связи условная. Время миссии и ресурсы пересчитываются только по команде.', 'Motion and contact windows are schematic. Mission time and resources advance only on command.', 'Қозғалыс пен байланыс терезелері шартты. Миссия уақыты мен ресурстары тек команда бойынша есептеледі.')}</p>
       {/* Flight Phase Progress Bar when in Flight Mode */}
       {mode === 'flight' && flight && (
         <div className="fss-phase-track" role="list" aria-label={c('Этапы полёта', 'Flight phases', 'Ұшу кезеңдері')}>
@@ -636,7 +640,7 @@ export function FlightStageScene({
             return (
               <div key={p} role="listitem" className={`fss-phase-step is-${state}`}>
                 <span className="fss-phase-num">{idx + 1}</span>
-                <span className="fss-phase-name">{p}</span>
+                <span className="fss-phase-name">{t(p)}</span>
               </div>
             );
           })}

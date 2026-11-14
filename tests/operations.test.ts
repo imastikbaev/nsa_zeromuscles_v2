@@ -18,12 +18,17 @@ test('battery covers a short deficit, depletes under sustained loss and recharge
     assert(validOperations(recovered, d));
     assert(!validOperations({ ...recovered, batteryKWh: 100 }, d));
 });
-test('duty control lowers load; paused and completed flights reject changes', () => {
+test('duty control lowers load; planning while paused changes settings but not resources', () => {
     const f = createFlight(defaultDesign);
     const reduced = setFlightOperations(f, { duty: 0.5, downlink: false });
     assert(operatePower(defaultDesign, reduced.operations!, 0, 1).loadW < operatePower(defaultDesign, f.operations!, 0, 1).loadW);
     const paused = { ...f, paused: true };
-    assert.equal(setFlightOperations(paused, { duty: 0 }), paused);
+    const planned = setFlightOperations(paused, { duty: 0 });
+    assert.equal(planned.operations!.duty, 0);
+    assert.equal(planned.paused, true);
+    assert.equal(planned.operations!.elapsedHours, paused.operations!.elapsedHours);
+    assert.deepEqual(planned.operations!.data, paused.operations!.data);
+    assert.equal(planned.operations!.batteryKWh, paused.operations!.batteryKWh);
     const done = { ...f, completed: true };
     assert.equal(setFlightOperations(done, { duty: 0 }), done);
     assert.throws(() => setFlightOperations(f, { duty: 2 }));
