@@ -620,6 +620,7 @@
   "English": "Английский",
   "Could not save to this device. Export your design to keep a copy.": "Не удалось сохранить данные на устройстве. Экспортируйте проект, чтобы оставить копию.",
   "Your library has 12 projects. Export or remove one to make room.": "В библиотеке 12 проектов. Экспортируйте или удалите один, чтобы освободить место.",
+  "Your library has {0} projects. Export or remove one to make room.": "В библиотеке {0} проектов. Экспортируйте или удалите один, чтобы освободить место.",
   "Saved “{0}” as a separate project.": "«{0}» сохранён как отдельный проект.",
   "Opened “{0}”. Your previous design is safe in the library.": "Открыт проект «{0}». Предыдущий проект сохранён в библиотеке.",
   "Project library": "Библиотека проектов",

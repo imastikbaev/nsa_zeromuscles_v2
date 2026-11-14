@@ -3,7 +3,7 @@ import { calculate } from "./engineering";
 import { validDesign } from "./storage";
 
 export const PROJECTS_KEY = "mission-architect:projects:v1";
-export const PROJECT_LIMIT = 12;
+export const PROJECT_LIMIT = 100;
 export const MAX_IMPORT_BYTES = 64 * 1024;
 export interface Project {
   id: string;

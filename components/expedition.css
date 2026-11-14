@@ -33,3 +33,65 @@
 @media (prefers-reduced-motion: reduce) {
   .exp-demo-meter > div { transition: none; }
 }
+.exp-consequence {
+  margin-top: 4px;
+  padding: 10px 12px;
+  background: rgba(12, 23, 38, 0.72);
+  border: 1px solid rgba(144, 191, 255, 0.18);
+  border-radius: 7px;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: #cbd8ea;
+}
+.exp-consequence strong {
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  color: #9bc7ff;
+}
+.exp-subblock {
+  margin-top: 28px;
+  padding-top: 22px;
+  border-top: 1px solid var(--exp-line);
+}
+.exp-subblock h2 {
+  font-size: 18px;
+  font-weight: 550;
+  margin: 0 0 8px;
+  color: #e8f1ff;
+}
+.exp-subblock > p {
+  font-size: 14px;
+  margin: 0 0 14px;
+}
+.exp-compact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+.exp-steps {
+  overflow-x: auto;
+  gap: 6px;
+}
+.exp-steps li {
+  min-width: fit-content;
+  padding-right: 10px;
+}
+.expedition {
+  overflow-x: clip;
+  overflow-y: visible;
+}
+.exp-lesson {
+  align-items: start;
+}
+.exp-lesson-visual {
+  justify-content: flex-start;
+  position: sticky;
+  top: 24px;
+}
+@media (max-width: 600px) {
+  .exp-lesson-visual {
+    position: static;
+  }
+}
+
+

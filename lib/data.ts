@@ -30,7 +30,7 @@ export const missions: Mission[] = [
     name: "Earth Observation",
     description: "Image Earth’s surface and monitor climate.",
     label: "EARTH SCIENCE / REMOTE SENSING",
-    budget: 180,
+    budget: 250,
     duration: 12,
     orbit: "sso",
     objectives: ["imaging", "climate", "terrain"],

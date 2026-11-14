@@ -996,12 +996,25 @@ export default function MissionControl() {
                                       className={`mission-card ${design.mission === mi.id ? "selected" : ""}`}
                                       key={mi.id}
                                       aria-pressed={design.mission === mi.id}
-                                      disabled={!!activeChallenge}
-                                      onClick={() =>
-                                        setDesign(
-                                          designForMission(mi.id, design.mode),
-                                        )
-                                      }
+                                      onClick={() => {
+                                        const nextBase = designForMission(
+                                          mi.id,
+                                          design.mode,
+                                        );
+                                        const matchingScenario =
+                                          design.scenario &&
+                                          scenarios.some(
+                                            (s) =>
+                                              s.id === design.scenario &&
+                                              s.mission === mi.id,
+                                          )
+                                            ? design.scenario
+                                            : null;
+                                        setDesign({
+                                          ...nextBase,
+                                          scenario: matchingScenario,
+                                        });
+                                      }}
                                     >
                                       <div
                                         className={`mission-icon icon-${mi.id}`}
