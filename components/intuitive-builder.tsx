@@ -42,6 +42,7 @@ import {
 import {
   clearFlight,
   DESIGN_KEY,
+  deleteFlightResult,
   downloadReport,
   readDesign,
   readFlight,
@@ -51,6 +52,8 @@ import {
 import { ExpeditionShell, useExpeditionCopy } from './expedition-shell';
 import { FlightStageScene } from './flight-stage-scene';
 import { OperationsControl } from './operations-control';
+import { OnboardEngineer } from "./onboard-engineer";
+import { FlightChanges, FlightLog } from './flight-changes';
 import { IntervalSummary } from './interval-summary';
 import { LaunchIntro } from './launch-intro';
 import { LaunchSequence } from './launch-sequence';
@@ -67,6 +70,7 @@ export function IntuitiveBuilder() {
   const [step, setStep] = useState<BuilderStep>(0);
   const [expertMode, setExpertMode] = useState(false);
   const [flight, setFlight] = useState<Flight | null>(null);
+  const [previousFlight, setPreviousFlight] = useState<Flight | null>(null);
   const [result, setResult] = useState<Result | null>(null);
   const [showLaunchModal, setShowLaunchModal] = useState(false);
   const [showLaunchIntro, setShowLaunchIntro] = useState(false);
@@ -76,7 +80,6 @@ export function IntuitiveBuilder() {
   useEffect(() => {
     if (showLaunchModal && !launchDialog.current?.open) launchDialog.current?.showModal();
   }, [showLaunchModal]);
-
   // Load saved design / active flight on mount
   useEffect(() => {
     const savedDesign = readDesign();
@@ -114,6 +117,8 @@ export function IntuitiveBuilder() {
 
   // Both workspaces use the same command-based flight engine and checkpoints.
   function commitFlight(next: Flight) {
+    if (next === flight) return;
+    setPreviousFlight(flight);
     setFlight(next);
     const checkpointSaved = saveFlight(design, next);
     if (next.completed) {
@@ -186,15 +191,20 @@ export function IntuitiveBuilder() {
     setDesign(fixed);
   };
 
-  const startTestFlight = () => {
-    if (calc.issues.length > 0 || (flight && !flight.completed)) return;
+  const startTestFlight = (restart = false) => {
+    if (calc.issues.length > 0 || (flight && !flight.completed && !restart)) return;
+    if (restart && !window.confirm(t('Restart this flight? Current progress will be deleted.'))) return;
+
     const newFlight = { ...createFlight(design), paused: true };
+    const saved = saveFlight(design, newFlight);
+    setStorageWarning(!saved);
+    if (restart && !saved) return;
+    setPreviousFlight(null);
     setFlight(newFlight);
-    setResult(null);
-    setStorageWarning(!saveFlight(design, newFlight));
-    setStep(3);
     setShowLaunchModal(false);
     setShowLaunchIntro(true);
+    setResult(null);
+    setStep(3);
   };
 
   const handleNextPhase = () => {
@@ -207,12 +217,33 @@ export function IntuitiveBuilder() {
     commitFlight(respondByCommand(flight, design, choiceIdx));
   };
 
-  const handleAbortFlight = () => {
+  const returnToDesign = () => {
+    setPreviousFlight(null);
     setFlight(null);
     setResult(null);
     setStep(0);
     setShowLaunchModal(false);
-    setStorageWarning(!clearFlight());
+    setShowLaunchIntro(false);
+    setStorageWarning(false);
+  };
+
+  const handleAbortFlight = () => {
+    if (!flight) return;
+    if (!flight.completed && !window.confirm(t('End this flight and delete its progress?'))) return;
+    if (!clearFlight(flight.id)) {
+      setStorageWarning(true);
+      return;
+    }
+    returnToDesign();
+  };
+
+  const handleDeleteResult = () => {
+    if (!result || !window.confirm(t('Delete this attempt from flight records?'))) return;
+    if (!deleteFlightResult(result.id)) {
+      setStorageWarning(true);
+      return;
+    }
+    returnToDesign();
   };
 
   const stepIssuesCount = (targetStep: 0 | 1 | 2) =>
@@ -920,6 +951,8 @@ export function IntuitiveBuilder() {
                   </section>
                 )}
 
+                {flight && <FlightChanges before={previousFlight} flight={flight} design={design} />}
+                {flight && <OnboardEngineer key={flight.id} design={design} flight={flight} />}
                 {/* Active Flight Console */}
                 {flight && !flight.completed && (
                   <section className="ib-panel">
@@ -980,22 +1013,16 @@ export function IntuitiveBuilder() {
                     <p><strong>{t('Next interval duration')}: </strong>{nextIntervalHours(flight, design)} {t('hours')}</p>
                     {flight.lastInterval && <IntervalSummary report={flight.lastInterval} />}
 
-                    {/* Flight Log */}
-                    <div className="ib-check-list">
-                      {flight.log.slice(-4).map((entry, idx) => (
-                        <div key={idx} className="ib-check-item">
-                          <div>
-                            <strong>[{t(entry.phase)}]</strong> {t(entry.text)}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                    <FlightLog flight={flight} before={previousFlight} />
 
                     <div className="ib-step-footer">
                       <button type="button" className="ib-secondary-btn" onClick={handleAbortFlight}>
                         {c('Завершить текущий полёт и изменить аппарат', 'End this flight and edit spacecraft', 'Ұшуды аяқтап, аппаратты өзгерту')}
                       </button>
                       <div className="ib-header-controls">
+                        <button type="button" className="ib-secondary-btn" onClick={() => startTestFlight(true)}>
+                          {t('Restart flight')}
+                        </button>
                         <button
                           type="button"
                           className="ib-primary-btn"
@@ -1012,6 +1039,7 @@ export function IntuitiveBuilder() {
                 )}
 
                 {/* Post-Flight Debrief */}
+                {flight && flight.completed && <FlightLog flight={flight} before={previousFlight} />}
                 {flight && flight.completed && result && (
                   <section className="ib-panel">
                     <h2>{c('Итоги тестового полёта', 'Post-Flight Mission Debrief', 'Сынақ ұшуының қорытындысы')}</h2>
@@ -1079,6 +1107,9 @@ export function IntuitiveBuilder() {
                         {c('← Изменить конструкцию спутника', '← Modify Spacecraft Design', '← Конструкцияны өзгерту')}
                       </button>
                       <div className="ib-header-controls">
+                        <button type="button" className="ib-secondary-btn" onClick={handleDeleteResult}>
+                          {t('Delete attempt')}
+                        </button>
                         <button
                           type="button"
                           className="ib-secondary-btn"

@@ -166,8 +166,12 @@ export function readFlight(): FlightCheckpoint | null {
     return null;
   }
 }
-export function clearFlight(): boolean {
+export function clearFlight(id?: string): boolean {
   try {
+    if (id !== undefined) {
+      const checkpoint = JSON.parse(localStorage.getItem(FLIGHT_KEY) ?? "null");
+      if (checkpoint?.flight?.id !== id) return true;
+    }
     localStorage.removeItem(FLIGHT_KEY);
     return true;
   } catch {
@@ -218,6 +222,18 @@ export function saveResult(r: Result): boolean {
     return false;
   }
 }
+export function deleteFlightResult(id: string): boolean {
+  try {
+    if (!clearFlight(id)) return false;
+    const records: unknown = JSON.parse(localStorage.getItem(RECORDS_KEY) ?? "[]");
+    if (!Array.isArray(records)) return false;
+    localStorage.setItem(RECORDS_KEY, JSON.stringify(records.filter((record) => record?.id !== id)));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export function downloadReport(result: Result) {
   const text = `MISSION ARCHITECT — FLIGHT REPORT\n${result.name}\n${result.mission} | ${result.mode} mode\nScoring model: v${result.scoringVersion ?? 1}\n\nGrade: ${result.grade} | Score: ${result.score}/100\nMission success: ${result.success}%\nScience: ${result.science}\nEngineering efficiency: ${result.engineering}%\nBudget efficiency: ${result.budgetEfficiency}%\nReliability: ${result.reliability.toFixed(1)}%\nObjectives: ${result.objectives.length}/${result.objectiveCount}\nCost: $${result.cost.toFixed(1)}M\nFinal spacecraft mass: ${result.mass.toFixed(1)} kg\nPower margin: ${Math.round(result.powerMargin)} W\nAnomalies survived: ${result.anomalies}\n\n${result.reasons.join("\n\n")}\n\nMISSION LOG\n${result.log.map((l) => `[${l.phase}] ${l.text}`).join("\n")}\n\nFLIGHT RECORDER (phase / label / health % / fuel kg / projected science / nominal power headroom W)\n${result.telemetry?.map((s) => `${s.phase + 1} | ${s.label} | ${s.health.toFixed(1)} | ${s.fuel.toFixed(1)} | ${s.science.toFixed(1)} | ${s.power.toFixed(1)}`).join("\n") ?? "No recorder data in this legacy report."}\n\nEducational simulation. These simplified values are not flight-design predictions.`;
   const url = URL.createObjectURL(new Blob([translate(text, preferredLocale())], { type: "text/plain" }));

@@ -18,6 +18,8 @@ import {
   RotateCcw,
 } from "lucide-react";
 import { OperationsControl } from "./operations-control";
+import { OnboardEngineer } from "./onboard-engineer";
+import { FlightChanges, FlightLog } from "./flight-changes";
 import { IntervalSummary } from "./interval-summary";
 import { Design } from "@/lib/data";
 import { calculate } from "@/lib/engineering";
@@ -48,6 +50,8 @@ export function FlightControl({
   returnLabel,
   onReturn,
   onResult,
+  onRestart,
+  onDeleteResult,
 }: {
   design: Design;
   initial: Flight;
@@ -55,14 +59,18 @@ export function FlightControl({
   returnLabel?: string;
   onReturn: () => void;
   onResult: (r: Result) => void;
+  onRestart: () => boolean;
+  onDeleteResult: (id: string) => boolean;
 }) {
   const { t, tx, localeTag, number } = useI18n();
 
   const [flight, setFlight] = useState(() => ({ ...initial, paused: true }));
   const [showLaunchIntro, setShowLaunchIntro] = useState(!restored && initial.phase === 0 && !initial.completed);
+  const [previousFlight, setPreviousFlight] = useState<Flight | null>(null);
   const [checkpointSaved, setCheckpointSaved] = useState(true);
   const [saved, setSaved] = useState(true);
   const [result, setResult] = useState<Result | null>(null);
+  const [restartFailed, setRestartFailed] = useState(false);
   const once = useRef(false);
   const m = calculate(design);
   const event = pendingEvent(flight);
@@ -80,14 +88,30 @@ export function FlightControl({
       onResult(r);
     }
   }, [flight, design, onResult]);
+  function updateFlight(update: Flight | ((current: Flight) => Flight)) {
+    const next = typeof update === "function" ? update(flight) : update;
+    if (next === flight) return;
+    setPreviousFlight(flight);
+    setFlight(next);
+  }
   if (result)
     return (
+      <>
+      <FlightChanges before={previousFlight} flight={flight} design={design} />
+      <FlightLog flight={flight} before={previousFlight} />
       <ResultView
         result={result}
         onReturn={onReturn}
         saved={saved}
         returnLabel={returnLabel}
+        onRetry={onRestart}
+        onDelete={() => {
+          if (!onDeleteResult(result.id)) return false;
+          onReturn();
+          return true;
+        }}
       />
+      </>
     );
   return (
     <div className="flight-screen">
@@ -127,6 +151,8 @@ export function FlightControl({
           )}
         </span>
       </div>
+      <FlightChanges before={previousFlight} flight={flight} design={design} />
+      <OnboardEngineer key={flight.id} design={design} flight={flight} />
       <div className="flight-timeline">
         {tx(
           phases.map((p, i) => (
@@ -162,7 +188,7 @@ export function FlightControl({
           )),
         )}
       </div>
-      <OperationsControl design={design} flight={flight} onChange={setFlight} />
+      <OperationsControl design={design} flight={flight} onChange={updateFlight} />
       <section className="operations-panel interval-planning" aria-label={t("Planning next interval")}>
         <h3>{t("Planning next interval")}</h3>
         <p>{t("Time advances only when you confirm. Adjust instruments and transmission before continuing.")}</p>
@@ -171,9 +197,17 @@ export function FlightControl({
           {" · "}{t(phases[flight.phase + 1])}
         </p>
         <button className="primary-button" disabled={!!event || flight.completed}
-          onClick={() => setFlight(f => advanceByCommand(f, design))}>
+          onClick={() => updateFlight(f => advanceByCommand(f, design))}>
           {t("Calculate next interval")} <ArrowRight size={16} />
         </button>
+        <button className="secondary-button" onClick={() => {
+          if (window.confirm(t("Restart this flight? Current progress will be deleted."))) {
+            setRestartFailed(!onRestart());
+          }
+        }}>
+          {t("Restart flight")}
+        </button>
+        {restartFailed && <p role="alert">{t("Could not restart the flight.")}</p>}
         {event && <p role="status">{t("Resolve the pending event below before calculating the next interval.")}</p>}
       </section>
       {flight.lastInterval && <IntervalSummary report={flight.lastInterval} />}
@@ -234,7 +268,7 @@ export function FlightControl({
                         key={c.label}
                         disabled={c.fuel > flight.fuel}
                         onClick={() =>
-                          setFlight((f) => respondByCommand(f, design, i))
+                          updateFlight((f) => respondByCommand(f, design, i))
                         }
                       >
                         <span>{tx(String.fromCharCode(65 + i))}</span>
@@ -298,29 +332,7 @@ export function FlightControl({
               </div>
             ),
           )}
-          <section className="mission-log">
-            <div className="sub-heading">
-              <h3>
-                <Activity size={14} /> {t(" Mission log")}
-              </h3>
-              <span>
-                {tx(flight.log.length)} {t(" ENTRIES")}
-              </span>
-            </div>
-            <div className="log-entries">
-              {tx(
-                [...flight.log].reverse().map((l, i) => (
-                  <div
-                    className={`log-entry ${l.kind}`}
-                    key={`${i}-${l.phase}`}
-                  >
-                    <span>{tx(l.phase.toUpperCase())}</span>
-                    <p>{tx(l.text)}</p>
-                  </div>
-                )),
-              )}
-            </div>
-          </section>
+          <FlightLog flight={flight} before={previousFlight} />
         </div>
       </div>
     </div>
@@ -332,17 +344,22 @@ export function ResultView({
   saved = true,
   returnLabel = "Refine your mission",
   returnDisabled = false,
+  onRetry,
+  onDelete,
 }: {
   result: Result;
   onReturn: () => void;
   saved?: boolean;
   returnLabel?: string;
   returnDisabled?: boolean;
+  onRetry?: () => boolean;
+  onDelete?: () => boolean;
 }) {
   const { t, tx, localeTag } = useI18n();
 
   const [copied, setCopied] = useState(false);
   const [copyError, setCopyError] = useState(false);
+  const [attemptError, setAttemptError] = useState<"restart" | "delete" | null>(null);
   async function copy() {
     try {
       await navigator.clipboard.writeText(
@@ -511,10 +528,21 @@ export function ResultView({
           <Copy size={15} />
           {tx(copied ? "Summary copied" : "Copy mission summary")}
         </button>
+        {onDelete && <button className="secondary-button" onClick={() => {
+          if (window.confirm(t("Delete this attempt from flight records?"))) {
+            setAttemptError(onDelete() ? null : "delete");
+          }
+        }}>{t("Delete attempt")}</button>}
+        {onRetry && <button className="secondary-button" onClick={() => {
+          setAttemptError(onRetry() ? null : "restart");
+        }}>{t("Fly again")}</button>}
         <button className="primary-button" onClick={onReturn} disabled={returnDisabled}>
           <RotateCcw size={15} /> {tx(returnLabel)}
         </button>
       </div>
+      {attemptError && <p className="launch-warning" role="alert">
+        {t(attemptError === "delete" ? "Could not delete the attempt." : "Could not restart the flight.")}
+      </p>}
       {tx(
         copyError && (
           <p className="launch-warning">

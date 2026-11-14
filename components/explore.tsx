@@ -89,9 +89,11 @@ export function Challenges({ onSelect }: { onSelect: (d: Design) => void }) {
 export function Records({
   records,
   onBuild,
+  onDelete,
 }: {
   records: Result[];
   onBuild: () => void;
+  onDelete: (id: string) => boolean;
 }) {
   const { t, tx, localeTag } = useI18n();
 
@@ -124,6 +126,11 @@ export function Records({
         result={selectedResult}
         onReturn={() => setSelectedResult(null)}
         returnLabel="Back to flight records"
+        onDelete={() => {
+          if (!onDelete(selectedResult.id)) return false;
+          setSelectedResult(null);
+          return true;
+        }}
       />
     );
   return (
