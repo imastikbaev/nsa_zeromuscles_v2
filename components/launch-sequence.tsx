@@ -394,8 +394,7 @@ export function LaunchSequence({
 
       <div className="ls-hud">
         <div className="ls-hud-top">
-          <span className="ls-clock">
-            T{sign}
+          <span className="ls-clock">{t(" T")}{sign}
             {mm}:{ss}
           </span>
           <span className="ls-phase" aria-live="polite">
@@ -409,7 +408,7 @@ export function LaunchSequence({
         )}
         {phaseIndex === 4 && (
           <div className="ls-banner" role="status">
-            {c("ОРБИТА ДОСТИГНУТА", "ORBIT ACHIEVED", "ОРБИТАҒА ШЫҚТЫ")} · {m.orbit.short}
+            {c("ОРБИТА ДОСТИГНУТА", "ORBIT ACHIEVED", "ОРБИТАҒА ШЫҚТЫ")} · {t(m.orbit.short)}
           </div>
         )}
         <div className="ls-hud-bottom">
@@ -421,13 +420,12 @@ export function LaunchSequence({
           </div>
           <div>
             <span>{c("Топливо", "Propellant", "Отын")}</span>
-            <strong>{remainingFuel.toFixed(0)} kg</strong>
+            <strong>{remainingFuel.toFixed(0)}{t(" kg")}</strong>
           </div>
           <div>
             <span>{c("Высота / скорость", "Altitude / speed", "Биіктік / жылдамдық")}</span>
             <strong>
-              {altitude.toFixed(0)} km · {speed.toFixed(1)} km/s
-            </strong>
+              {altitude.toFixed(0)}{t(" km · ")}{speed.toFixed(1)}{t(" km/s ")}</strong>
           </div>
         </div>
         <p className="ls-note">

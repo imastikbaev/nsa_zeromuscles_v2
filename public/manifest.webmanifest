@@ -1,8 +1,8 @@
 {
   "id": "/",
-  "name": "Mission Architect",
-  "short_name": "Mission Architect",
-  "description": "Design, launch, and simulate your own space mission. An interactive engineering lab, available offline.",
+  "name": "Архитектор миссий",
+  "short_name": "Архитектор миссий",
+  "description": "Проектируйте и запускайте космические миссии. Интерактивная инженерная лаборатория с автономным режимом.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -10,7 +10,7 @@
   "background_color": "#080b10",
   "theme_color": "#000000",
   "orientation": "any",
-  "lang": "en",
+  "lang": "ru",
   "categories": ["education", "games", "simulation"],
   "icons": [
     {

@@ -173,3 +173,8 @@ Solo flight has no automatic timer. Configure instrument duty, enabled instrumen
 Each calculated interval reports generated, delivered, overflow-lost and remaining data, starting/ending battery charge and cumulative unserved energy for that interval. Explanations identify reduced collection settings, transmitter shutdown, power shortages and overflow. Battery endpoints alone do not indicate whether a shortage occurred during the interval. Manual buffer discard remains visible in the cumulative lost-data counter; it is not labeled as interval overflow. The last interval report survives reloads and is included in the saved debrief. Legacy flights without operational state retain their previous calculations and use manual phase progression.
 
 The asteroid trajectory now resolves its explicit `transfer` operating profile. The tests cover catalog/profile consistency, manual progression, event gating, paused configuration, saved report validation and final interval persistence.
+
+
+### Русская локализация
+
+Русский — язык первого открытия, включая статическую HTML-страницу и установку приложения. Полный русский словарь дополнен в `lib/i18n/ru.json`; общие переводы трёх языков остаются в TSV-каталогах. Перевод выполняется при отображении и выгрузке текстовых отчётов. Идентификаторы компонентов и формат JSON-проектов не переводятся. Настройки языка версии 2 начинают с русского; последующий выбор пользователя сохраняется. Поиск справочника работает по русским терминам и объяснениям.

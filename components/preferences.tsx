@@ -26,7 +26,7 @@ type Preferences = {
 };
 const Context = createContext<Preferences | null>(null);
 export function PreferencesProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocale] = useState<Locale>("en");
+  const [locale, setLocale] = useState<Locale>("ru");
   const [theme, setTheme] = useState<Theme>("dark");
   const [ready, setReady] = useState(false);
   const [saved, setSaved] = useState(true);
@@ -103,7 +103,7 @@ export function PreferenceControls() {
             Қазақша
           </option>
           <option lang="en" value="en">
-            English
+            {t("English")}
           </option>
         </select>
       </label>

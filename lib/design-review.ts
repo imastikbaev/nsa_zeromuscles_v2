@@ -1,3 +1,4 @@
+import { translate, preferredLocale } from "./i18n";
 import { Design, objectives } from "./data";
 import { calculate } from "./engineering";
 
@@ -170,7 +171,7 @@ export function engineeringReport(d: Design) {
 }
 export function downloadEngineeringReport(d: Design) {
   const url = URL.createObjectURL(
-    new Blob([engineeringReport(d)], { type: "text/plain;charset=utf-8" }),
+    new Blob([translate(engineeringReport(d), preferredLocale())], { type: "text/plain;charset=utf-8" }),
   );
   const a = document.createElement("a");
   a.href = url;

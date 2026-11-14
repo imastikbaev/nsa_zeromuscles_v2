@@ -276,7 +276,7 @@ export function MissionLab({
               <div>
                 <strong>
                   {t("Current workspace: ")}
-                  {design.name}
+                  {t(design.name)}
                 </strong>
                 <p>
                   {t("$")}

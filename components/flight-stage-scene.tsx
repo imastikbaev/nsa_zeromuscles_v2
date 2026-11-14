@@ -1,4 +1,6 @@
 'use client';
+import { useI18n } from "@/components/preferences";
+
 
 import './flight-stage-scene.css';
 import { useEffect, useId, useMemo, useState } from 'react';
@@ -90,6 +92,8 @@ export function FlightStageScene({
   mode = 'preview',
   onOpenLaunchCinematic,
 }: Props) {
+  const { t } = useI18n();
+
   const c = useExpeditionCopy();
   const uid = useId().replace(/:/g, '');
   const calc = useMemo(() => calculate(design), [design]);
@@ -236,10 +240,10 @@ export function FlightStageScene({
         </div>
         <div className="fss-meta-pills">
           <span className="fss-pill">
-            {c('Носитель:', 'Launcher:', 'Зымыран:')} {launcher.name}
+            {c('Носитель:', 'Launcher:', 'Зымыран:')} {t(launcher.name)}
           </span>
           <span className="fss-pill">
-            {c('Орбита:', 'Orbit:', 'Орбита:')} {orbit.short} ({orbit.altitude})
+            {c('Орбита:', 'Orbit:', 'Орбита:')} {t(orbit.short)} ({t(orbit.altitude)})
           </span>
           {onOpenLaunchCinematic && (
             <button type="button" className="fss-cinematic-btn" onClick={onOpenLaunchCinematic}>
@@ -389,7 +393,7 @@ export function FlightStageScene({
               fontSize="12"
               fontWeight="600"
             >
-              {c(palette.labelRu, palette.labelEn, palette.labelKk)} · {orbit.altitude}
+              {c(palette.labelRu, palette.labelEn, palette.labelKk)} · {t(orbit.altitude)}
             </text>
           </g>
 
@@ -484,7 +488,7 @@ export function FlightStageScene({
                 fontSize="12"
                 fontWeight="700"
               >
-                ⚠ {activeEvent.title}
+                ⚠ {t(activeEvent.title)}
               </text>
             </g>
           )}
@@ -570,7 +574,7 @@ export function FlightStageScene({
                   stroke="#08111f"
                   strokeWidth="0.8"
                 >
-                  <title>{inst.name}</title>
+                  <title>{t(inst.name)}</title>
                 </circle>
               );
             })}
@@ -597,23 +601,20 @@ export function FlightStageScene({
       {/* Bottom Live Telemetry Strip */}
       <div className="fss-telemetry-grid">
         <div className="fss-stat">
-          <span>{c('Энергобаланс (EOL)', 'Power Margin (EOL)', 'Энергия балансы (EOL)')}</span>
+          <span>{c('Энергобаланс (конец срока службы)', 'Power Margin (EOL)', 'Энергия балансы (EOL)')}</span>
           <strong className={calc.endOfLifeMargin >= calc.designPowerMargin ? 'is-ok' : 'is-bad'}>
-            {design.panels} m² · {calc.endOfLifeMargin >= 0 ? '+' : ''}
-            {Math.round(calc.endOfLifeMargin)} W
-          </strong>
+            {design.panels}{t(" m² · ")}{calc.endOfLifeMargin >= 0 ? '+' : ''}
+            {Math.round(calc.endOfLifeMargin)}{t(" W ")}</strong>
         </div>
         <div className="fss-stat">
           <span>{c('Двигатель и манёвр Δv', 'Propulsion & Δv', 'Қозғалтқыш және Δv')}</span>
           <strong className={calc.deltaV >= calc.requiredDeltaV ? 'is-ok' : 'is-bad'}>
-            {prop.name} · {Math.round(calc.deltaV)} / {calc.requiredDeltaV} m/s
-          </strong>
+            {t(prop.name)} · {Math.round(calc.deltaV)} / {calc.requiredDeltaV}{t(" m/s ")}</strong>
         </div>
         <div className="fss-stat">
           <span>{c('Канал связи и антенна', 'Radio Link & Antenna', 'Радиоарна және антенна')}</span>
           <strong className={calc.bandwidth >= calc.requiredBandwidth ? 'is-ok' : 'is-bad'}>
-            {ant.name} · {Math.round(calc.bandwidth)} / {calc.requiredBandwidth} GB/d
-          </strong>
+            {t(ant.name)} · {Math.round(calc.bandwidth)} / {calc.requiredBandwidth}{t(" GB/d ")}</strong>
         </div>
         <div className="fss-stat">
           <span>
@@ -622,9 +623,9 @@ export function FlightStageScene({
               : c('Режим 6-часового витка', '6-Hour Orbit Profile', '6 сағаттық орбита циклі')}
           </span>
           <strong>
-            {totals
+            {t(totals
               ? `${totals.buffered.toFixed(0)}/${calc.storage} GB (${bufferPct}%) · ↓${totals.delivered.toFixed(0)} GB`
-              : `${Math.round(profile.observation * 6 * 10) / 10}h obs · ${Math.round(profile.eclipse * 6 * 10) / 10}h ecl · ${Math.round(profile.contact * 6 * 10) / 10}h link`}
+              : `${Math.round(profile.observation * 6 * 10) / 10}h obs · ${Math.round(profile.eclipse * 6 * 10) / 10}h ecl · ${Math.round(profile.contact * 6 * 10) / 10}h link`)}
           </strong>
         </div>
       </div>
@@ -639,7 +640,7 @@ export function FlightStageScene({
             return (
               <div key={p} role="listitem" className={`fss-phase-step is-${state}`}>
                 <span className="fss-phase-num">{idx + 1}</span>
-                <span className="fss-phase-name">{p}</span>
+                <span className="fss-phase-name">{t(p)}</span>
               </div>
             );
           })}

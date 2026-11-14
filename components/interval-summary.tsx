@@ -8,12 +8,12 @@ export function IntervalSummary({ report: r }: { report: IntervalReport }) {
     <h3>{t("Last interval result")}</h3>
     <p>{t("Calculated duration")}: {number(r.hours / (r.hours >= 720 ? 720 : 1), 2)} {t(r.hours >= 720 ? "months" : "hours")}</p>
     <dl className="operations-metrics">
-      <div><dt>{t("Data generated this interval")}</dt><dd>{number(r.generated, 2)} GB</dd></div>
-      <div><dt>{t("Data delivered this interval")}</dt><dd>{number(r.delivered, 2)} GB</dd></div>
-      <div><dt>{t("Overflow loss this interval")}</dt><dd>{number(r.lost, 2)} GB</dd></div>
-      <div><dt>{t("Data remaining onboard")}</dt><dd>{number(r.buffered, 2)} GB</dd></div>
-      <div><dt>{t("Battery before / after")}</dt><dd>{number(r.batteryBefore, 2)} → {number(r.batteryAfter, 2)} kWh</dd></div>
-      <div><dt>{t("Unserved energy this interval")}</dt><dd>{number(r.unservedKWh, 2)} kWh</dd></div>
+      <div><dt>{t("Data generated this interval")}</dt><dd>{number(r.generated, 2)}{t(" GB")}</dd></div>
+      <div><dt>{t("Data delivered this interval")}</dt><dd>{number(r.delivered, 2)}{t(" GB")}</dd></div>
+      <div><dt>{t("Overflow loss this interval")}</dt><dd>{number(r.lost, 2)}{t(" GB")}</dd></div>
+      <div><dt>{t("Data remaining onboard")}</dt><dd>{number(r.buffered, 2)}{t(" GB")}</dd></div>
+      <div><dt>{t("Battery before / after")}</dt><dd>{number(r.batteryBefore, 2)} → {number(r.batteryAfter, 2)}{t(" kWh")}</dd></div>
+      <div><dt>{t("Unserved energy this interval")}</dt><dd>{number(r.unservedKWh, 2)}{t(" kWh")}</dd></div>
     </dl>
     <ul>
       {!r.scienceActive && <li>{t("Commissioning interval: science collection has not started yet.")}</li>}

@@ -308,7 +308,7 @@ export function SpacecraftStage({
           ].map((r) => (
             <label key={r.key} className="range-control">
               <div>
-                <span>{r.name}</span>
+                <span>{t(r.name)}</span>
                 <strong>
                   {tx(d[r.key as "fuel" | "battery" | "panels"])}
                   {tx(" ")}

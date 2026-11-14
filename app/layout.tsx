@@ -6,14 +6,14 @@ import "./aerospace.css";
 import "./workbench.css";
 import { PreferencesProvider } from "@/components/preferences";
 export const metadata: Metadata = {
-  title: "Mission Architect — Space Mission Design Lab",
+  title: "Архитектор миссий — лаборатория космического проектирования",
   description:
-    "Your mission. Your decisions. Design a spacecraft, balance the engineering, and explore the unknown in an interactive space mission simulator.",
+    "Ваша миссия. Ваши решения. Создайте аппарат, сбалансируйте ресурсы и исследуйте космос в интерактивном симуляторе.",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Mission Architect",
+    title: "Архитектор миссий",
   },
   icons: { icon: "/favicon.svg", apple: "/icon-192.png" },
 };
@@ -26,7 +26,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="ru">
       <body>
         <PreferencesProvider>{children}</PreferencesProvider>
       </body>

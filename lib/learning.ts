@@ -1,3 +1,4 @@
+import { translate, preferredLocale } from "./i18n";
 import { Design } from "./data";
 import { calculate, designForMission } from "./engineering";
 import { configurationKey } from "./design-identity";
@@ -276,7 +277,7 @@ export function learningReport(s: LearningSession, records: Result[]) {
 }
 export function downloadLearningReport(s: LearningSession, records: Result[]) {
   const url = URL.createObjectURL(
-    new Blob([learningReport(s, records)], {
+    new Blob([translate(learningReport(s, records), preferredLocale())], {
       type: "text/plain;charset=utf-8",
     }),
   );

@@ -18,10 +18,10 @@ export function OperationsControl({ design, flight, onChange }: {
    <h3>{t("Mission operations")}</h3>
    <p role="status">{t(o.safeMode ? "Energy shortage: observations are reduced automatically." : "Energy available for scheduled operations.")}</p>
    <dl className="operations-metrics">
-    <div><dt>{t("Battery charge")}</dt><dd>{number(o.batteryKWh, 2)} / {number(design.battery, 2)} kWh</dd></div>
-    <div><dt>{t("Buffered data")}</dt><dd>{number(totals.buffered, 2)} GB</dd></div>
-    <div><dt>{t("Delivered data")}</dt><dd>{number(totals.delivered, 2)} GB</dd></div>
-    <div><dt>{t("Lost data")}</dt><dd>{number(totals.lost, 2)} GB</dd></div>
+    <div><dt>{t("Battery charge")}</dt><dd>{number(o.batteryKWh, 2)} / {number(design.battery, 2)}{t(" kWh")}</dd></div>
+    <div><dt>{t("Buffered data")}</dt><dd>{number(totals.buffered, 2)}{t(" GB")}</dd></div>
+    <div><dt>{t("Delivered data")}</dt><dd>{number(totals.delivered, 2)}{t(" GB")}</dd></div>
+    <div><dt>{t("Lost data")}</dt><dd>{number(totals.lost, 2)}{t(" GB")}</dd></div>
    </dl>
    <fieldset disabled={flight.completed}>
     <legend>{t("Commands for the next interval")}</legend>

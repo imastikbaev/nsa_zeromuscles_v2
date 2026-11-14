@@ -16,7 +16,7 @@ Mission Architect is an interactive educational space mission design game and pr
 An offline-capable, zero-cloud preliminary mission engineering workbench and operational flight simulator where every choice couples across six physical and programmatic budgets—Mass, Power (BOL/EOL solar degradation & eclipse battery cycles), Cost, Delta-v (Tsiolkovsky rocket equation), Data generation/storage (GB/day vs. buffer), and RF Link bandwidth (Mbps)—with deterministic checkpoints, Climate Watch trade-study lab, and 4-player role-based local team rooms.
 
 ## Operating Context
-Used in classrooms, hackathons (NASA Space Apps Challenge), and self-paced learning on desktop and mobile browsers (online or offline PWA), in solo or 4-member team sessions, with English, Russian, and Kazakh interface support (some detailed prose still falls back to English).
+Used in classrooms, hackathons (NASA Space Apps Challenge), and self-paced learning on desktop and mobile browsers (online or offline PWA), in solo or 4-member team sessions, with Russian as the default language. Russian catalog, event, glossary and report translations have regression coverage; English and Kazakh remain selectable.
 
 ## Capabilities and Constraints
 - Six catalog missions: Earth Observation, Lunar Mission, Mars Orbiter, Asteroid Explorer, Solar Observation, and Deep Space Mission.

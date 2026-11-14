@@ -354,7 +354,7 @@ export function EngineeringReview({
                     m.ledger.map((r) => (
                       <tr key={r.id}>
                         <th>
-                          {r.name}
+                          {t(r.name)}
                           <span>{tx(r.group)}</span>
                         </th>
                         <td>{tx(r.mass.toFixed(1))}</td>

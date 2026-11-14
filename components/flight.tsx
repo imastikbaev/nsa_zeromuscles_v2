@@ -109,7 +109,7 @@ export function FlightControl({
           <span className="eyebrow">
             {t("MISSION CONTROL / FLIGHT IN PROGRESS")}
           </span>
-          <h2>{design.name}</h2>
+          <h2>{t(design.name)}</h2>
           <p>
             {tx(m.mission.name)} {t(" · ")}
             {tx(m.orbit.name)}
@@ -343,7 +343,7 @@ export function ResultView({
   async function copy() {
     try {
       await navigator.clipboard.writeText(
-        `${r.name} — Mission Architect\nGrade ${r.grade} · ${r.score}/100 · Science ${r.science}\n${r.mission} · $${r.cost.toFixed(1)}M · ${r.objectives.length}/${r.objectiveCount} objectives complete\n${location.origin}`,
+        t(`${r.name} — Mission Architect\nGrade ${r.grade} · ${r.score}/100 · Science ${r.science}\n${r.mission} · $${r.cost.toFixed(1)}M · ${r.objectives.length}/${r.objectiveCount} objectives complete\n${location.origin}`),
       );
       setCopied(true);
     } catch {
@@ -373,7 +373,7 @@ export function ResultView({
             )}
           </h2>
           <p>
-            {t("Scoring model")} v{r.scoringVersion ?? 1} · {r.name} {t(" · ")}
+            {t("Scoring model")}{t(" v")}{r.scoringVersion ?? 1} · {t(r.name)} {t(" · ")}
             {tx(r.mission)}
           </p>
           <div className="result-badges">
